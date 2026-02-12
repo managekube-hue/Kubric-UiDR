@@ -29,6 +29,7 @@
   --ifm-pre-border-radius: 0.5rem;
   --ifm-navbar-background-color: #ffffff;
   --ifm-footer-background-color: #0a0f1a;
+  --enterprise-content-measure: 78ch;
 }
 
 [data-theme='dark'] {
@@ -129,6 +130,12 @@
   width: 100%;
 }
 
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .container {
   padding: 2rem 2rem 2rem 1rem;
 }
@@ -142,8 +149,9 @@
 .markdown h1 {
   --ifm-h1-font-size: 2.25rem;
   font-weight: 650;
-  letter-spacing: -0.01em;
-  margin-bottom: 1.5rem;
+  letter-spacing: -0.014em;
+  line-height: 1.16;
+  margin-bottom: 1.35rem;
   border-bottom: 1px solid var(--ifm-color-gray-200);
   padding-bottom: 1rem;
 }
@@ -151,27 +159,33 @@
 .markdown h2 {
   --ifm-h2-font-size: 1.5rem;
   font-weight: 650;
-  letter-spacing: -0.01em;
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
+  letter-spacing: -0.012em;
+  line-height: 1.24;
+  margin-top: 2.3rem;
+  margin-bottom: 0.9rem;
 }
 
 .markdown h3 {
   --ifm-h3-font-size: 1.25rem;
   font-weight: 600;
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  margin-top: 1.85rem;
+  margin-bottom: 0.65rem;
 }
 
 .markdown p {
-  line-height: 1.75;
-  margin-bottom: 1.25rem;
+  line-height: 1.72;
+  margin-bottom: 1.05rem;
   color: var(--ifm-color-content);
 }
 
 .markdown li {
-  line-height: 1.75;
-  margin-bottom: 0.375rem;
+  line-height: 1.68;
+  margin-bottom: 0.32rem;
+}
+
+.theme-doc-markdown {
+  max-width: var(--enterprise-content-measure);
 }
 
 code {
@@ -244,10 +258,25 @@ pre {
   border-bottom: 1px solid var(--ifm-color-gray-200);
   box-shadow: none;
   padding: 0 2rem;
+  background: #0f172a !important;
 }
 
 [data-theme='dark'] .navbar {
   border-bottom-color: #1e293b;
+}
+
+.navbar__brand,
+.navbar__title,
+.navbar__link,
+.navbar__item,
+.navbar__toggle,
+.navbar__search-input {
+  color: #ffffff !important;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: #dbeafe !important;
 }
 
 .navbar__title {
@@ -260,6 +289,7 @@ pre {
 .navbar__link {
   font-size: 0.875rem;
   font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--ifm-color-content-secondary);
   padding: 0.5rem 1rem;
 }
@@ -292,7 +322,7 @@ pre {
 
 .enterpriseHero {
   background: linear-gradient(180deg, #020617 0%, #0f172a 65%, #1e293b 100%);
-  padding: 4.5rem 0 3rem;
+  padding: 4.85rem 0 3.2rem;
   border-bottom: 1px solid var(--ifm-color-gray-200);
 }
 
@@ -304,8 +334,10 @@ pre {
 
 .enterpriseHero h1 {
   margin: 0;
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  line-height: 1.1;
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  color: #f8fafc;
 }
 
 .enterpriseHero__eyebrow {
@@ -319,8 +351,9 @@ pre {
 
 .enterpriseHero p {
   margin-top: 1rem;
-  max-width: 64ch;
-  color: var(--ifm-color-content-secondary);
+  max-width: 62ch;
+  line-height: 1.64;
+  color: #cbd5e1;
 }
 
 .enterpriseHero__actions {
@@ -332,6 +365,7 @@ pre {
 .enterpriseHero__proof {
   margin-top: 1rem;
   font-size: 0.9rem;
+  color: #94a3b8;
 }
 
 .enterpriseHero__band {
@@ -351,7 +385,7 @@ pre {
 .enterpriseHome {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 3.5rem;
+  padding: 2.15rem 1.5rem 3.8rem;
 }
 
 .enterpriseCardGrid {
@@ -366,13 +400,14 @@ pre {
   background: var(--ifm-background-surface-color, #ffffff);
   border: 1px solid var(--ifm-color-gray-200);
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 1.08rem;
   box-shadow: 0 4px 12px rgba(2, 6, 23, 0.08);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .enterpriseCard:hover {
   transform: translateY(-3px);
+  border-color: var(--ifm-color-gray-300);
   box-shadow: 0 10px 24px rgba(2, 6, 23, 0.12);
 }
 
@@ -393,11 +428,13 @@ pre {
   border: 1px solid var(--ifm-color-gray-300);
   border-radius: 0.45rem;
   text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .enterpriseCard__cta:hover {
   border-color: var(--ifm-link-color);
   color: var(--ifm-link-hover-color);
+  background: color-mix(in srgb, var(--ifm-link-color) 8%, transparent);
 }
 
 .enterpriseWhy {
@@ -417,6 +454,7 @@ pre {
   text-decoration: none;
   font-weight: 600;
   color: var(--ifm-color-content);
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .enterpriseButton:hover {
@@ -465,8 +503,85 @@ pre {
   padding: 0.55rem 0.65rem;
 }
 
+.enterpriseForm input:focus-visible,
+.enterpriseForm select:focus-visible,
+.enterpriseForm textarea:focus-visible,
+.enterpriseButton:focus-visible,
+.enterpriseCard__cta:focus-visible,
+.menu__link:focus-visible,
+.navbar__link:focus-visible {
+  outline: 2px solid var(--ifm-link-color);
+  outline-offset: 2px;
+}
+
 .enterpriseForm textarea {
   resize: vertical;
+}
+
+.notion-context-banner {
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.notion-context-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.notion-context-content div {
+  flex: 1;
+  min-width: 260px;
+}
+
+.notion-context-content strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.notion-context-content p {
+  margin: 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
+}
+
+.notion-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.8rem;
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.notion-button:hover {
+  background: var(--ifm-color-primary-darker);
+  color: #ffffff;
+}
+
+.github-source-link {
+  margin-top: 1.35rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  font-size: 0.875rem;
+}
+
+.github-source-link a {
+  color: var(--ifm-color-emphasis-700);
+  text-decoration: none;
+}
+
+.github-source-link a:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {

@@ -80,7 +80,7 @@ const config: Config = {
       style: 'dark',
       logo: {
         alt: 'Kubric Logo',
-        src: 'img/kubric-logo.svg',
+        src: 'img/logo.svg',
         height: 32,
       },
       items: [

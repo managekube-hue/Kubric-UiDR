@@ -2,6 +2,8 @@
 title: Platform
 ---
 
+import PlatformModuleGrid from '@site/src/components/docs/PlatformModuleGrid';
+
 <section className="enterpriseHero">
   <div className="enterpriseHero__inner">
     <p className="enterpriseHero__eyebrow">Platform</p>
@@ -23,32 +25,6 @@ title: Platform
 
   <section>
     <h2>Platform Modules</h2>
-    <div className="enterpriseCardGrid">
-      <article className="enterpriseCard">
-        <h3>SOC</h3>
-        <p>Detection, threat intelligence, vulnerability prioritization, incident stitching, forensics.</p>
-        <a className="enterpriseCard__cta" href="/docs/K-SOC-04_SECURITY">Open SOC docs</a>
-      </article>
-      <article className="enterpriseCard">
-        <h3>NOC</h3>
-        <p>Configuration management, backup and DR, performance observability, patch workflows.</p>
-        <a className="enterpriseCard__cta" href="/docs/K-NOC-05_OPERATIONS">Open NOC docs</a>
-      </article>
-      <article className="enterpriseCard">
-        <h3>GRC</h3>
-        <p>OSCAL mapping, evidence vault, supply chain security, audit-readiness controls.</p>
-        <a className="enterpriseCard__cta" href="/docs/K-GRC-07_COMPLIANCE">Open GRC docs</a>
-      </article>
-      <article className="enterpriseCard">
-        <h3>PSA</h3>
-        <p>ITSM, billing and invoicing, CRM/CPQ, customer portal, business intelligence.</p>
-        <a className="enterpriseCard__cta" href="/docs/K-PSA-06_BUSINESS">Open PSA docs</a>
-      </article>
-      <article className="enterpriseCard">
-        <h3>KAI</h3>
-        <p>Agent personas, workflows, guardrails, RAG, and cryptographically signed decision trails.</p>
-        <a className="enterpriseCard__cta" href="/docs/K-KAI-03_ORCHESTRATION">Open KAI docs</a>
-      </article>
-    </div>
+    <PlatformModuleGrid />
   </section>
 </main>
