@@ -109,16 +109,16 @@ const config: Config = {
         {
           title: 'Modules',
           items: [
-            { label: ' Core Infrastructure', to: '/docs/K-CORE-01_INFRASTRUCTURE/' },
-            { label: ' XRO Super Agent', to: '/docs/K-XRO-02_SUPER_AGENT/' },
-            { label: ' KAI Orchestration', to: '/docs/K-KAI-03_ORCHESTRATION/' },
-            { label: 'SOC Security', to: '/docs/K-SOC-04_SECURITY/' },
-            { label: ' NOC Operations', to: '/docs/K-NOC-05_OPERATIONS/' },
-            { label: ' PSA Business', to: '/docs/K-PSA-06_BUSINESS/' },
-            { label: 'GRC Compliance', to: '/docs/K-GRC-07_COMPLIANCE/' },
-            { label: 'Development', to: '/docs/K-DEV-08_DEVELOPMENT/' },
-            { label: ' API Reference', to: '/docs/K-API-09_API_REFERENCE/' },
-            { label: ' ITIL Map', to: '/docs/K-ITIL-10_ITIL_MATRIX/' },
+            { label: '🏭 Core Infrastructure', to: '/docs/K-CORE-01_INFRASTRUCTURE/' },
+            { label: '🤖 XRO Super Agent', to: '/docs/K-XRO-02_SUPER_AGENT/' },
+            { label: '🧠 KAI Orchestration', to: '/docs/K-KAI-03_ORCHESTRATION/' },
+            { label: '🛡️ SOC Security', to: '/docs/K-SOC-04_SECURITY/' },
+            { label: '📊 NOC Operations', to: '/docs/K-NOC-05_OPERATIONS/' },
+            { label: '💰 PSA Business', to: '/docs/K-PSA-06_BUSINESS/' },
+            { label: '⚖️ GRC Compliance', to: '/docs/K-GRC-07_COMPLIANCE/' },
+            { label: '🔧 Development', to: '/docs/K-DEV-08_DEVELOPMENT/' },
+            { label: '🔌 API Reference', to: '/docs/K-API-09_API_REFERENCE/' },
+            { label: '📋 ITIL Map', to: '/docs/K-ITIL-10_ITIL_MATRIX/' },
           ],
         },
         {
@@ -190,6 +190,9 @@ const config: Config = {
   } satisfies Preset.ThemeConfig,
 
   plugins: [
+    // ============================================
+    // SECTION 1: ENTERPRISE SEARCH & DISCOVERABILITY
+    // ============================================
     [
       '@docusaurus/plugin-search-local',
       {
@@ -252,19 +255,9 @@ const config: Config = {
       },
     ],
 
-    [
-      '@docusaurus/plugin-dead-link-check',
-      {
-        checkInternal: true,
-        checkExternal: true,
-        exclude: [
-          '/docs/K-ITIL-10_ITIL_MATRIX/**',
-          '**/node_modules/**',
-          '**/_*.{md,mdx}',
-        ],
-        timeout: 10000,
-      },
-    ],
+    // ============================================
+    // SECTION 2: DOCUMENTATION QUALITY & VERIFICATION
+    // ============================================
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -282,88 +275,16 @@ const config: Config = {
     ],
     '@docusaurus/plugin-content-pages',
     '@docusaurus/theme-mermaid',
-    [
-      'docusaurus-plugin-pdf',
-      {
-        exclude: [
-          '**/_*.{md,mdx}',
-          '**/node_modules/**',
-          '**/K-ITIL-10_ITIL_MATRIX/**',
-          '**/K-DEV-08_DEVELOPMENT/**',
-          '**/README.md',
-        ],
-        include: [
-          '**/K-CORE-01_INFRASTRUCTURE/**',
-          '**/K-XRO-02_SUPER_AGENT/**',
-          '**/K-KAI-03_ORCHESTRATION/**',
-          '**/K-SOC-04_SECURITY/**',
-          '**/K-NOC-05_OPERATIONS/**',
-          '**/K-PSA-06_BUSINESS/**',
-          '**/K-GRC-07_COMPLIANCE/**',
-          '**/K-API-09_API_REFERENCE/**',
-        ],
-        pdfOptions: {
-          format: 'A4',
-          printBackground: true,
-          margin: {
-            top: '1in',
-            bottom: '1in',
-            left: '1in',
-            right: '1in',
-          },
-        },
-      },
-    ],
 
+    // ============================================
+    // SECTION 3: VISUAL ENTERPRISE THEMING
+    // ============================================
     '@docusaurus/theme-live-codeblock',
     '@docusaurus/plugin-ideal-image',
-    [
-      'docusaurus-plugin-openapi-docs',
-      {
-        id: 'apiDocs',
-        docsPluginId: 'classic',
-        config: {
-          provisioningApi: {
-            specPath: 'docs/K-API-09_API_REFERENCE/K-API-OPEN-001_provisioning.yaml',
-            outputDir: 'docs/K-API-09_API_REFERENCE/rest_api/provisioning',
-            sidebarOptions: {
-              groupPathsBy: 'tag',
-              categoryLinkSource: 'tag',
-            },
-            downloadLink: 'https://raw.githubusercontent.com/kubric/platform/main/docs/K-API-09_API_REFERENCE/K-API-OPEN-001_provisioning.yaml',
-            version: '1.0.0',
-            label: 'Provisioning API',
-            baseUrl: '/api/provisioning',
-          },
-          triageApi: {
-            specPath: 'docs/K-API-09_API_REFERENCE/K-API-OPEN-002_triage.yaml',
-            outputDir: 'docs/K-API-09_API_REFERENCE/rest_api/triage',
-            sidebarOptions: {
-              groupPathsBy: 'tag',
-              categoryLinkSource: 'tag',
-            },
-            downloadLink: 'https://raw.githubusercontent.com/kubric/platform/main/docs/K-API-09_API_REFERENCE/K-API-OPEN-002_triage.yaml',
-            version: '1.0.0',
-            label: 'Triage API',
-            baseUrl: '/api/triage',
-          },
-          billingApi: {
-            specPath: 'docs/K-API-09_API_REFERENCE/K-API-OPEN-003_billing.yaml',
-            outputDir: 'docs/K-API-09_API_REFERENCE/rest_api/billing',
-            sidebarOptions: {
-              groupPathsBy: 'tag',
-              categoryLinkSource: 'tag',
-            },
-            downloadLink: 'https://raw.githubusercontent.com/kubric/platform/main/docs/K-API-09_API_REFERENCE/K-API-OPEN-003_billing.yaml',
-            version: '1.0.0',
-            label: 'Billing API',
-            baseUrl: '/api/billing',
-          },
-        },
-      },
-    ],
-    'docusaurus-theme-openapi-docs',
-
+    
+    // ============================================
+    // SECTION 5: CODE QUALITY & VERIFICATION
+    // ============================================
     '@docusaurus/theme-common',
     [
       '@docusaurus/remark-plugin-npm2yarn',
@@ -372,198 +293,17 @@ const config: Config = {
         converters: ['yarn', 'pnpm'],
       },
     ],
-    'docusaurus-plugin-plantuml',
     '@docusaurus/plugin-tag',
-    'docusaurus-plugin-sass',
-    [
-      'docusaurus-plugin-structured-data',
-      {
-        schemas: [
-          {
-            path: 'docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE/**/*.md',
-            schema: 'HardwareSpec',
-            outputPath: 'data/hardware-assets.json',
-          },
-          {
-            path: 'docs/K-CORE-01_INFRASTRUCTURE/K-DL-POSTGRES/**/*.sql',
-            schema: 'DatabaseSchema',
-            outputPath: 'data/database-schemas.json',
-          },
-          {
-            path: 'docs/K-NOC-05_OPERATIONS/K-NOC-CM-ANSIBLE/**/*.yml',
-            schema: 'AnsiblePlaybook',
-            outputPath: 'data/playbooks.json',
-          },
-        ],
-      },
-    ],
-
-    [
-      './plugins/kubric-sidebar-generator',
-      {
-        rootDir: 'docs',
-        moduleOrder: [
-          'K-CORE-01_INFRASTRUCTURE',
-          'K-XRO-02_SUPER_AGENT',
-          'K-KAI-03_ORCHESTRATION',
-          'K-SOC-04_SECURITY',
-          'K-NOC-05_OPERATIONS',
-          'K-PSA-06_BUSINESS',
-          'K-GRC-07_COMPLIANCE',
-          'K-DEV-08_DEVELOPMENT',
-          'K-API-09_API_REFERENCE',
-          'K-ITIL-10_ITIL_MATRIX',
-        ],
-        enforceKPrefix: true,
-        urlPrefix: 'docs',
-      },
-    ],
-    [
-      './plugins/kubric-itil-mapper',
-      {
-        matrixPath: 'docs/K-ITIL-10_ITIL_MATRIX',
-        enforceLinks: true,
-        codePaths: [
-          'docs/K-CORE-01_INFRASTRUCTURE',
-          'docs/K-XRO-02_SUPER_AGENT',
-          'docs/K-KAI-03_ORCHESTRATION',
-          'docs/K-SOC-04_SECURITY',
-          'docs/K-NOC-05_OPERATIONS',
-          'docs/K-PSA-06_BUSINESS',
-          'docs/K-GRC-07_COMPLIANCE',
-        ],
-        generateEvidenceReport: true,
-        evidenceOutputPath: 'data/compliance-evidence.json',
-      },
-    ],
-    [
-      './plugins/kubric-hardware-specs',
-      {
-        hardwarePath: 'docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE',
-        renderTables: true,
-        exportFormats: ['json', 'csv', 'markdown'],
-        assetTracking: true,
-        warrantyAlerts: true,
-      },
-    ],
-    [
-      './plugins/kubric-arch-diagrams',
-      {
-        mermaidTheme: 'dark',
-        defaultZoom: 1.2,
-        diagramPaths: [
-          'docs/**/*.mmd',
-          'docs/**/*.mermaid',
-        ],
-        exportFormat: 'svg',
-      },
-    ],
-    [
-      './plugins/kubric-schema-visualizer',
-      {
-        schemaPaths: [
-          'docs/K-CORE-01_INFRASTRUCTURE/K-DL-POSTGRES/**/*.sql',
-          'docs/K-CORE-01_INFRASTRUCTURE/K-DL-CLICKHOUSE/**/*.sql',
-        ],
-        generateERD: true,
-        outputFormat: 'svg',
-      },
-    ],
-    [
-      './plugins/kubric-ansible-viewer',
-      {
-        playbookPaths: 'docs/K-NOC-05_OPERATIONS/K-NOC-CM-ANSIBLE',
-        syntaxHighlight: true,
-        executionDocs: true,
-        variables: true,
-      },
-    ],
-    [
-      './plugins/kubric-telemetry-dashboard',
-      {
-        metricsPath: 'docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE',
-        sampleData: true,
-        visualizationType: 'grafana',
-      },
-    ],
-    [
-      './plugins/kubric-evidence-vault',
-      {
-        evidencePath: 'docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT',
-        auditReady: true,
-        exportFormats: ['pdf', 'json', 'csv'],
-        chainOfCustody: true,
-        blake3Hashes: true,
-      },
-    ],
-    [
-      './plugins/kubric-code-search',
-      {
-        codePaths: [
-          'docs/K-XRO-02_SUPER_AGENT/**/*.rs',
-          'docs/K-XRO-02_SUPER_AGENT/**/*.go',
-          'docs/K-KAI-03_ORCHESTRATION/**/*.py',
-          'docs/K-PSA-06_BUSINESS/**/*.tsx',
-          'docs/K-PSA-06_BUSINESS/**/*.ts',
-        ],
-        indexComments: true,
-        indexStrings: true,
-      },
-    ],
-    'docusaurus-plugin-redoc',
-    'docusaurus-plugin-matomo',
-    'docusaurus-plugin-segment',
-    'docusaurus-plugin-hotjar',
-    [
-      'docusaurus-plugin-google-adsense',
-      {
-        adClient: 'ca-pub-XXXXXXXXXXXXXXXX',
-      },
-    ],
-    '@easyops-cn/docusaurus-search-local',
+    
+    // ============================================
+    // SECTION 8: ADDITIONAL ENTERPRISE PLUGINS
+    // ============================================
     'docusaurus-plugin-image-zoom',
-    'docusaurus-plugin-sentry',
-    'docusaurus-plugin-drawio',
     '@docusaurus/plugin-client-redirects',
-    [
-      'docusaurus-graphql-plugin',
-      {
-        schema: './graphql/schema.graphql',
-        routeBasePath: '/graphql',
-      },
-    ],
-    '@docusaurus/plugin-debug',
-    [
-      'docusaurus-plugin-umami',
-      {
-        scriptUrl: 'https://umami.example.com/umami.js',
-        websiteId: 'UMAMI-ID',
-      },
-    ],
-    [
-      'docusaurus-plugin-fathom',
-      {
-        siteId: 'FATHOM-ID',
-        spa: true,
-      },
-    ],
-    [
-      'docusaurus-plugin-plausible',
-      {
-        domain: 'docs.kubric.io',
-      },
-    ],
-    [
-      'docusaurus-plugin-yandex-metrica',
-      {
-        counterId: 'YANDEX-ID',
-      },
-    ],
   ],
 
   themes: [
     '@docusaurus/theme-mermaid',
-    'docusaurus-theme-openapi-docs',
     '@docusaurus/theme-live-codeblock',
     '@docusaurus/theme-search-algolia',
     [
