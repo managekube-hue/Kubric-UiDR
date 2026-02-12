@@ -1,9 +1,5 @@
 {
   "buildCommand": "cd docs && yarn install && yarn build",
   "outputDirectory": "docs/build",
-  "installCommand": "cd docs && yarn install",
-  "env": {
-    "DOCU_NOTION_INTEGRATION_TOKEN": "@docu-notion-integration-token",
-    "DOCU_NOTION_SAMPLE_ROOT_PAGE": "@docu-notion-sample-root-page"
-  }
+  "installCommand": "cd docs && yarn install"
 }
