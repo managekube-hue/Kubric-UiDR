@@ -2,7 +2,7 @@
 
 A comprehensive, modular security orchestration and response platform built on enterprise-grade infrastructure.
 
-## 🎯 Overview
+## Overview
 
 Kubric is a next-generation security operations platform designed for modern cloud-native environments. It combines:
 
@@ -16,7 +16,7 @@ Kubric is a next-generation security operations platform designed for modern clo
 - **K-DEV**: Development infrastructure
 - **K-API**: Unified REST and gRPC APIs
 
-## 📋 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -49,7 +49,7 @@ make bootstrap
 # 4. Deploy API and services
 ```
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 kubric-platform/
@@ -66,7 +66,7 @@ kubric-platform/
 └── Makefile             # Development tasks
 ```
 
-## 🚀 Key Features
+## Key Features
 
 ### Security Agents (K-XRO)
 - **CoreSec**: eBPF-based kernel monitoring (Rust)
@@ -86,7 +86,7 @@ kubric-platform/
 - Distributed analytics (ClickHouse)
 - Secure secrets management (Vault)
 
-## 📊 Technology Stack
+## Technology Stack
 
 | Layer | Technologies |
 |-------|---|
@@ -97,14 +97,14 @@ kubric-platform/
 | **Data** | PostgreSQL, ClickHouse |
 | **Infrastructure** | Kubernetes, Terraform, Ansible, Proxmox, Ceph |
 
-## 📖 Documentation
+## Documentation
 
 - [Architecture Guide](docs/architecture/architecture.md)
 - [Core Requirements](docs/srs/core_requirements.md)
 - [API Reference](docs/api/kubric_gateway_v1.yaml)
 - [ITIL Compliance](docs/itil/)
 
-## 🛠️ Development Commands
+## Development Commands
 
 ```bash
 make dev                # Start development environment
@@ -114,7 +114,7 @@ make lint               # Run linters
 make clean              # Clean build artifacts
 ```
 
-## 🔐 Security
+## Security
 
 - FIPS 140-2 cryptographic operations
 - HIPAA multi-tenant isolation
@@ -122,7 +122,7 @@ make clean              # Clean build artifacts
 - GDPR data residency and right to erasure
 - NIST 800-53 control mappings
 
-## 📝 Contributing
+## Contributing
 
 Pre-commit hooks and code style requirements:
 
@@ -131,7 +131,7 @@ make pre-commit-install
 make lint
 ```
 
-## 📄 License
+## License
 
 Copyright (c) 2025 Kubric Contributors. See [LICENSE](LICENSE) for details.
 
