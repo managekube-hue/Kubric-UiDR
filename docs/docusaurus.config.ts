@@ -30,13 +30,17 @@ const config: Config = {
           exclude: ['**/README.md', '**/node_modules/**'],
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
-          versions: {
-            current: {
-              label: 'Next',
-              path: 'next',
-              banner: 'unreleased',
-            },
-          },
+        },
+        gtag: process.env.GOOGLE_GA_ID
+          ? {
+              trackingID: process.env.GOOGLE_GA_ID,
+              anonymizeIP: true,
+            }
+          : undefined,
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.5,
+          filename: 'sitemap.xml',
         },
         blog: false,
         theme: {
@@ -184,7 +188,36 @@ const config: Config = {
     },
   } as any,
 
-  plugins: [],
+  plugins: [
+    [
+      '@docusaurus/plugin-ideal-image',
+      {
+        quality: 85,
+        max: 1920,
+        min: 640,
+        steps: 2,
+        disableInDev: false,
+      },
+    ],
+    [
+      '@docusaurus/plugin-pwa',
+      {
+        offlineModeActivationStrategies: ['appInstalled', 'standalone', 'queryString'],
+        pwaHead: [
+          {
+            tagName: 'link',
+            rel: 'manifest',
+            href: '/manifest.json',
+          },
+          {
+            tagName: 'meta',
+            name: 'theme-color',
+            content: '#FF8533',
+          },
+        ],
+      },
+    ],
+  ],
 
   themes: [
     '@docusaurus/theme-mermaid',

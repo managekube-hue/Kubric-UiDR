@@ -11,7 +11,7 @@ export default function Compliance() {
         <ul>
           <li><Link to="/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/">SOC2 Evidence Vault</Link></li>
           <li><Link to="/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-05_AUDIT_READINESS/">Audit Readiness</Link></li>
-          <li><Link to="/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC-003_LICENSE">License & NOTICE</Link></li>
+          <li><Link to="/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-003_LICENSE">License & NOTICE</Link></li>
         </ul>
       </main>
     </Layout>
