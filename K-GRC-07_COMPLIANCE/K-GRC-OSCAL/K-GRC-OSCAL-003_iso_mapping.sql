@@ -1,0 +1,2 @@
+-- K-GRC-OSCAL-003 iso
+-- SQL component for Kubric Platform

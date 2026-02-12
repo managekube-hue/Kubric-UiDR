@@ -1,0 +1,2 @@
+-- K-KAI-RAG-001 vector
+-- SQL component for Kubric Platform

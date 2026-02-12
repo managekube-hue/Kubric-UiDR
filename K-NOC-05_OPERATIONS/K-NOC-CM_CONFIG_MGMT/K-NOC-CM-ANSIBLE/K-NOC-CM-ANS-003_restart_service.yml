@@ -1,0 +1,7 @@
+# K-NOC-CM-ANS-003 restart
+# YAML configuration for Kubric Platform
+
+apiVersion: v1
+kind: Config
+metadata:
+  name: kubric

@@ -1,0 +1,2 @@
+# K-NOC-PM-002 anomaly
+# Kubric Platform component

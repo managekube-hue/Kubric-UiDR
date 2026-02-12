@@ -1,0 +1,7 @@
+# K-NOC-PM-001 otel
+# YAML configuration for Kubric Platform
+
+apiVersion: v1
+kind: Config
+metadata:
+  name: kubric

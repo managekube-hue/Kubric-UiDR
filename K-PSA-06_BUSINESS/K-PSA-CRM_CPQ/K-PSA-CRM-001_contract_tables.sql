@@ -1,0 +1,2 @@
+-- K-PSA-CRM-001 contract
+-- SQL component for Kubric Platform

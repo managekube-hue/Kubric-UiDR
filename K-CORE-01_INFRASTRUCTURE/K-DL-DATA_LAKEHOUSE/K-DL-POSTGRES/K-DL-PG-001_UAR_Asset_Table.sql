@@ -1,0 +1,2 @@
+-- K-DL-PG-001 UAR Asset
+-- SQL component for Kubric Platform

@@ -1,0 +1,2 @@
+-- K-PSA-ITSM-003 service
+-- SQL component for Kubric Platform

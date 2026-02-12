@@ -1,0 +1,7 @@
+# K-DEV-GIT-002
+# YAML configuration for Kubric Platform
+
+apiVersion: v1
+kind: Config
+metadata:
+  name: kubric

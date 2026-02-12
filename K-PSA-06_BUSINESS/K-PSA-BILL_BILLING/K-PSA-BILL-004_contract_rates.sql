@@ -1,0 +1,2 @@
+-- K-PSA-BILL-004 contract
+-- SQL component for Kubric Platform

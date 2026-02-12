@@ -1,0 +1,5 @@
+# K-XRO-CS-001
+# TOML configuration
+
+[package]
+name = "k-xro-cs-001"
