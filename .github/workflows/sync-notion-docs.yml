@@ -1,0 +1,262 @@
+name: 📝 Sync Notion to Docusaurus
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-notion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: 'docs/yarn.lock'
+
+      - name: Install dependencies
+        run: |
+          cd docs
+          yarn install --frozen-lockfile
+
+      - name: Install Notion SDK
+        run: |
+          cd docs
+          yarn add -D @notionhq/client marked dotenv
+
+      - name: Create Notion Sync Script
+        run: |
+          mkdir -p .github/scripts
+          cat > .github/scripts/notion-sync.js << 'SCRIPT_EOF'
+          const { Client } = require('@notionhq/client');
+          const fs = require('fs');
+          const path = require('path');
+          
+          const notion = new Client({ 
+            auth: process.env.NOTION_API_KEY 
+          });
+          
+          const NOTION_DB_ID = process.env.NOTION_DATABASE_ID;
+          const DOCS_DIR = 'docs/docs';
+          
+          // Mapping of K-IDs to file paths and categories
+          const MODULE_MAP = {
+            'K-CORE': 'K-CORE-01_INFRASTRUCTURE',
+            'K-XRO': 'K-XRO-02_SUPER_AGENT',
+            'K-KAI': 'K-KAI-03_ORCHESTRATION',
+            'K-SOC': 'K-SOC-04_SECURITY',
+            'K-NOC': 'K-NOC-05_OPERATIONS',
+            'K-PSA': 'K-PSA-06_BUSINESS',
+            'K-GRC': 'K-GRC-07_COMPLIANCE',
+            'K-DEV': 'K-DEV-08_DEVELOPMENT',
+            'K-API': 'K-API-09_API_REFERENCE',
+            'K-ITIL': 'K-ITIL-10_ITIL_MATRIX',
+          };
+          
+          async function convertNotionBlocks(blocks) {
+            let markdown = '';
+            
+            for (const block of blocks) {
+              switch (block.type) {
+                case 'paragraph':
+                  if (block.paragraph.rich_text.length > 0) {
+                    const text = block.paragraph.rich_text
+                      .map(rt => rt.plain_text)
+                      .join('');
+                    markdown += text + '\n\n';
+                  }
+                  break;
+                  
+                case 'heading_1':
+                  const h1 = block.heading_1.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  markdown += '# ' + h1 + '\n\n';
+                  break;
+                  
+                case 'heading_2':
+                  const h2 = block.heading_2.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  markdown += '## ' + h2 + '\n\n';
+                  break;
+                  
+                case 'heading_3':
+                  const h3 = block.heading_3.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  markdown += '### ' + h3 + '\n\n';
+                  break;
+                  
+                case 'code':
+                  const language = block.code.language || 'text';
+                  const code = block.code.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  
+                  // ✅ PRESERVE LIVE CODE FLAGS
+                  if (language === 'jsx' || language === 'javascript-react') {
+                    markdown += '\`\`\`jsx live\n' + code + '\n\`\`\`\n\n';
+                  } else if (language === 'python') {
+                    markdown += '\`\`\`python\n' + code + '\n\`\`\`\n\n';
+                  } else if (language === 'rust') {
+                    markdown += '\`\`\`rust\n' + code + '\n\`\`\`\n\n';
+                  } else if (language === 'sql') {
+                    markdown += '\`\`\`sql\n' + code + '\n\`\`\`\n\n';
+                  } else {
+                    markdown += '\`\`\`' + language + '\n' + code + '\n\`\`\`\n\n';
+                  }
+                  break;
+                  
+                case 'bulleted_list_item':
+                  const bullet = block.bulleted_list_item.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  markdown += '- ' + bullet + '\n';
+                  break;
+                  
+                case 'numbered_list_item':
+                  const numbered = block.numbered_list_item.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  markdown += '1. ' + numbered + '\n';
+                  break;
+                  
+                case 'divider':
+                  markdown += '---\n\n';
+                  break;
+                  
+                case 'quote':
+                  const quote = block.quote.rich_text
+                    .map(rt => rt.plain_text)
+                    .join('');
+                  markdown += '> ' + quote + '\n\n';
+                  break;
+              }
+            }
+            
+            return markdown;
+          }
+          
+          async function syncPage(pageId, kid, title) {
+            try {
+              const blocks = await notion.blocks.children.list({
+                block_id: pageId,
+                page_size: 100,
+              });
+              
+              let markdown = '---\n';
+              markdown += 'title: ' + title + '\n';
+              markdown += 'sidebar_label: ' + kid + '\n';
+              markdown += '---\n\n';
+              
+              markdown += await convertNotionBlocks(blocks.results);
+              
+              // Determine file path from K-ID
+              const [module] = kid.split('-');
+              const moduleDir = MODULE_MAP[module];
+              
+              if (!moduleDir) {
+                console.warn(`⚠️  Unknown module prefix: ${module}`);
+                return;
+              }
+              
+              const filePath = path.join(DOCS_DIR, moduleDir, kid + '.md');
+              
+              // Create directory if needed
+              fs.mkdirSync(path.dirname(filePath), { recursive: true });
+              
+              // Write file
+              fs.writeFileSync(filePath, markdown);
+              console.log(`✅ Synced: ${kid} → ${filePath}`);
+              
+            } catch (error) {
+              console.error(`❌ Failed to sync ${kid}:`, error.message);
+            }
+          }
+          
+          async function main() {
+            try {
+              console.log('🔄 Starting Notion sync...');
+              
+              const database = await notion.databases.query({
+                database_id: NOTION_DB_ID,
+                page_size: 100,
+              });
+              
+              for (const page of database.results) {
+                const props = page.properties;
+                
+                // Get K-ID and Title from Notion properties
+                const kidProp = props.KID || props['K-ID'] || props.ID;
+                const titleProp = props.Title || props.Name;
+                
+                if (!kidProp) continue;
+                
+                const kid = kidProp.rich_text?.[0]?.plain_text || 
+                           kidProp.formula?.string ||
+                           kidProp.rollup?.number ||
+                           null;
+                const title = titleProp?.title?.[0]?.plain_text ||
+                             titleProp?.rich_text?.[0]?.plain_text ||
+                             'Untitled';
+                
+                if (kid && title) {
+                  await syncPage(page.id, kid, title);
+                }
+              }
+              
+              console.log('✅ Notion sync completed!');
+              
+            } catch (error) {
+              console.error('❌ Sync failed:', error);
+              process.exit(1);
+            }
+          }
+          
+          main();
+          SCRIPT_EOF
+
+      - name: Pull from Notion
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: |
+          cd docs
+          node ../.github/scripts/notion-sync.js
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/docs/
+          git diff --quiet && git diff --staged --quiet || \
+            (git commit -m "📝 Sync from Notion: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push origin main)
+
+      - name: Build documentation
+        run: |
+          cd docs
+          yarn build
+        continue-on-error: true
+
+      - name: Trigger Vercel deployment
+        if: success()
+        run: |
+          curl -X POST "https://api.vercel.com/v1/deployments?teamId=${{ secrets.VERCEL_TEAM_ID }}" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"name": "Kubric-UiDR", "gitSource": {"type": "github", "repo": "${{ github.repository }}", "ref": "main"}}'
+        continue-on-error: true
