@@ -1,0 +1,57 @@
+server:
+  port: 7233
+  metrics_port: 9090
+
+persistence:
+  type: postgres
+  postgresql:
+    host: postgres
+    port: 5432
+    database: temporal
+    user: temporal_user
+    password: "${TEMPORAL_DB_PASSWORD}"
+    
+ringpop:
+  name: temporal
+  hosts:
+    - temporal:7933
+
+elasticsearch:
+  url: http://elasticsearch:9200
+  version: "7"
+  logLevel: error
+  
+frontend:
+  rpcs:
+    - name: RegisterNamespace
+      timeout: 10s
+    - name: DescribeNamespace
+      timeout: 10s
+    - name: UpdateNamespace
+      timeout: 10s
+    - name: DeprecateNamespace
+      timeout: 10s
+    - name: ListNamespaces
+      timeout: 10s
+    - name: ListArchiveNamespaces
+      timeout: 10s
+    - name: GetSearchAttributes
+      timeout: 10s
+    - name: GetClusterInfo
+      timeout: 10s
+      
+archival:
+  history:
+    state: "enabled"
+    enableRead: true
+    provider:
+      s3:
+        region: us-east-1
+        s3Uri: s3://temporal-archive/history
+  visibility:
+    state: "enabled"
+    enableRead: true
+    provider:
+      s3:
+        region: us-east-1
+        s3Uri: s3://temporal-archive/visibility

@@ -1,0 +1,29 @@
+{
+  "name": "Heartbeat to Billing",
+  "description": "Process agent heartbeats and trigger billing reconciliation",
+  "nodes": [
+    {
+      "id": "nats_subscribe",
+      "type": "trigger",
+      "trigger_type": "nats",
+      "data": {
+        "subject": "heartbeat.agents.*"
+      }
+    },
+    {
+      "id": "validate_heartbeat",
+      "type": "function",
+      "function": "validateHeartbeat"
+    },
+    {
+      "id": "billing_aggregator",
+      "type": "http",
+      "method": "POST",
+      "url": "http://api:8080/billing/heartbeat",
+      "data": {
+        "agent_id": "{{ $json.agent_id }}",
+        "timestamp": "{{ $json.timestamp }}"
+      }
+    }
+  ]
+}

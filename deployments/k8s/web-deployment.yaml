@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-portal
+  namespace: kubric
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-portal
+  template:
+    metadata:
+      labels:
+        app: web-portal
+    spec:
+      containers:
+      - name: web
+        image: kubric/web-portal:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: API_URL
+          value: http://api:8080
+        - name: NEXT_PUBLIC_API_URL
+          value: https://api.kubric.io
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5

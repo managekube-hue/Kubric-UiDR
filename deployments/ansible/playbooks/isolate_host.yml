@@ -1,0 +1,32 @@
+---
+- name: Isolate host from cluster
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Drain Kubernetes node
+      shell: kubectl drain {{ inventory_hostname }} --ignore-daemonsets --delete-emptydir-data --grace-period=300
+      delegate_to: localhost
+      environment:
+        KUBECONFIG: ~/.kube/config
+
+    - name: Cordon Kubernetes node
+      shell: kubectl cordon {{ inventory_hostname }}
+      delegate_to: localhost
+      environment:
+        KUBECONFIG: ~/.kube/config
+
+    - name: Stop kubelet service
+      systemd:
+        name: kubelet
+        state: stopped
+        enabled: no
+
+    - name: Disable networking interfaces (except management)
+      shell: |
+        for iface in $(ip -br link show | grep -v UP | awk '{print $1}'); do
+          ip link set $iface down
+        done
+      when: inventory_hostname != hostvars['localhost']['management_host']
+
+    - name: Log isolation event
+      shell: echo "{{ inventory_hostname }} isolated at $(date)" >> /var/log/kubric-isolation.log

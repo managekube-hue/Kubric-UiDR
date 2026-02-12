@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kubric
+
+resources:
+  - namespace.yaml
+  - nats-statefulset.yaml
+  - clickhouse-statefulset.yaml
+  - postgres-statefulset.yaml
+  - api-deployment.yaml
+  - kai-deployment.yaml
+  - web-deployment.yaml
+  - caddy-ingress.yaml
+  - pvc-ceph.yaml
+
+commonAnnotations:
+  managed-by: kubric
+  version: "1.0"
+
+commonLabels:
+  platform: kubric
+
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - postgres-secrets.env
+  - name: api-secrets
+    envs:
+      - api-secrets.env
+
+configMapGenerator:
+  - name: clickhouse-config
+    files:
+      - ../../../config/clickhouse/config.xml
+  - name: postgres-init-scripts
+    files:
+      - ../../../config/postgres/init/01_uar_schema.sql
+      - ../../../config/postgres/init/02_rls_policies.sql
+
+replicas:
+  - name: api
+    count: 3
+  - name: kai-orchestration
+    count: 2

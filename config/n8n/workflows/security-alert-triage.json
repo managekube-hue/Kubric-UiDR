@@ -1,0 +1,42 @@
+{
+  "name": "Security Alert Triage",
+  "description": "Orchestrate security alert triage workflow",
+  "nodes": [
+    {
+      "id": "trigger",
+      "type": "trigger",
+      "trigger_type": "webhook",
+      "data": {
+        "url": "https://api.kubric.io/webhooks/alert-trigger"
+      }
+    },
+    {
+      "id": "triage_agent",
+      "type": "http",
+      "method": "POST",
+      "url": "http://kai-orchestration:50051/triage",
+      "data": {
+        "alert": "{{ $json.body }}"
+      }
+    },
+    {
+      "id": "store_incident",
+      "type": "http",
+      "method": "POST",
+      "url": "http://api:8080/incidents",
+      "data": {
+        "triage_result": "{{ $json.body }}"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "source": "trigger",
+      "target": "triage_agent"
+    },
+    {
+      "source": "triage_agent",
+      "target": "store_incident"
+    }
+  ]
+}

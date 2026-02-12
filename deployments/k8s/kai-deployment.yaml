@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kai-orchestration
+  namespace: kubric
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kai-orchestration
+  template:
+    metadata:
+      labels:
+        app: kai-orchestration
+    spec:
+      serviceAccountName: kai-orchestration
+      containers:
+      - name: kai
+        image: kubric/kai-orchestration:latest
+        ports:
+        - containerPort: 50051
+          name: grpc
+        env:
+        - name: TEMPORAL_HOST
+          value: temporal
+        - name: TEMPORAL_PORT
+          value: "7233"
+        - name: NATS_URL
+          value: nats://nats:4222
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"

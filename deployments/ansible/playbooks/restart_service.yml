@@ -1,0 +1,37 @@
+---
+- name: Restart service with health checks
+  hosts: all
+  vars:
+    service_name: "{{ target_service | required }}"
+    health_check_retries: 5
+    health_check_delay: 10
+  tasks:
+    - name: Check service status before restart
+      systemd:
+        name: "{{ service_name }}"
+        enabled: yes
+      register: service_status
+
+    - name: Stop service
+      systemd:
+        name: "{{ service_name }}"
+        state: stopped
+
+    - name: Wait for service to stop
+      wait_for:
+        timeout: 10
+
+    - name: Start service
+      systemd:
+        name: "{{ service_name }}"
+        state: started
+
+    - name: Wait for service to become ready
+      shell: systemctl is-active {{ service_name }}
+      register: service_check
+      until: service_check.rc == 0
+      retries: "{{ health_check_retries }}"
+      delay: "{{ health_check_delay }}"
+      
+    - name: Log restart event
+      shell: echo "{{ service_name }} restarted on {{ inventory_hostname }} at $(date)" >> /var/log/kubric-services.log

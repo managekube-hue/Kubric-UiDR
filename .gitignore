@@ -1,0 +1,72 @@
+# Build artifacts
+K-XRO-02_SUPER_AGENT/*/target/
+K-XRO-02_SUPER_AGENT/**/Cargo.lock
+K-DEV-08_DEVELOPMENT/**/build/
+K-DEV-08_DEVELOPMENT/**/dist/
+
+# Dependencies
+K-*/node_modules/
+K-*/.venv/
+K-*/env/
+K-PSA-06_BUSINESS/*/node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+K-*/**/*.pyc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Kubernetes
+kubeconfig
+.kubeconfig
+*.yaml.orig
+
+# Terraform
+K-CORE-01_INFRASTRUCTURE/**/.terraform/
+K-CORE-01_INFRASTRUCTURE/**/.terraform.lock.hcl
+*.tfvars
+*.tfstate*
+crash.log
+
+# Ansible
+*.retry
+.ansible_vault_pass
+
+# Secrets
+.env
+.env.local
+.env.*.local
+secrets.yaml
+*-secrets.env
+
+# Logs
+*.log
+logs/
+*.err
+
+# Backups
+.backups/
+*.bak
+*.backup
+
+# Docker
+docker-compose.override.yml
+
+# Testing
+.mocha_env
+coverage/
+test-results.xml
+
+# Temporary
+tmp/
+temp/
+.cache/

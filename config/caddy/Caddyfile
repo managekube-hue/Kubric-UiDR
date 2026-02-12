@@ -1,0 +1,49 @@
+# Global options
+{
+  admin = false
+  api_password = "changeme"
+}
+
+# Kubric API endpoint
+api.kubric.io {
+  reverse_proxy localhost:8080
+  
+  encode zstd gzip
+  
+  log {
+    format json
+  }
+  
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# Portal endpoint
+portal.kubric.io {
+  reverse_proxy localhost:3000
+  
+  encode zstd gzip
+  
+  log {
+    format json
+  }
+  
+  # Security headers
+  header / {
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    X-XSS-Protection "1; mode=block"
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  }
+}
+
+# ClickHouse endpoint (internal only)
+clickhouse.internal {
+  reverse_proxy localhost:8123 {
+    health_uri /ping
+    health_interval 10s
+    health_timeout 5s
+  }
+}

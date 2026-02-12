@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<yandex>
+  <macros>
+    <replica>{{ inventory_hostname }}</replica>
+    <shard>01</shard>
+    <cluster>kubric_cluster</cluster>
+  </macros>
+</yandex>

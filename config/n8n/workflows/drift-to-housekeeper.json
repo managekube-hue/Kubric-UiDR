@@ -1,0 +1,29 @@
+{
+  "name": "Host Drift Detection to Remediation",
+  "description": "Detect configuration drift and trigger housekeeper remediation",
+  "nodes": [
+    {
+      "id": "cron_trigger",
+      "type": "trigger",
+      "trigger_type": "cron",
+      "data": {
+        "schedule": "*/15 * * * *"
+      }
+    },
+    {
+      "id": "query_drift_detection",
+      "type": "http",
+      "method": "GET",
+      "url": "http://clickhouse:8123/?query=SELECT%20*%20FROM%20drift_detection%20WHERE%20detected_at%20%3E%20now()%20-%20interval%2015%20minute"
+    },
+    {
+      "id": "trigger_housekeeper",
+      "type": "http",
+      "method": "POST",
+      "url": "http://kai-orchestration:50051/housekeeper",
+      "data": {
+        "changes": "{{ $json.body }}"
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+---
+- name: Deploy XRO agents
+  hosts: all
+  gather_facts: yes
+  vars:
+    agent_version: "{{ release_version | default('latest') }}"
+    agent_install_path: "/opt/kubric/agents"
+  tasks:
+    - name: Create agent installation directory
+      file:
+        path: "{{ agent_install_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Download agent binary
+      get_url:
+        url: "https://releases.kubric.io/xro-agent/{{ agent_version }}/xro-agent-linux-{{ ansible_architecture }}.tar.gz"
+        dest: "/tmp/xro-agent.tar.gz"
+        checksum: "sha256:{{ agent_checksum | default('skip') }}"
+
+    - name: Extract agent binary
+      unarchive:
+        src: "/tmp/xro-agent.tar.gz"
+        dest: "{{ agent_install_path }}"
+        remote_src: yes
+
+    - name: Create systemd service file
+      copy:
+        content: |
+          [Unit]
+          Description=Kubric XRO Agent
+          After=network.target
+          
+          [Service]
+          Type=simple
+          ExecStart={{ agent_install_path }}/xro-agent
+          Restart=always
+          RestartSec=5
+          
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/xro-agent.service
+        mode: '0644'
+
+    - name: Enable and start agent service
+      systemd:
+        name: xro-agent
+        daemon_reload: yes
+        enabled: yes
+        state: started
+
+    - name: Verify agent health
+      shell: systemctl is-active xro-agent
+      register: agent_status
+      failed_when: agent_status.rc != 0
+
+    - name: Log deployment
+      shell: echo "Agent deployed on {{ inventory_hostname }} at $(date)" >> /var/log/kubric-deployments.log

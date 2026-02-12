@@ -1,0 +1,32 @@
+---
+- name: Rollback deployment
+  hosts: localhost
+  gather_facts: no
+  vars:
+    deployment_name: "{{ deployment | required }}"
+    namespace: "{{ kube_namespace | default('kubric') }}"
+  tasks:
+    - name: Get current revision
+      shell: |
+        kubectl rollout history deployment/{{ deployment_name }} -n {{ namespace }} | tail -1 | awk '{print $1}'
+      register: current_revision
+
+    - name: Get previous revision
+      shell: |
+        kubectl rollout history deployment/{{ deployment_name }} -n {{ namespace }} | tail -2 | head -1 | awk '{print $1}'
+      register: previous_revision
+
+    - name: Rollback deployment
+      shell: kubectl rollout undo deployment/{{ deployment_name }} -n {{ namespace }}
+      when: previous_revision.stdout != ""
+
+    - name: Wait for rollback to complete
+      shell: kubectl rollout status deployment/{{ deployment_name }} -n {{ namespace }} --timeout=5m
+
+    - name: Verify rollback
+      shell: kubectl get deployment {{ deployment_name }} -n {{ namespace }} -o jsonpath='{.status.observedGeneration}'
+      register: rollback_status
+
+    - name: Log rollback event
+      shell: |
+        echo "Rollback completed for {{ deployment_name }} from revision {{ current_revision.stdout }} to {{ previous_revision.stdout }}" >> /var/log/kubric-rollback.log
