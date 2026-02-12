@@ -69,13 +69,13 @@ const config: Config = {
     },
     announcementBar: {
       id: 'kubric-announcement',
-      content: '🚀 Enterprise-Grade Security Operations Platform - Version 1.0',
-      backgroundColor: '#FF8533',
+      content: 'Enterprise Security Operations Platform — Version 1.0',
+      backgroundColor: '#0f172a',
       textColor: '#FFFFFF',
       isCloseable: true,
     },
     navbar: {
-      title: 'Kubric',
+      title: 'Kubric UIDR',
       hideOnScroll: false,
       style: 'dark',
       logo: {
@@ -85,15 +85,34 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          to: '/',
           position: 'left',
-          label: '📚 Documentation',
+          label: 'Home',
         },
         {
-          type: 'docsVersionDropdown',
-          position: 'right',
-          dropdownActiveClassDisabled: true,
+          to: '/platform',
+          position: 'left',
+          label: 'Platform',
+        },
+        {
+          to: '/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE',
+          position: 'left',
+          label: 'Documentation',
+        },
+        {
+          to: '/contributors',
+          position: 'left',
+          label: 'Contributors',
+        },
+        {
+          to: '/open-source',
+          position: 'left',
+          label: 'Open Source',
+        },
+        {
+          to: '/contact',
+          position: 'left',
+          label: 'Contact',
         },
         {
           href: 'https://github.com/kubric/kubric-uidr',
@@ -110,15 +129,15 @@ const config: Config = {
           title: 'Core Modules',
           items: [
             {
-              label: '🏗️ Infrastructure',
+              label: 'Platform',
               to: '/docs/K-CORE-01_INFRASTRUCTURE',
             },
             {
-              label: '🤖 Orchestration',
+              label: 'Orchestration',
               to: '/docs/K-KAI-03_ORCHESTRATION',
             },
             {
-              label: '🛡️ Security Operations',
+              label: 'Security Operations',
               to: '/docs/K-SOC-04_SECURITY',
             },
           ],
@@ -127,15 +146,15 @@ const config: Config = {
           title: 'Enterprise',
           items: [
             {
-              label: '💼 Business & Billing',
+              label: 'Business & Billing',
               to: '/docs/K-PSA-06_BUSINESS',
             },
             {
-              label: '📋 Compliance & GRC',
+              label: 'Compliance & GRC',
               to: '/docs/K-GRC-07_COMPLIANCE',
             },
             {
-              label: '🔧 Development',
+              label: 'Development',
               to: '/docs/K-DEV-08_DEVELOPMENT',
             },
           ],
@@ -144,15 +163,15 @@ const config: Config = {
           title: 'Reference',
           items: [
             {
-              label: '📡 API Reference',
+              label: 'API Reference',
               to: '/docs/K-API-09_API_REFERENCE',
             },
             {
-              label: '🚀 Super Agent',
+              label: 'Super Agent',
               to: '/docs/K-XRO-02_SUPER_AGENT',
             },
             {
-              label: '📚 ITIL Framework',
+              label: 'ITIL Framework',
               to: '/docs/K-ITIL-10_ITIL_MATRIX',
             },
           ],
@@ -212,7 +231,7 @@ const config: Config = {
           {
             tagName: 'meta',
             name: 'theme-color',
-            content: '#FF8533',
+            content: '#0f172a',
           },
         ],
       },

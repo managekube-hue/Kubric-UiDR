@@ -1,0 +1,105 @@
+---
+title: Contributors
+---
+
+import {ToolGrid} from '@site/src/components/tools/ToolGrid';
+
+<section className="enterpriseHero">
+  <div className="enterpriseHero__inner">
+    <p className="enterpriseHero__eyebrow">Contributors</p>
+    <h1>Build the future of autonomous security</h1>
+    <p>
+      Selected contributors receive direct mentorship, architecture exposure, and meaningful ownership.
+    </p>
+    <div className="enterpriseHero__band" aria-hidden="true">
+      <img src="/img/kubric-contributors-band.svg" alt="" />
+    </div>
+  </div>
+</section>
+
+<main className="enterpriseHome">
+  <section>
+    <h2>Why contribute?</h2>
+    <div className="enterpriseCardGrid">
+      <article className="enterpriseCard">
+        <h3>Open core, real impact</h3>
+        <p>Contribute to systems used for real enterprise security and operations outcomes.</p>
+      </article>
+      <article className="enterpriseCard">
+        <h3>Modern engineering stack</h3>
+        <p>Work across Rust, eBPF, Go, Python, Llama workflows, and distributed infrastructure.</p>
+      </article>
+      <article className="enterpriseCard">
+        <h3>Enterprise-grade from day one</h3>
+        <p>High standards for reliability, observability, security controls, and auditability.</p>
+      </article>
+      <article className="enterpriseCard">
+        <h3>World-class team</h3>
+        <p>Collaborate with operators, architects, and contributors building deeply technical systems.</p>
+      </article>
+    </div>
+  </section>
+
+  <ToolGrid />
+
+  <section className="enterpriseWhy">
+    <h2>Team and channels</h2>
+    <ul>
+      <li><strong>#general</strong> — Project-wide announcements</li>
+      <li><strong>#engineering</strong> — Technical discussions</li>
+      <li><strong>#security</strong> — Threat research and detections</li>
+      <li><strong>#platform</strong> — Core infrastructure</li>
+      <li><strong>#agents</strong> — XRO Super Agent development</li>
+      <li><strong>#ai</strong> — KAI orchestration and LLM work</li>
+      <li><strong>#ux</strong> — Documentation and portal experience</li>
+      <li><strong>#contributors</strong> — Onboarding and support</li>
+    </ul>
+  </section>
+
+  <section className="enterpriseWhy">
+    <h2>Open source license model</h2>
+    <ul>
+      <li><strong>Core platform</strong> — Proprietary (source available)</li>
+      <li><strong>Super Agent</strong> — Apache 2.0</li>
+      <li><strong>Detection rules</strong> — MIT</li>
+      <li><strong>Attribution</strong> — Full licensing and notices in NOTICE.md</li>
+    </ul>
+  </section>
+
+  <section className="enterpriseFormWrap">
+    <h2>Join the Kubric engineering team</h2>
+    <p>
+      Selected contributors receive commit access, hardware sponsorship, and direct mentorship.
+    </p>
+    <form className="enterpriseForm" method="post" action="mailto:contributors@kubric.io" encType="text/plain">
+      <label htmlFor="fullName">Full Name</label>
+      <input id="fullName" name="fullName" type="text" required />
+
+      <label htmlFor="email">Email Address</label>
+      <input id="email" name="email" type="email" required />
+
+      <label htmlFor="github">GitHub Profile</label>
+      <input id="github" name="github" type="url" placeholder="https://github.com/username" required />
+
+      <label htmlFor="interest">Area of Interest</label>
+      <select id="interest" name="interest" required>
+        <option value="">Select one</option>
+        <option>SOC</option>
+        <option>NOC</option>
+        <option>GRC</option>
+        <option>PSA</option>
+        <option>KAI</option>
+        <option>Agents</option>
+        <option>Platform</option>
+        <option>Documentation</option>
+      </select>
+
+      <label htmlFor="experience">Experience</label>
+      <textarea id="experience" name="experience" rows={5} required />
+
+      <button type="submit" className="enterpriseButton enterpriseButton--primary">
+        Request access
+      </button>
+    </form>
+  </section>
+</main>

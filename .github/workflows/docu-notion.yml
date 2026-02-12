@@ -35,6 +35,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Apply changes from docu-notion
+          file_pattern: docs/docs/**
       - name: Build documentation
         working-directory: ./docs
         run: yarn build

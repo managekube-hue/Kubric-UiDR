@@ -1,0 +1,28 @@
+<svg width="1600" height="520" viewBox="0 0 1600 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.55" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="beamA" x1="220" y1="520" x2="520" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1d4ed8" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.72"/>
+    </linearGradient>
+    <linearGradient id="beamB" x1="840" y1="520" x2="1120" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1e40af" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#93c5fd" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="beamC" x1="1250" y1="520" x2="1480" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1d4ed8" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.66"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="520" fill="url(#bg)"/>
+  <path d="M80 520L360 82L560 520H80Z" fill="url(#beamA)"/>
+  <path d="M620 520L940 58L1168 520H620Z" fill="url(#beamB)"/>
+  <path d="M1020 520L1328 118L1528 520H1020Z" fill="url(#beamC)"/>
+  <circle cx="340" cy="118" r="2" fill="#BFDBFE" fill-opacity="0.6"/>
+  <circle cx="965" cy="95" r="2" fill="#DBEAFE" fill-opacity="0.65"/>
+  <circle cx="1360" cy="148" r="2" fill="#BFDBFE" fill-opacity="0.55"/>
+</svg>

@@ -1,0 +1,42 @@
+---
+title: Overview
+sidebar_position: 1
+---
+
+# Kubric Enterprise Overview
+
+Kubric unifies SOC, NOC, GRC, ITSM, billing, and agentic orchestration into one operational platform.
+
+## Platform at a glance
+
+- Unified identity-driven remediation pipeline
+- Autonomous agent workflows with approval guardrails
+- End-to-end auditability with immutable evidence chains
+- Operationally aligned with ITIL and compliance frameworks
+
+## Live code block check
+
+The live editor below verifies the interactive code block capability is functioning.
+
+```jsx live
+function StatusBadge({ state = 'Healthy' }) {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 8,
+        padding: '6px 10px',
+        borderRadius: 999,
+        border: '1px solid #334155',
+        fontFamily: 'JetBrains Mono, monospace',
+      }}
+    >
+      <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#16a34a' }} />
+      {state}
+    </span>
+  );
+}
+
+render(<StatusBadge state="Production Ready" />)
+```

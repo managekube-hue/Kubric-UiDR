@@ -238,10 +238,12 @@ jobs:
           cd docs
           node ../.github/scripts/notion-sync.js
 
-      - name: Commit changes
+      - name: Commit docs-content changes only
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Guardrail: only synced docs content is auto-committed.
+          # Website shell (src/pages hero/headline/navigation) remains manually managed.
           git add docs/docs/
           git diff --quiet && git diff --staged --quiet || \
             (git commit -m "📝 Sync from Notion: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push origin main)

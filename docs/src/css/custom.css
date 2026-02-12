@@ -1,189 +1,476 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* You can override the default Infima variables here. */
 :root {
-  /* Enterprise palette: orange primary + charcoal greys */
-  --ifm-color-primary: #FF8533; /* vivid orange */
-  --ifm-color-primary-dark: #E67320;
-  --ifm-color-primary-darker: #CC5A15;
-  --ifm-color-primary-darkest: #994310;
-  --ifm-color-primary-light: #FF9E5A;
-  --ifm-color-primary-lighter: #FFAB6E;
-  --ifm-color-primary-lightest: #FFD4B8;
-
-  --ifm-color-secondary: #2f2f33; /* charcoal */
-  --ifm-color-background: #ffffff;
-  --ifm-color-surface: #f7f7f8;
-
-  --ifm-heading-color: #1f1f23;
-  --ifm-paragraph-color: #2b2b2f;
-
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.04);
-
-  /* Navbar / footer accents */
-  --ifm-navbar-background-color: #2F2F33;
-  --ifm-navbar-text-color: #FFFFFF;
-  --ifm-footer-background-color: #1F1F23;
-  --ifm-footer-text-color: #FFFFFF;
-  --ifm-footer-link-color: #FFFFFF;
+  --doc-sidebar-width: 300px;
+  --doc-sidebar-hidden-width: 30px;
+  --ifm-navbar-height: 4rem;
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'SF Mono', monospace;
+  --ifm-heading-font-family: 'Inter', sans-serif;
+  --ifm-heading-font-weight: 600;
+  --ifm-color-gray-100: #f1f5f9;
+  --ifm-color-gray-200: #e2e8f0;
+  --ifm-color-gray-300: #cbd5e1;
+  --ifm-color-gray-600: #475569;
+  --ifm-color-gray-800: #1e293b;
+  --ifm-color-gray-900: #0f172a;
+  --ifm-heading-color: var(--ifm-color-gray-900);
+  --ifm-color-content: var(--ifm-color-gray-800);
+  --ifm-color-content-secondary: var(--ifm-color-gray-600);
+  --ifm-link-color: #2563eb;
+  --ifm-link-hover-color: #1d4ed8;
+  --ifm-code-font-size: 0.875rem;
+  --ifm-code-background: var(--ifm-color-gray-100);
+  --ifm-code-border-radius: 0.375rem;
+  --ifm-pre-background: var(--ifm-color-gray-900);
+  --ifm-pre-color: var(--ifm-color-gray-100);
+  --ifm-pre-padding: 1.25rem;
+  --ifm-pre-border-radius: 0.5rem;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: #0a0f1a;
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #FF8533;
-  --ifm-color-primary-dark: #E67320;
-  --ifm-color-primary-darker: #CC5A15;
-  --ifm-color-primary-light: #FF9E5A;
-  --ifm-color-secondary: #101012;
-  --ifm-color-background: #0b0b0c;
-  --ifm-color-surface: #0f0f10;
-  --ifm-heading-color: #ffffff;
-  --ifm-paragraph-color: #e6e6e6;
-  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.02);
-  --ifm-navbar-text-color: #FFFFFF;
-  --ifm-footer-text-color: #FFFFFF;
+  --ifm-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+  --ifm-navbar-background-color: #0f172a;
+  --ifm-footer-background-color: #0a0f1a;
+  --ifm-toc-border-color: #334155;
+  --ifm-color-gray-100: #f1f5f9;
+  --ifm-color-gray-200: #334155;
+  --ifm-color-gray-300: #475569;
+  --ifm-color-gray-800: #e2e8f0;
+  --ifm-color-gray-900: #f8fafc;
+  --ifm-heading-color: #f8fafc;
+  --ifm-color-content: #e2e8f0;
+  --ifm-color-content-secondary: #94a3b8;
+  --ifm-code-background: #1e293b;
+  --ifm-pre-background: #020617;
 }
 
-/* Navbar styling - white text on charcoal background */
-.navbar {
-  background-color: #2F2F33 !important;
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-color-gray-200);
+  font-size: 0.875rem;
+  background: var(--ifm-background-surface-color, #f8fafc);
 }
 
-.navbar__inner {
-  background-color: #2F2F33;
+[data-theme='dark'] .theme-doc-sidebar-container {
+  border-right-color: #1e293b;
 }
 
-.navbar__brand {
-  color: #FFFFFF !important;
+.menu {
+  padding: 1.5rem 0.75rem !important;
+  font-weight: 450;
+}
+
+.menu__link {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  color: var(--ifm-color-content-secondary);
+  font-weight: 450;
+  transition: none;
+  line-height: 1.5;
+  border: 1px solid transparent;
+}
+
+.menu__link:hover {
+  background: var(--ifm-color-gray-100);
+  color: var(--ifm-color-gray-900);
+}
+
+[data-theme='dark'] .menu__link:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.menu__link--active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 550;
+}
+
+[data-theme='dark'] .menu__link--active {
+  background: #1e3a8a30;
+  color: #93c5fd;
+}
+
+.menu__list-item-collapsible {
+  border-radius: 0.375rem;
+}
+
+.menu__list .menu__list {
+  border-left: 1px solid var(--ifm-color-gray-200);
+  margin-left: 0.75rem;
+  padding-left: 0.5rem;
+}
+
+[data-theme='dark'] .menu__list .menu__list {
+  border-left-color: #1e293b;
+}
+
+.menu__list-item > .menu__link[role='button'] {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ifm-color-content-secondary);
   font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  margin-top: 1rem;
 }
 
-.navbar__item {
-  color: #FFFFFF !important;
+.menu__list-item:first-child > .menu__link[role='button'] {
+  margin-top: 0;
+}
+
+.main-wrapper {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.container {
+  padding: 2rem 2rem 2rem 1rem;
+}
+
+.col--9 {
+  --ifm-col-width: calc(9 / 12 * 100%) !important;
+  max-width: calc(9 / 12 * 100%) !important;
+  padding: 0 2rem !important;
+}
+
+.markdown h1 {
+  --ifm-h1-font-size: 2.25rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--ifm-color-gray-200);
+  padding-bottom: 1rem;
+}
+
+.markdown h2 {
+  --ifm-h2-font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.markdown h3 {
+  --ifm-h3-font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.markdown p {
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+  color: var(--ifm-color-content);
+}
+
+.markdown li {
+  line-height: 1.75;
+  margin-bottom: 0.375rem;
+}
+
+code {
+  font-size: 0.8125rem;
+  padding: 0.2rem 0.4rem;
+  border: none;
+  font-weight: 450;
+  background: var(--ifm-code-background);
+}
+
+pre {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.table-of-contents {
+  font-size: 0.8125rem;
+  border-left: 1px solid var(--ifm-color-gray-200);
+  padding-left: 1rem;
+}
+
+.table-of-contents__link {
+  color: var(--ifm-color-content-secondary);
+  padding: 0.25rem 0;
+}
+
+.table-of-contents__link--active {
+  color: #2563eb;
+  font-weight: 550;
+  border-left: 2px solid #2563eb;
+  padding-left: 0.75rem;
+  margin-left: -1rem;
+}
+
+.breadcrumbs {
+  font-size: 0.8125rem;
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumbs__item:after {
+  opacity: 0.5;
+}
+
+.breadcrumbs__link {
+  color: var(--ifm-color-content-secondary);
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+}
+
+.breadcrumbs__link:hover {
+  background: var(--ifm-color-gray-100);
+  color: var(--ifm-color-gray-900);
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--ifm-color-content);
+  font-weight: 550;
+  background: transparent;
+}
+
+.menu__link svg,
+.button svg,
+.navbar__link svg,
+.pagination-nav__link svg {
+  display: none !important;
+}
+
+.navbar {
+  border-bottom: 1px solid var(--ifm-color-gray-200);
+  box-shadow: none;
+  padding: 0 2rem;
+}
+
+[data-theme='dark'] .navbar {
+  border-bottom-color: #1e293b;
+}
+
+.navbar__title {
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--ifm-color-gray-900);
 }
 
 .navbar__link {
-  color: #FFFFFF !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ifm-color-content-secondary);
+  padding: 0.5rem 1rem;
 }
 
-.navbar__link:hover {
-  color: #FF8533 !important;
+.navbar__link--active {
+  color: var(--ifm-color-gray-900);
+  font-weight: 600;
+  background: transparent;
 }
 
-/* Footer styling - white text on charcoal background */
-footer {
-  background-color: #1F1F23 !important;
-  color: #FFFFFF !important;
+.DocSearch-Button {
+  border-radius: 0.375rem !important;
+  background: var(--ifm-color-gray-100) !important;
+  border: 1px solid transparent;
+  padding: 0 1rem !important;
 }
 
-footer.footer {
-  background-color: #1F1F23;
-  color: #FFFFFF;
+.DocSearch-Button:hover {
+  background: var(--ifm-color-gray-200) !important;
+  border-color: var(--ifm-color-gray-300);
 }
 
-footer .footer__title {
-  color: #FFFFFF !important;
+[data-theme='dark'] .DocSearch-Button {
+  background: #1e293b !important;
 }
 
-footer .footer__item {
-  color: #E6E6E6 !important;
+[data-theme='dark'] .DocSearch-Button:hover {
+  background: #2d3a4f !important;
 }
 
-footer .footer__link-item {
-  color: #E6E6E6 !important;
+.enterpriseHero {
+  background: linear-gradient(180deg, #020617 0%, #0f172a 65%, #1e293b 100%);
+  padding: 4.5rem 0 3rem;
+  border-bottom: 1px solid var(--ifm-color-gray-200);
 }
 
-footer .footer__link-item:hover {
-  color: #FF8533 !important;
+.enterpriseHero__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
-footer .footer__copyright {
-  color: #CCCCCC !important;
+.enterpriseHero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.1;
 }
 
-/* Card styling for enterprise look */
-.card {
-  border: 2px solid #FF8533;
-  border-radius: 8px;
+.enterpriseHero__eyebrow {
+  margin: 0 0 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ifm-color-content-secondary);
 }
 
-.card:hover {
-  box-shadow: 0 8px 24px rgba(255, 133, 51, 0.15);
+.enterpriseHero p {
+  margin-top: 1rem;
+  max-width: 64ch;
+  color: var(--ifm-color-content-secondary);
 }
 
-/* Announcement bar styling */
-.announcement-bar {
-  background-color: #FF8533 !important;
-  color: #FFFFFF !important;
+.enterpriseHero__actions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
 }
 
-/* Main doc styles */
-.docusaurus-content main {
-  max-width: 100%;
+.enterpriseHero__proof {
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 
-/* Hero section styling */
-.hero {
-  background: linear-gradient(135deg, #FF8533 0%, #FF6B1F 100%);
-  color: #FFFFFF;
+.enterpriseHero__band {
+  margin-top: 1.25rem;
+  border: 1px solid var(--ifm-color-gray-200);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  background: #020617;
 }
 
-.hero .hero__title {
-  color: #FFFFFF;
+.enterpriseHero__band img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.hero .hero__subtitle {
-  color: rgba(255, 255, 255, 0.95);
+.enterpriseHome {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3.5rem;
 }
 
-/* Enterprise category styling */
-.docSidebarItem_node_modules-@docusaurus-plugin-content-docs-cjs__default {
-  margin-top: 8px;
+.enterpriseCardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
 }
 
-/* Button styling */
-.button.button--primary {
-  background-color: #FF8533;
-  border-color: #FF8533;
-  color: #FFFFFF;
+.enterpriseCard {
+  background: var(--ifm-background-surface-color, #ffffff);
+  border: 1px solid var(--ifm-color-gray-200);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-.button.button--primary:hover {
-  background-color: #E67320;
-  border-color: #E67320;
-  color: #FFFFFF;
+.enterpriseCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.12);
 }
 
-.navbar__brand img {
-  filter: none;
+.enterpriseCard h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
-/* Footer adjustments for enterprise look */
-.footer--dark {
-  background-color: var(--ifm-footer-background-color);
-  color: var(--ifm-footer-link-color);
+.enterpriseCard p {
+  margin: 0;
 }
 
-/* Typography: slightly larger headings and comfortable line-height */
-h1, h2, h3, h4, h5 {
-  color: var(--ifm-heading-color);
-  line-height: 1.15;
+.enterpriseCard__cta {
+  display: inline-flex;
+  margin-top: 0.9rem;
+  font-weight: 600;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--ifm-color-gray-300);
+  border-radius: 0.45rem;
+  text-decoration: none;
 }
 
-p, li {
-  color: var(--ifm-paragraph-color);
-  line-height: 1.7;
+.enterpriseCard__cta:hover {
+  border-color: var(--ifm-link-color);
+  color: var(--ifm-link-hover-color);
 }
 
-/* Buttons: orange primary with subtle rounded corners */
-.button--primary {
-  background-color: var(--ifm-color-primary);
-  border-color: var(--ifm-color-primary-dark);
-  color: white;
-  border-radius: 6px;
+.enterpriseWhy {
+  border: 1px solid var(--ifm-color-gray-200);
+  border-radius: 0.75rem;
+  padding: 1rem 1.1rem;
+  background: var(--ifm-background-surface-color, #ffffff);
+}
+
+.enterpriseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ifm-color-gray-300);
+  border-radius: 0.45rem;
+  padding: 0.5rem 0.8rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--ifm-color-content);
+}
+
+.enterpriseButton:hover {
+  border-color: var(--ifm-link-color);
+  color: var(--ifm-link-hover-color);
+}
+
+.enterpriseButton--primary {
+  background: var(--ifm-link-color);
+  color: #fff;
+  border-color: var(--ifm-link-color);
+}
+
+.enterpriseButton--primary:hover {
+  background: var(--ifm-link-hover-color);
+  color: #fff;
+  border-color: var(--ifm-link-hover-color);
+}
+
+.enterpriseFormWrap {
+  border: 1px solid var(--ifm-color-gray-200);
+  border-radius: 0.75rem;
+  padding: 1rem 1.1rem;
+  margin-top: 1.25rem;
+  background: var(--ifm-background-surface-color, #ffffff);
+}
+
+.enterpriseForm {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.enterpriseForm label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.enterpriseForm input,
+.enterpriseForm select,
+.enterpriseForm textarea {
+  width: 100%;
+  border: 1px solid var(--ifm-color-gray-300);
+  border-radius: 0.45rem;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-content);
+  padding: 0.55rem 0.65rem;
+}
+
+.enterpriseForm textarea {
+  resize: vertical;
+}
+
+@media (max-width: 768px) {
+  .enterpriseHero__actions {
+    flex-wrap: wrap;
+  }
 }
