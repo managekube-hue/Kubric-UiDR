@@ -1,5 +1,4 @@
 {
   "buildCommand": "cd docs && yarn install && yarn build",
-  "outputDirectory": "docs/build",
-  "installCommand": "cd docs && yarn install"
+  "outputDirectory": "docs/build"
 }
