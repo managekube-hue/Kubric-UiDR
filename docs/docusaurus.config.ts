@@ -1,21 +1,16 @@
-import { themes as prismThemes } from 'prism-react-renderer';
-import type { Config } from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import {themes as prismThemes} from 'prism-react-renderer';
+import type {Config} from '@docusaurus/types';
 
 const config: Config = {
-  title: 'Kubric UIDR',
-  tagline: 'Unified SOC • NOC • GRC • PSA • KAI',
+  title: 'Kubric Platform',
+  tagline: 'Enterprise Security Operations & Orchestration',
   favicon: 'img/favicon.ico',
-
-  url: 'https://docs.kubric.io',
+  url: 'https://kubric-platform.vercel.app',
   baseUrl: '/',
   organizationName: 'kubric',
-  projectName: 'platform',
-
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'throw',
-  onDuplicateRoutes: 'throw',
-
+  projectName: 'kubric-platform',
+  onBrokenLinks: 'warn',
+  onBrokenMarkdownLinks: 'warn',
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -26,79 +21,46 @@ const config: Config = {
       'classic',
       {
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/kubric/platform/edit/main/',
-          routeBasePath: '/docs',
-          path: 'docs',
-          include: ['**/*.md', '**/*.mdx'],
-          exclude: [
-            '**/_*.{md,mdx}',
-            '**/README.md',
-            '**/node_modules/**',
-          ],
-          showLastUpdateTime: true,
-          showLastUpdateAuthor: true,
+          sidebarPath: './sidebars.js',
+          editUrl: 'https://github.com/kubric/kubric-uidr/edit/main/docs/',
+          admonitions: {
+            keywords: ['note', 'tip', 'info', 'caution', 'danger', 'success', 'warning'],
+            extendDefaults: true,
+          },
         },
-        blog: false,
+        pages: {
+          path: 'src/pages',
+        },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: './src/css/custom.css',
         },
-        sitemap: {
-          changefreq: 'daily',
-          priority: 0.7,
-          filename: 'sitemap.xml',
-          ignorePatterns: ['/docs/K-ITIL-10_ITIL_MATRIX/**'],
-        },
-        gtag: {
-          trackingID: 'G-XXXXXXXXXX',
-          anonymizeIP: true,
-        },
-      } satisfies Preset.Options,
+      } as any,
     ],
   ],
 
   themeConfig: {
-    image: 'img/kubric-social-card.jpg',
+    image: 'img/kubric-og.png',
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: true,
+    },
     navbar: {
-      title: 'Kubric UIDR',
+      title: 'Kubric Platform',
       logo: {
         alt: 'Kubric Logo',
         src: 'img/logo.svg',
-        srcDark: 'img/logo-dark.svg',
       },
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'kubricSidebar',
+          sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Documentation',
         },
         {
-          type: 'docsVersionDropdown',
-          position: 'left',
-          dropdownActiveClassDisabled: true,
-          dropdownItemsAfter: [
-            {
-              type: 'html',
-              value: '<hr class="dropdown-separator">',
-            },
-            {
-              type: 'html',
-              value: '<span class="dropdown-subtitle">Archived</span>',
-            },
-            {
-              to: '/versions',
-              label: 'All versions',
-            },
-          ],
-        },
-        {
-          href: 'https://github.com/kubric/platform',
+          href: 'https://github.com/kubric/kubric-uidr',
           label: 'GitHub',
-          position: 'right',
-        },
-        {
-          type: 'search',
           position: 'right',
         },
       ],
@@ -107,250 +69,200 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Modules',
+          title: 'Documentation',
           items: [
-            { label: '🏭 Core Infrastructure', to: '/docs/K-CORE-01_INFRASTRUCTURE/' },
-            { label: '🤖 XRO Super Agent', to: '/docs/K-XRO-02_SUPER_AGENT/' },
-            { label: '🧠 KAI Orchestration', to: '/docs/K-KAI-03_ORCHESTRATION/' },
-            { label: '🛡️ SOC Security', to: '/docs/K-SOC-04_SECURITY/' },
-            { label: '📊 NOC Operations', to: '/docs/K-NOC-05_OPERATIONS/' },
-            { label: '💰 PSA Business', to: '/docs/K-PSA-06_BUSINESS/' },
-            { label: '⚖️ GRC Compliance', to: '/docs/K-GRC-07_COMPLIANCE/' },
-            { label: '🔧 Development', to: '/docs/K-DEV-08_DEVELOPMENT/' },
-            { label: '🔌 API Reference', to: '/docs/K-API-09_API_REFERENCE/' },
-            { label: '📋 ITIL Map', to: '/docs/K-ITIL-10_ITIL_MATRIX/' },
-          ],
-        },
-        {
-          title: 'Compliance',
-          items: [
-            { label: 'SOC2 Evidence', to: '/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/' },
-            { label: 'ISO 27001', to: '/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-05_AUDIT_READINESS/K-ITIL-AUD-002_SOC2_ISO_Control_Crosswalk' },
-            { label: 'NIST 800-53', to: '/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-05_AUDIT_READINESS/' },
-            { label: 'License', to: '/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC-003_LICENSE' },
-            { label: 'NOTICE', to: '/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC-004_NOTICE' },
+            {
+              label: 'Getting Started',
+              to: '/docs/intro',
+            },
+            {
+              label: 'Architecture',
+              to: '/docs/architecture',
+            },
           ],
         },
         {
           title: 'Community',
           items: [
-            { label: 'GitHub', href: 'https://github.com/kubric/platform' },
-            { label: 'Discord', href: 'https://discord.gg/kubric' },
-            { label: 'Twitter', href: 'https://twitter.com/kubric' },
-            { label: 'Stack Overflow', href: 'https://stackoverflow.com/questions/tagged/kubric' },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/kubric/kubric-uidr',
+            },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Kubric. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Kubric Platform. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
-      additionalLanguages: [
-        'rust', 'go', 'python', 'typescript', 'yaml', 'json', 'sql', 
-        'bash', 'protobuf', 'toml', 'ini', 'nginx', 'hcl', 'groovy', 
-        'java', 'csharp', 'powershell', 'markdown', 'docker', 'diff'
-      ],
-      magicComments: [
-        {
-          className: 'theme-code-block-highlighted-line',
-          line: 'highlight-next-line',
-          block: { start: 'highlight-start', end: 'highlight-end' },
-        },
-      ],
+      theme: prismThemes.oneDark,
+      darkTheme: prismThemes.oneDark,
+      additionalLanguages: ['bash', 'python', 'typescript', 'yaml', 'json', 'sql'],
     },
-    colorMode: {
-      defaultMode: 'dark',
-      disableSwitch: false,
-      respectPrefersColorScheme: true,
-    },
-    docs: {
-      sidebar: {
-        hideable: true,
-        autoCollapseCategories: true,
-      },
-    },
-    tableOfContents: {
-      minHeadingLevel: 2,
-      maxHeadingLevel: 5,
-    },
-    algolia: {
-      appId: 'YOUR_APP_ID',
-      apiKey: 'YOUR_SEARCH_API_KEY',
-      indexName: 'kubric',
-      contextualSearch: true,
-      searchParameters: {},
-      searchPagePath: 'search',
-    },
-    metadata: [
-      { name: 'keywords', content: 'security, soc, noc, grc, psa, xdr, edr, ndr, compliance, itil' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:site', content: '@kubric' },
-    ],
-  } satisfies Preset.ThemeConfig,
+  } as any,
 
   plugins: [
-    // ============================================
-    // SECTION 1: ENTERPRISE SEARCH & DISCOVERABILITY
-    // ============================================
+    // Local search with Chinese/English support
     [
-      '@docusaurus/plugin-search-local',
+      '@easyops-cn/docusaurus-search-local',
       {
-        indexDocs: true,
-        indexBlog: false,
-        indexPages: true,
-        language: ['en'],
+        hashed: true,
+        language: ['en', 'zh'],
+        docsRouteBasePath: '/docs',
         highlightSearchTermsOnTargetPage: true,
-        searchResultLimits: 8,
-        searchResultContextMaxLength: 50,
-        docsDir: ['docs'],
       },
     ],
-    '@docusaurus/plugin-sitemap',
+
+    // OpenAPI documentation
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: 'openapi',
+        docsPluginId: 'classic',
+        config: {
+          api: {
+            specPath: 'openapi/spec.yaml',
+            outputDir: 'docs/api/openapi',
+            downloadUrl: 'https://raw.githubusercontent.com/kubric/kubric-uidr/main/openapi/spec.yaml',
+          },
+        },
+      },
+    ],
+
+    // Redoc for alternative OpenAPI rendering
+    [
+      'redocusaurus',
+      {
+        specs: [
+          {
+            url: 'https://raw.githubusercontent.com/kubric/kubric-uidr/main/openapi/spec.yaml',
+            route: '/api/redoc',
+          },
+        ],
+        theme: {
+          primaryColor: '#FF8533',
+          textColor: '#FFFFFF',
+          backgroundColor: '#1a1a1a',
+        },
+      },
+    ],
+
+    // Structured data for SEO
+    [
+      '@coffeecup_tech/docusaurus-plugin-structured-data',
+      {
+        schema: {
+          '@context': 'https://schema.org/',
+          '@type': 'WebSite',
+          name: 'Kubric Platform',
+          description: 'Enterprise Security Operations & Orchestration',
+          url: 'https://kubric-platform.vercel.app',
+          author: {
+            '@type': 'Organization',
+            name: 'Kubric',
+          },
+        },
+      },
+    ],
+
+    // Sitemap generation
+    [
+      '@docusaurus/plugin-sitemap',
+      {
+        changefreq: 'weekly',
+        priority: 0.5,
+        trailingSlash: false,
+      },
+    ],
+
+    // Progressive Web App support
     [
       '@docusaurus/plugin-pwa',
       {
-        debug: false,
-        offlineModeActivationStrategies: [
-          'appInstalled',
-          'standalone',
-          'queryString',
-        ],
+        debug: process.env.NODE_ENV !== 'production',
+        offlineModeActivationStrategies: ['appInstalled', 'queryString'],
         pwaHead: [
           {
             tagName: 'link',
             rel: 'icon',
-            href: 'img/pwa/icon-192.png',
+            href: '/img/favicon.ico',
           },
           {
             tagName: 'link',
             rel: 'manifest',
-            href: 'manifest.json',
+            href: '/manifest.json',
           },
           {
             tagName: 'meta',
             name: 'theme-color',
-            content: '#0066cc',
+            content: '#FF8533',
           },
           {
             tagName: 'meta',
             name: 'apple-mobile-web-app-capable',
             content: 'yes',
           },
+          {
+            tagName: 'meta',
+            name: 'apple-mobile-web-app-status-bar-style',
+            content: '#000000',
+          },
         ],
       },
     ],
+
+    // Image optimization
     [
-      '@docusaurus/plugin-google-gtag',
+      '@docusaurus/plugin-ideal-image',
       {
-        trackingID: 'G-XXXXXXXXXX',
-        anonymizeIP: true,
-      },
-    ],
-    [
-      '@docusaurus/plugin-vercel-analytics',
-      {
-        debug: false,
-        mode: 'auto',
+        quality: 70,
+        max: 1030,
+        min: 640,
+        steps: 2,
+        disableInDev: false,
       },
     ],
 
-    // ============================================
-    // SECTION 2: DOCUMENTATION QUALITY & VERIFICATION
-    // ============================================
+    // Client-side redirects
     [
-      '@docusaurus/plugin-content-docs',
+      '@docusaurus/plugin-client-redirects',
       {
-        id: 'versions',
-        path: 'versions',
-        routeBasePath: 'versions',
-        sidebarPath: require.resolve('./sidebarsVersions.js'),
-        versions: {
-          current: {
-            label: 'v1.0.0 (current)',
-            path: '1.0.0',
+        redirects: [
+          {
+            from: '/docs/old-page',
+            to: '/docs/new-page',
           },
+        ],
+        createRedirects(existingPath) {
+          if (existingPath.includes('/api/')) {
+            return [
+              existingPath.replace('/api/', '/rest-api/'),
+            ];
+          }
+          return undefined;
         },
       },
     ],
-    '@docusaurus/plugin-content-pages',
-    '@docusaurus/theme-mermaid',
-
-    // ============================================
-    // SECTION 3: VISUAL ENTERPRISE THEMING
-    // ============================================
-    '@docusaurus/theme-live-codeblock',
-    '@docusaurus/plugin-ideal-image',
-    
-    // ============================================
-    // SECTION 5: CODE QUALITY & VERIFICATION
-    // ============================================
-    '@docusaurus/theme-common',
-    [
-      '@docusaurus/remark-plugin-npm2yarn',
-      {
-        sync: true,
-        converters: ['yarn', 'pnpm'],
-      },
-    ],
-    '@docusaurus/plugin-tag',
-    
-    // ============================================
-    // SECTION 8: ADDITIONAL ENTERPRISE PLUGINS
-    // ============================================
-    'docusaurus-plugin-image-zoom',
-    '@docusaurus/plugin-client-redirects',
   ],
 
   themes: [
+    // Mermaid diagram support
     '@docusaurus/theme-mermaid',
+    // Live code block editing
     '@docusaurus/theme-live-codeblock',
-    '@docusaurus/theme-search-algolia',
-    [
-      '@docusaurus/theme-classic',
-      {
-        customCss: require.resolve('./src/css/custom.css'),
-      },
-    ],
+    // OpenAPI docs theme
+    'docusaurus-theme-openapi-docs',
   ],
 
   markdown: {
     mermaid: true,
-    format: 'detect',
-    mdx1Compat: false,
-    remarkPlugins: [
-      [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
-    ],
-    rehypePlugins: [],
   },
-
-  stylesheets: [
-    {
-      href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
-      type: 'text/css',
-    },
-    {
-      href: 'https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css',
-      type: 'text/css',
-      integrity: 'sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM',
-      crossorigin: 'anonymous',
-    },
-  ],
 
   scripts: [
     {
-      src: 'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js',
+      src: 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js',
       async: true,
     },
   ],
-
-  staticDirectories: ['static', 'public'],
-  
-  customFields: {
-    kubricVersion: '1.0.0',
-    kubricDocs: 'enterprise',
-    supportedKernels: ['5.15+', '6.x'],
-  },
 };
 
 export default config;
