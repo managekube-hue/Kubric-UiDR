@@ -1,0 +1,86 @@
+[
+  {"title":"K-HW-001_Node1_Config","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE/K-HW-001_Node1_Config"},
+  {"title":"K-HW-002_Node2_Config","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE/K-HW-002_Node2_Config"},
+  {"title":"K-HW-003_Node3_Config","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE/K-HW-003_Node3_Config"},
+  {"title":"K-HW-004_iDRAC9_Network","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE/K-HW-004_iDRAC9_Network"},
+  {"title":"K-HW-005_RAM_Expansion","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE/K-HW-005_RAM_Expansion"},
+
+  {"title":"K-NET-001_10G_SFP_Config","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-001_10G_SFP_Config"},
+  {"title":"K-NET-002_Corosync_Heartbeat","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-002_Corosync_Heartbeat"},
+  {"title":"K-NET-003_Virtual_IP_Failover","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover"},
+
+  {"title":"K-HV-001_Cluster_Bootstrap","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-001_Cluster_Bootstrap"},
+  {"title":"K-HV-002_Ceph_Storage","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-002_Ceph_Storage"},
+
+  {"title":"K-HV-VM-001_Go_API_CloudInit","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-001_Go_API_CloudInit"},
+  {"title":"K-HV-VM-002_ClickHouse_StatefulSet","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-002_ClickHouse_StatefulSet"},
+  {"title":"K-HV-VM-003_PostgreSQL_RLS","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-003_PostgreSQL_RLS"},
+  {"title":"K-HV-VM-004_Ollama_LLM","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-004_Ollama_LLM"},
+
+  {"title":"K-HV-LXC-001_Gitea","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-001_Gitea"},
+  {"title":"K-HV-LXC-002_n8n","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-002_n8n"},
+  {"title":"K-HV-LXC-003_Caddy","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy"},
+
+  {"title":"K-K8S-001_ClickHouse_StatefulSet","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-001_ClickHouse_StatefulSet"},
+  {"title":"K-K8S-002_NATS_StatefulSet","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-002_NATS_StatefulSet"},
+  {"title":"K-K8S-003_PostgreSQL_StatefulSet","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-003_PostgreSQL_StatefulSet"},
+  {"title":"K-K8S-004_API_Deployment","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-004_API_Deployment"},
+
+  {"title":"K-DL-CH-001_Cluster_Config","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config"},
+  {"title":"K-DL-CH-002_OCSF_Schema","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema"},
+  {"title":"K-DL-CH-003_TTL_Cold_Storage","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-003_TTL_Cold_Storage"},
+  {"title":"K-DL-CH-004_Agent_Decision_History","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-004_Agent_Decision_History"},
+
+  {"title":"K-DL-PG-001_UAR_Asset_Table","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-001_UAR_Asset_Table"},
+  {"title":"K-DL-PG-002_RLS_Policies","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-002_RLS_Policies"},
+  {"title":"K-DL-PG-003_Contract_Rate_Tables","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables"},
+  {"title":"K-DL-PG-004_OSCAL_Ingestion","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-004_OSCAL_Ingestion"},
+
+  {"title":"K-MB-001_NATS_Cluster","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-001_NATS_Cluster"},
+  {"title":"K-MB-002_JetStream_Config","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-002_JetStream_Config"},
+  {"title":"K-MB-SUB-001_security.alert.v1","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-001_security.alert.v1"},
+  {"title":"K-MB-SUB-002_remediation.task.v1","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-002_remediation.task.v1"},
+  {"title":"K-MB-SUB-003_asset.provisioned.v1","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-003_asset.provisioned.v1"},
+  {"title":"K-MB-SUB-004_billing.meter.v1","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-004_billing.meter.v1"},
+  {"title":"K-MB-003_mTLS_Cert_Rotation","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-003_mTLS_Cert_Rotation"},
+
+  {"title":"K-SEC-001_HashiCorp_Vault","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-001_HashiCorp_Vault"},
+  {"title":"K-SEC-002_TPM_Root_of_Trust","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-002_TPM_Root_of_Trust"},
+  {"title":"K-SEC-003_Blake3_Fingerprint","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-003_Blake3_Fingerprint"},
+  {"title":"K-SEC-004_CA_Setup","docPath":"/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup"},
+
+  {"title":"K-XRO-CS-001_Cargo.toml","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-001_Cargo.toml"},
+  {"title":"K-XRO-CS-001_main.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-001_main.rs"},
+  {"title":"K-XRO-CS-EBPF-001_execve_hook.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-001_execve_hook"},
+  {"title":"K-XRO-CS-EBPF-002_openat2_hook.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-002_openat2_hook"},
+  {"title":"K-XRO-CS-EBPF-003_map_pressure.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-003_map_pressure"},
+
+  {"title":"K-XRO-CS-FR-001_memory_snapshot.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FORENSIC/K-XRO-CS-FR-001_memory_snapshot"},
+  {"title":"K-XRO-CS-GV-001_token_bucket.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-GOVERNOR/K-XRO-CS-GV-001_token_bucket"},
+
+  {"title":"K-XRO-CS-002_eBPF_Compatibility","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-002_eBPF_Compatibility"},
+
+  {"title":"K-XRO-NG-001_Cargo.toml","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-001_Cargo.toml"},
+  {"title":"K-XRO-NG-001_main.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-001_main.rs"},
+  {"title":"K-XRO-NG-PCAP-001_flow_analyzer.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-001_flow_analyzer"},
+  {"title":"K-XRO-NG-PCAP-002_tls_sni.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-002_tls_sni"},
+  {"title":"K-XRO-NG-PCAP-003_af_packet_ring.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-003_af_packet_ring"},
+
+  {"title":"K-XRO-NG-002_10G_Validation","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-002_10G_Validation"},
+
+  {"title":"K-XRO-PT-001_Cargo.toml","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-001_Cargo.toml"},
+  {"title":"K-XRO-PT-001_main.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs"},
+  {"title":"K-XRO-PT-002_perf_event_open.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-002_perf_event_open"},
+  {"title":"K-XRO-PT-003_prometheus.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-003_prometheus"},
+  {"title":"K-XRO-PT-004_otel_collector.rs","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-004_otel_collector"},
+
+  {"title":"K-XRO-PT-005_Baseline_Schema","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-005_Baseline_Schema"},
+
+  {"title":"K-XRO-WD-001_agent_orchestrator","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator"},
+  {"title":"K-XRO-WD-002_zstd_delta","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-002_zstd_delta"},
+  {"title":"K-XRO-WD-003_manifest_signer","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer"},
+
+  {"title":"K-XRO-PV-001_registration_handler","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-001_registration_handler"},
+  {"title":"K-XRO-PV-002_install_script_gen","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-002_install_script_gen"},
+  {"title":"K-XRO-PV-003_blake3_fingerprinter","docPath":"/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-003_blake3_fingerprinter"}
+]

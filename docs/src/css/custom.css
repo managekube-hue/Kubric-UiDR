@@ -1,0 +1,80 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  /* Enterprise palette: orange primary + charcoal greys */
+  --ifm-color-primary: #ff6a00; /* vivid orange */
+  --ifm-color-primary-dark: #e65a00;
+  --ifm-color-primary-darker: #cc4b00;
+  --ifm-color-primary-darkest: #993800;
+  --ifm-color-primary-light: #ff7f26;
+  --ifm-color-primary-lighter: #ff9450;
+  --ifm-color-primary-lightest: #ffb88a;
+
+  --ifm-color-secondary: #2f2f33; /* charcoal */
+  --ifm-color-background: #ffffff;
+  --ifm-color-surface: #f7f7f8;
+
+  --ifm-heading-color: #1f1f23;
+  --ifm-paragraph-color: #2b2b2f;
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.04);
+
+  /* Navbar / footer accents */
+  --ifm-navbar-background-color: var(--ifm-color-secondary);
+  --ifm-footer-background-color: #1f1f23;
+  --ifm-footer-link-color: #dddddd;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #ff8a42;
+  --ifm-color-primary-dark: #e67339;
+  --ifm-color-primary-darker: #cc5b2f;
+  --ifm-color-primary-light: #ff9a5a;
+  --ifm-color-secondary: #101012;
+  --ifm-color-background: #0b0b0c;
+  --ifm-color-surface: #0f0f10;
+  --ifm-heading-color: #ffffff;
+  --ifm-paragraph-color: #e6e6e6;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.02);
+}
+
+/* Navbar styling to use charcoal background with orange accents */
+.navbar__inner {
+  background-color: var(--ifm-navbar-background-color);
+}
+
+.navbar__brand img {
+  filter: none;
+}
+
+/* Footer adjustments for enterprise look */
+.footer--dark {
+  background-color: var(--ifm-footer-background-color);
+  color: var(--ifm-footer-link-color);
+}
+
+/* Typography: slightly larger headings and comfortable line-height */
+h1, h2, h3, h4, h5 {
+  color: var(--ifm-heading-color);
+  line-height: 1.15;
+}
+
+p, li {
+  color: var(--ifm-paragraph-color);
+  line-height: 1.7;
+}
+
+/* Buttons: orange primary with subtle rounded corners */
+.button--primary {
+  background-color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary-dark);
+  color: white;
+  border-radius: 6px;
+}
