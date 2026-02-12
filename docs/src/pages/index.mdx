@@ -1,0 +1,310 @@
+---
+title: Kubric Enterprise Platform
+---
+
+import {Fragment} from 'react';
+
+<div style={{
+  background: 'linear-gradient(135deg, #FF8533 0%, #FF6B1F 100%)',
+  padding: '80px 40px',
+  textAlign: 'center',
+  color: 'white',
+  marginBottom: '40px',
+}}>
+  <h1 style={{fontSize: '3.5rem', margin: '0 0 20px 0', fontWeight: 'bold'}}>
+    Kubric
+  </h1>
+  <p style={{fontSize: '1.3rem', margin: '0 0 30px 0', fontWeight: '300'}}>
+    Enterprise Security Operations & Orchestration
+  </p>
+  <p style={{fontSize: '1.1rem', margin: '0', opacity: '0.95'}}>
+    Unified platform for SOC, NOC, GRC, PSA, and intelligent orchestration with CrewAI personas
+  </p>
+</div>
+
+<div style={{
+  maxWidth: '1200px',
+  margin: '0 auto',
+  padding: '40px 20px',
+}}>
+
+## Core Platform Modules
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+  gap: '24px',
+  marginBottom: '60px',
+}}>
+
+### 🏗️ Infrastructure & Core
+<div style={{
+  border: '2px solid #FF8533',
+  borderRadius: '8px',
+  padding: '24px',
+  backgroundColor: '#f9f9f9',
+}}>
+
+**K-CORE-01_INFRASTRUCTURE**
+
+Foundation systems including:
+- Hardware (R740 nodes, iDRAC9 management)
+- Networking (10G SFP, Corosync heartbeat, failover)
+- Hypervisor (Proxmox clusters, Ceph storage, VMs, LXCs)
+- Kubernetes (ClickHouse, NATS, PostgreSQL, API)
+- Data Lakehouse (ClickHouse + PostgreSQL OCSF schema)
+- Message Bus (NATS JetStream, mTLS)
+- Security Root (Vault, TPM, Blake3, CA setup)
+
+[View Documentation →](/docs/K-CORE-01_INFRASTRUCTURE)
+
+</div>
+
+### 🤖 Intelligent Orchestration
+<div style={{
+  border: '2px solid #FF8533',
+  borderRadius: '8px',
+  padding: '24px',
+  backgroundColor: '#f9f9f9',
+}}>
+
+**K-KAI-03_ORCHESTRATION**
+
+CrewAI-powered autonomous agents:
+- Triage Agent (incident analysis, KISS calculation)
+- Housekeeper Agent (drift detection, Ansible remediation)
+- Billing Agent (usage tracking, invoicing)
+- Comms Agent (VAPI phone, Twilio SMS)
+- RAG system with OSCAL embeddings
+- Workflow engines (n8n, Temporal)
+- Guardrails (MFA, action queues, criticality checks)
+
+[View Documentation →](/docs/K-KAI-03_ORCHESTRATION)
+
+</div>
+
+### 🛡️ Security Operations
+<div style={{
+  border: '2px solid #FF8533',
+  borderRadius: '8px',
+  padding: '24px',
+  backgroundColor: '#f9f9f9',
+}}>
+
+**K-SOC-04_SECURITY**
+
+Enterprise SOC capabilities:
+- Detection (Sigma compiler, MITRE mapping, Yara, Suricata)
+- Threat Intelligence (OTX, AbuseIPDB, MalwareBazaar, HIBP)
+- Vulnerability Management (Nuclei, EPSS, CVE prioritization)
+- Incident Stitching (Redis state, graph correlation)
+- Forensics (Blake3 evidence, chain of custody)
+
+[View Documentation →](/docs/K-SOC-04_SECURITY)
+
+</div>
+
+### ⚙️ Operations & Compliance
+<div style={{
+  border: '2px solid #FF8533',
+  borderRadius: '8px',
+  padding: '24px',
+  backgroundColor: '#f9f9f9',
+}}>
+
+**K-NOC-05_OPERATIONS + K-GRC-07_COMPLIANCE**
+
+Operational excellence:
+- Config Management (osquery drift, Ansible playbooks)
+- Backup/DR (Restic, Kopia, S3 cold storage)
+- Performance (OpenTelemetry, anomaly detection)
+- Patch Management (delta generation, manifest signing)
+
+Compliance framework:
+- OSCAL compliance (NIST, SOC2, ISO mapping)
+- Evidence Vault (immutable audit, Blake3 signing)
+- Supply Chain (SBOM, Grype, OpenSSF scorecard)
+
+[Operations →](/docs/K-NOC-05_OPERATIONS) | [Compliance →](/docs/K-GRC-07_COMPLIANCE)
+
+</div>
+
+### 💼 Business Capabilities
+<div style={{
+  border: '2px solid #FF8533',
+  borderRadius: '8px',
+  padding: '24px',
+  backgroundColor: '#f9f9f9',
+}}>
+
+**K-PSA-06_BUSINESS**
+
+Business operations:
+- ITSM (ticket state, SLA tracking, service desk)
+- Billing (usage aggregation, PDF rendering, HLE contracts)
+- CRM/CPQ (contract tables, risk quoting)
+- Portal (asset cards, deployment wizard, white-label)
+- BI (QBR engine, profitability analysis)
+
+[View Documentation →](/docs/K-PSA-06_BUSINESS)
+
+</div>
+
+### 🔧 Development & APIs
+<div style={{
+  border: '2px solid #FF8533',
+  borderRadius: '8px',
+  padding: '24px',
+  backgroundColor: '#f9f9f9',
+}}>
+
+**K-DEV-08 + K-API-09**
+
+Developer experience:
+- Local stack (Docker Compose, PostgreSQL init)
+- Build toolchain (Makefile, Rust, Go, Node.js)
+- CI/CD (GitHub Actions, Gitea, branch protection)
+- Documentation (architecture specs, API reference)
+
+OpenAPI reference:
+- Provisioning API
+- Triage API
+- Billing API
+
+[Development →](/docs/K-DEV-08_DEVELOPMENT) | [API Ref →](/docs/K-API-09_API_REFERENCE)
+
+</div>
+
+</div>
+
+## Advanced Features
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+  gap: '20px',
+  marginBottom: '60px',
+}}>
+
+<div style={{
+  padding: '20px',
+  backgroundColor: '#FFF4E6',
+  borderLeft: '4px solid #FF8533',
+  borderRadius: '4px',
+}}>
+
+### 🚀 Super Agent (K-XRO-02)
+Rust-based eBPF agents for:
+- CoreSec (process security, eBPF intrusion)
+- NetGuard (10G packet analysis, TLS SNI, flow detection)
+- PerfTrace (perf events, Prometheus metrics)
+- Watchdog (orchestration, manifest signing)
+- Provisioning (registration, fingerprinting)
+
+</div>
+
+<div style={{
+  padding: '20px',
+  backgroundColor: '#FFF4E6',
+  borderLeft: '4px solid #FF8533',
+  borderRadius: '4px',
+}}>
+
+### 📋 ITIL Alignment (K-ITIL-10)
+Complete ITIL v4 framework:
+- Service Value System
+- Governance & Management Practices (14 GMP)
+- Service Management Practices (17 SMP)
+- Technical Management Practices (3 TMP)
+- Audit Readiness (KIC mapping, SOC2/ISO crosswalk)
+
+</div>
+
+</div>
+
+## Why Kubric?
+
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+  gap: '20px',
+  marginBottom: '60px',
+}}>
+
+<div style={{
+  textAlign: 'center',
+  padding: '30px',
+  backgroundColor: '#f5f5f5',
+  borderRadius: '8px',
+}}>
+
+#### 🎯 Enterprise-Grade
+Built for Fortune 500 security operations with ITIL alignment, SOC2 compliance, and proven architectures.
+
+</div>
+
+<div style={{
+  textAlign: 'center',
+  padding: '30px',
+  backgroundColor: '#f5f5f5',
+  borderRadius: '8px',
+}}>
+
+#### ⚡ Autonomous Agents
+CrewAI personas handle routine security tasks autonomously while maintaining human oversight via MFA guardrails.
+
+</div>
+
+<div style={{
+  textAlign: 'center',
+  padding: '30px',
+  backgroundColor: '#f5f5f5',
+  borderRadius: '8px',
+}}>
+
+#### 🔗 Unified Platform
+Single pane of glass for SOC alerts, NOC metrics, GRC compliance, PSA ticketing, and KAI orchestration.
+
+</div>
+
+<div style={{
+  textAlign: 'center',
+  padding: '30px',
+  backgroundColor: '#f5f5f5',
+  borderRadius: '8px',
+}}>
+
+#### 🛡️ Security-First
+Zero-trust networking, immutable audit, Blake3 fingerprinting, TPM root of trust, and comprehensive forensics.
+
+</div>
+
+</div>
+
+---
+
+## Getting Started
+
+<div style={{
+  border: '1px solid #ddd',
+  borderRadius: '8px',
+  padding: '30px',
+  backgroundColor: '#fafafa',
+  marginBottom: '40px',
+}}>
+
+1. **[Review Infrastructure](/docs/K-CORE-01_INFRASTRUCTURE)** - Understand the foundational systems (hardware, networking, virtualization)
+
+2. **[Explore Orchestration](/docs/K-KAI-03_ORCHESTRATION)** - Learn how autonomous agents drive security operations
+
+3. **[Study Security Ops](/docs/K-SOC-04_SECURITY)** - Deep dive into detection, threat intel, and incident response
+
+4. **[Check ITIL Alignment](/docs/K-ITIL-10_ITIL_MATRIX)** - See how Kubric maps to industry frameworks
+
+</div>
+
+:::info Enterprise Documentation
+This documentation represents a complete, production-ready platform with integrated governance, compliance, and autonomous orchestration capabilities. All modules are designed for high availability, scalability, and security at enterprise scale.
+:::
+
+</div>

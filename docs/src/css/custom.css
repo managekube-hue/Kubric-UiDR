@@ -7,13 +7,13 @@
 /* You can override the default Infima variables here. */
 :root {
   /* Enterprise palette: orange primary + charcoal greys */
-  --ifm-color-primary: #ff6a00; /* vivid orange */
-  --ifm-color-primary-dark: #e65a00;
-  --ifm-color-primary-darker: #cc4b00;
-  --ifm-color-primary-darkest: #993800;
-  --ifm-color-primary-light: #ff7f26;
-  --ifm-color-primary-lighter: #ff9450;
-  --ifm-color-primary-lightest: #ffb88a;
+  --ifm-color-primary: #FF8533; /* vivid orange */
+  --ifm-color-primary-dark: #E67320;
+  --ifm-color-primary-darker: #CC5A15;
+  --ifm-color-primary-darkest: #994310;
+  --ifm-color-primary-light: #FF9E5A;
+  --ifm-color-primary-lighter: #FFAB6E;
+  --ifm-color-primary-lightest: #FFD4B8;
 
   --ifm-color-secondary: #2f2f33; /* charcoal */
   --ifm-color-background: #ffffff;
@@ -26,28 +26,138 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.04);
 
   /* Navbar / footer accents */
-  --ifm-navbar-background-color: var(--ifm-color-secondary);
-  --ifm-footer-background-color: #1f1f23;
-  --ifm-footer-link-color: #dddddd;
+  --ifm-navbar-background-color: #2F2F33;
+  --ifm-navbar-text-color: #FFFFFF;
+  --ifm-footer-background-color: #1F1F23;
+  --ifm-footer-text-color: #FFFFFF;
+  --ifm-footer-link-color: #FFFFFF;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #ff8a42;
-  --ifm-color-primary-dark: #e67339;
-  --ifm-color-primary-darker: #cc5b2f;
-  --ifm-color-primary-light: #ff9a5a;
+  --ifm-color-primary: #FF8533;
+  --ifm-color-primary-dark: #E67320;
+  --ifm-color-primary-darker: #CC5A15;
+  --ifm-color-primary-light: #FF9E5A;
   --ifm-color-secondary: #101012;
   --ifm-color-background: #0b0b0c;
   --ifm-color-surface: #0f0f10;
   --ifm-heading-color: #ffffff;
   --ifm-paragraph-color: #e6e6e6;
   --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.02);
+  --ifm-navbar-text-color: #FFFFFF;
+  --ifm-footer-text-color: #FFFFFF;
 }
 
-/* Navbar styling to use charcoal background with orange accents */
+/* Navbar styling - white text on charcoal background */
+.navbar {
+  background-color: #2F2F33 !important;
+}
+
 .navbar__inner {
-  background-color: var(--ifm-navbar-background-color);
+  background-color: #2F2F33;
+}
+
+.navbar__brand {
+  color: #FFFFFF !important;
+  font-weight: 700;
+}
+
+.navbar__item {
+  color: #FFFFFF !important;
+}
+
+.navbar__link {
+  color: #FFFFFF !important;
+}
+
+.navbar__link:hover {
+  color: #FF8533 !important;
+}
+
+/* Footer styling - white text on charcoal background */
+footer {
+  background-color: #1F1F23 !important;
+  color: #FFFFFF !important;
+}
+
+footer.footer {
+  background-color: #1F1F23;
+  color: #FFFFFF;
+}
+
+footer .footer__title {
+  color: #FFFFFF !important;
+}
+
+footer .footer__item {
+  color: #E6E6E6 !important;
+}
+
+footer .footer__link-item {
+  color: #E6E6E6 !important;
+}
+
+footer .footer__link-item:hover {
+  color: #FF8533 !important;
+}
+
+footer .footer__copyright {
+  color: #CCCCCC !important;
+}
+
+/* Card styling for enterprise look */
+.card {
+  border: 2px solid #FF8533;
+  border-radius: 8px;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(255, 133, 51, 0.15);
+}
+
+/* Announcement bar styling */
+.announcement-bar {
+  background-color: #FF8533 !important;
+  color: #FFFFFF !important;
+}
+
+/* Main doc styles */
+.docusaurus-content main {
+  max-width: 100%;
+}
+
+/* Hero section styling */
+.hero {
+  background: linear-gradient(135deg, #FF8533 0%, #FF6B1F 100%);
+  color: #FFFFFF;
+}
+
+.hero .hero__title {
+  color: #FFFFFF;
+}
+
+.hero .hero__subtitle {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Enterprise category styling */
+.docSidebarItem_node_modules-@docusaurus-plugin-content-docs-cjs__default {
+  margin-top: 8px;
+}
+
+/* Button styling */
+.button.button--primary {
+  background-color: #FF8533;
+  border-color: #FF8533;
+  color: #FFFFFF;
+}
+
+.button.button--primary:hover {
+  background-color: #E67320;
+  border-color: #E67320;
+  color: #FFFFFF;
+}
 }
 
 .navbar__brand img {

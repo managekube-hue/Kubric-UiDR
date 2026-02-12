@@ -38,6 +38,13 @@ const config: Config = {
       disableSwitch: false,
       respectPrefersColorScheme: true,
     },
+    announcementBar: {
+      id: 'enterprisegrade',
+      content: 'Enterprise-Grade Security Operations Platform',
+      backgroundColor: '#FF8533',
+      textColor: '#FFFFFF',
+      isCloseable: false,
+    },
     navbar: {
       title: 'Kubric',
       logo: {
@@ -45,6 +52,7 @@ const config: Config = {
         src: 'img/kubric-logo.svg',
         srcDark: 'img/kubric-logo-dark.svg',
       },
+      style: 'dark',
       items: [
         {
           type: 'docSidebar',
@@ -61,13 +69,26 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
+      logo: {
+        alt: 'Kubric',
+        src: 'img/kubric-logo.svg',
+        height: 50,
+      },
       links: [
         {
           title: 'Documentation',
           items: [
             {
-              label: 'Getting Started',
-              to: '/docs/intro',
+              label: 'Core Infrastructure',
+              to: '/docs/K-CORE-01_INFRASTRUCTURE',
+            },
+            {
+              label: 'Security Operations',
+              to: '/docs/K-SOC-04_SECURITY',
+            },
+            {
+              label: 'API Reference',
+              to: '/docs/K-API-09_API_REFERENCE',
             },
           ],
         },
@@ -78,32 +99,37 @@ const config: Config = {
               label: 'GitHub',
               href: 'https://github.com/kubric/kubric-uidr',
             },
+            {
+              label: 'Issues',
+              href: 'https://github.com/kubric/kubric-uidr/issues',
+            },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Kubric. Built with Docusaurus.`,
+      copyright: `<div style="color: #FFFFFF;">Copyright © ${new Date().getFullYear()} Kubric Platform. All rights reserved.</div><div style="color: #CCCCCC; font-size: 0.9em; margin-top: 10px;">Enterprise Security Operations & Orchestration</div>`,
     },
     prism: {
       theme: prismThemes.oneDark,
       darkTheme: prismThemes.oneDark,
-      additionalLanguages: ['bash', 'python', 'typescript', 'yaml', 'json', 'sql'],
+      additionalLanguages: ['bash', 'python', 'typescript', 'yaml', 'json', 'sql', 'rust', 'go'],
     },
   } as any,
 
   plugins: [
-    function searchLocalPlugin(context, options) {
-      return {
-        name: 'docusaurus-plugin-search-local',
-        configResolved: {},
-        loadContent: async () => null,
-        contentLoaded: async () => {},
-      };
-    },
+    '@docusaurus/plugin-sitemap',
+    '@docusaurus/plugin-pwa',
+    '@docusaurus/plugin-ideal-image',
+    '@docusaurus/plugin-client-redirects',
+    '@easyops-cn/docusaurus-search-local',
+    'docusaurus-plugin-openapi-docs',
+    'redocusaurus',
   ],
 
   themes: [
     '@docusaurus/theme-mermaid',
     '@docusaurus/theme-live-codeblock',
+    '@docusaurus/theme-search-algolia',
+    'docusaurus-theme-openapi-docs',
   ],
 
   markdown: {
