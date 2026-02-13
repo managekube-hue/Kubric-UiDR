@@ -27,17 +27,33 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'docs/yarn.lock'
 
+      - name: Validate Notion secrets
+        id: notion_secrets
+        run: |
+          if [ -z "${{ secrets.NOTION_DATABASE_ID }}" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping Notion sync: NOTION_DATABASE_ID is not configured."
+          elif [ -z "${{ secrets.NOTION_API_KEY }}${{ secrets.DOCU_NOTION_INTEGRATION_TOKEN }}" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping Notion sync: neither NOTION_API_KEY nor DOCU_NOTION_INTEGRATION_TOKEN is configured."
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
+        if: steps.notion_secrets.outputs.ready == 'true'
         run: |
           cd docs
           yarn install --frozen-lockfile
 
       - name: Install Notion SDK
+        if: steps.notion_secrets.outputs.ready == 'true'
         run: |
           cd docs
           yarn add -D @notionhq/client marked dotenv
 
       - name: Create Notion Sync Script
+        if: steps.notion_secrets.outputs.ready == 'true'
         run: |
           mkdir -p .github/scripts
           cat > .github/scripts/notion-sync.js << 'SCRIPT_EOF'
@@ -231,14 +247,16 @@ jobs:
           SCRIPT_EOF
 
       - name: Pull from Notion
+        if: steps.notion_secrets.outputs.ready == 'true'
         env:
-          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY || secrets.DOCU_NOTION_INTEGRATION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
           cd docs
           node ../.github/scripts/notion-sync.js
 
       - name: Commit docs-content changes only
+        if: steps.notion_secrets.outputs.ready == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -249,13 +267,14 @@ jobs:
             (git commit -m "📝 Sync from Notion: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push origin main)
 
       - name: Build documentation
+        if: steps.notion_secrets.outputs.ready == 'true'
         run: |
           cd docs
           yarn build
         continue-on-error: true
 
       - name: Trigger Vercel deployment
-        if: success()
+        if: success() && steps.notion_secrets.outputs.ready == 'true'
         run: |
           curl -X POST "https://api.vercel.com/v1/deployments?teamId=${{ secrets.VERCEL_TEAM_ID }}" \
             -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
