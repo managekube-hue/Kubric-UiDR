@@ -275,9 +275,4 @@ jobs:
 
       - name: Trigger Vercel deployment
         if: success() && steps.notion_secrets.outputs.ready == 'true'
-        run: |
-          curl -X POST "https://api.vercel.com/v1/deployments?teamId=${{ secrets.VERCEL_TEAM_ID }}" \
-            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"name": "Kubric-UiDR", "gitSource": {"type": "github", "repo": "${{ github.repository }}", "ref": "main"}}'
-        continue-on-error: true
+        run: echo "Skipping direct Vercel API deployment. Use single Git-integrated Vercel project for deploys."
