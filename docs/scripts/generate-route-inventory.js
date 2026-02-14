@@ -9,6 +9,8 @@ const outJsonFile = path.join(docsRoot, 'ROUTES-BREADCRUMBS.json');
 const outCsvFile = path.join(docsRoot, 'ROUTES-BREADCRUMBS.csv');
 
 const markdownExt = ['.md', '.mdx'];
+const ignoredDocsPathSegments = ['docs/tutorial-basics/', 'docs/tutorial-extras/', 'docs/product/'];
+const ignoredPageRoutes = new Set(['/markdown-page']);
 
 function walk(dir) {
   const entries = fs.readdirSync(dir, {withFileTypes: true});
@@ -85,6 +87,7 @@ const pageRows = pageFiles
     filePath: path.relative(docsRoot, filePath).replace(/\\/g, '/'),
     route: routeFromPages(filePath),
   }))
+  .filter((row) => !ignoredPageRoutes.has(row.route))
   .sort((a, b) => a.route.localeCompare(b.route));
 
 const docsRows = docsFiles
@@ -92,6 +95,7 @@ const docsRows = docsFiles
     filePath: path.relative(docsRoot, filePath).replace(/\\/g, '/'),
     route: routeFromDocs(filePath),
   }))
+  .filter((row) => !ignoredDocsPathSegments.some((segment) => row.filePath.includes(segment)))
   .sort((a, b) => a.route.localeCompare(b.route));
 
 const allRows = [...pageRows, ...docsRows];

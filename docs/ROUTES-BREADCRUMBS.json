@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-02-14T02:10:20.824Z",
-  "totalRoutes": 336,
+  "generatedAt": "2026-02-14T02:18:10.588Z",
+  "totalRoutes": 322,
   "routes": [
     {
       "route": "/",
@@ -16,11 +16,6 @@
       "route": "/contributors",
       "breadcrumbs": "Home > Contributors",
       "source": "src/pages/contributors.mdx"
-    },
-    {
-      "route": "/markdown-page",
-      "breadcrumbs": "Home > Markdown Page",
-      "source": "src/pages/markdown-page.md"
     },
     {
       "route": "/open-source",
@@ -1616,71 +1611,6 @@
       "route": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go",
       "breadcrumbs": "Home > Docs > K XRO 02 SUPER AGENT > K XRO WD WATCHDOG > K XRO WD 003 Manifest Signer.Go",
       "source": "docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go.md"
-    },
-    {
-      "route": "/docs/product/competitive-landscape",
-      "breadcrumbs": "Home > Docs > Product > Competitive Landscape",
-      "source": "docs/product/competitive-landscape.md"
-    },
-    {
-      "route": "/docs/product/overview",
-      "breadcrumbs": "Home > Docs > Product > Overview",
-      "source": "docs/product/overview.mdx"
-    },
-    {
-      "route": "/docs/product/roi-calculator",
-      "breadcrumbs": "Home > Docs > Product > Roi Calculator",
-      "source": "docs/product/roi-calculator.md"
-    },
-    {
-      "route": "/docs/product/unified-idr-moat",
-      "breadcrumbs": "Home > Docs > Product > Unified Idr Moat",
-      "source": "docs/product/unified-idr-moat.md"
-    },
-    {
-      "route": "/docs/product/why-kubric",
-      "breadcrumbs": "Home > Docs > Product > Why Kubric",
-      "source": "docs/product/why-kubric.md"
-    },
-    {
-      "route": "/docs/tutorial-basics/congratulations",
-      "breadcrumbs": "Home > Docs > Tutorial Basics > Congratulations",
-      "source": "docs/tutorial-basics/congratulations.md"
-    },
-    {
-      "route": "/docs/tutorial-basics/create-a-blog-post",
-      "breadcrumbs": "Home > Docs > Tutorial Basics > Create A Blog Post",
-      "source": "docs/tutorial-basics/create-a-blog-post.md"
-    },
-    {
-      "route": "/docs/tutorial-basics/create-a-document",
-      "breadcrumbs": "Home > Docs > Tutorial Basics > Create A Document",
-      "source": "docs/tutorial-basics/create-a-document.md"
-    },
-    {
-      "route": "/docs/tutorial-basics/create-a-page",
-      "breadcrumbs": "Home > Docs > Tutorial Basics > Create A Page",
-      "source": "docs/tutorial-basics/create-a-page.md"
-    },
-    {
-      "route": "/docs/tutorial-basics/deploy-your-site",
-      "breadcrumbs": "Home > Docs > Tutorial Basics > Deploy Your Site",
-      "source": "docs/tutorial-basics/deploy-your-site.md"
-    },
-    {
-      "route": "/docs/tutorial-basics/markdown-features",
-      "breadcrumbs": "Home > Docs > Tutorial Basics > Markdown Features",
-      "source": "docs/tutorial-basics/markdown-features.mdx"
-    },
-    {
-      "route": "/docs/tutorial-extras/manage-docs-versions",
-      "breadcrumbs": "Home > Docs > Tutorial Extras > Manage Docs Versions",
-      "source": "docs/tutorial-extras/manage-docs-versions.md"
-    },
-    {
-      "route": "/docs/tutorial-extras/translate-your-site",
-      "breadcrumbs": "Home > Docs > Tutorial Extras > Translate Your Site",
-      "source": "docs/tutorial-extras/translate-your-site.md"
     }
   ]
 }
