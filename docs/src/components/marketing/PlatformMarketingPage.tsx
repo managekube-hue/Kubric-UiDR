@@ -20,9 +20,7 @@ export default function PlatformMarketingPage({page}: Props): JSX.Element {
         <div className="enterpriseHero__inner">
           <MarketingBreadcrumbs items={breadcrumbs} />
           <p className="enterpriseHero__eyebrow">{page.eyebrow}</p>
-          <h1>
-            {page.icon} {page.headline}
-          </h1>
+          <h1>{page.headline}</h1>
           <p>{page.subheadline}</p>
           <div className="enterpriseHero__actions">
             <Link className="enterpriseButton enterpriseButton--primary" to={page.ctaHref}>

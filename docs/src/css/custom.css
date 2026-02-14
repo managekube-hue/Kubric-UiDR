@@ -27,7 +27,7 @@
   --ifm-pre-color: var(--ifm-color-gray-100);
   --ifm-pre-padding: 1.25rem;
   --ifm-pre-border-radius: 0.5rem;
-  --ifm-navbar-background-color: #ffffff;
+  --ifm-navbar-background-color: #0f172a;
   --ifm-footer-background-color: #0a0f1a;
   --enterprise-content-measure: 78ch;
 }
@@ -134,10 +134,24 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(180deg, #1e40af 0%, #1d4ed8 18%, #0f172a 55%, #020617 100%);
+}
+
+body,
+#__docusaurus {
+  background: transparent;
 }
 
 .container {
-  padding: 2rem 2rem 2rem 1rem;
+  max-width: 100% !important;
+  padding: 1.5rem 1.5rem 2rem;
+}
+
+.main-wrapper > .container,
+.main-wrapper > .container.margin-vert--lg {
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .col--9 {
@@ -186,6 +200,7 @@ html {
 
 .theme-doc-markdown {
   max-width: var(--enterprise-content-measure);
+  background: transparent;
 }
 
 code {
@@ -332,10 +347,28 @@ pre {
   background: linear-gradient(180deg, #1e40af 0%, #1d4ed8 24%, #0f172a 60%, #020617 100%);
 }
 
+.theme-doc-markdown,
+.theme-doc-version-badge,
+.pagination-nav,
+.pagination-nav__link,
+.card,
+.tabs-container {
+  background: transparent !important;
+}
+
+.theme-doc-markdown h1,
+.theme-doc-markdown h2,
+.theme-doc-markdown h3,
+.theme-doc-markdown h4,
+.theme-doc-markdown p,
+.theme-doc-markdown li {
+  color: #e2e8f0;
+}
+
 .enterpriseHero__inner {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
 }
 
 .enterpriseHero h1 {
@@ -390,9 +423,9 @@ pre {
 }
 
 .enterpriseHome {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2.15rem 1.5rem 3.8rem;
+  padding: 2.15rem 2rem 3.8rem;
   color: #e2e8f0;
 }
 

@@ -1,47 +1,27 @@
 ---
 sidebar_position: 1
+title: Kubric Documentation Root
 ---
 
-# Tutorial Intro
+# Kubric UIDR Documentation Root
 
-Let's discover **Docusaurus in less than 5 minutes**.
+This is the root of the single documentation tree used for implementation and Notion mapping.
 
-## Getting Started
+## Module entry points
 
-Get started by **creating a new site**.
+- [CORE Infrastructure](/docs/K-CORE-01_INFRASTRUCTURE)
+- [XRO Super Agent](/docs/K-XRO-02_SUPER_AGENT)
+- [KAI Orchestration](/docs/K-KAI-03_ORCHESTRATION)
+- [SOC Security Operations](/docs/K-SOC-04_SECURITY)
+- [NOC Operations](/docs/K-NOC-05_OPERATIONS)
+- [GRC Compliance](/docs/K-GRC-07_COMPLIANCE)
+- [PSA Business](/docs/K-PSA-06_BUSINESS)
+- [Development](/docs/K-DEV-08_DEVELOPMENT)
+- [API Reference](/docs/K-API-09_API_REFERENCE)
+- [ITIL Matrix](/docs/K-ITIL-10_ITIL_MATRIX)
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Tree policy
 
-### What you'll need
-
-- [Node.js](https://nodejs.org/en/download/) version 16.14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
-
-## Generate a new site
-
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+- Every parent branch has an index page.
+- Child implementation pages live under their parent module/group path.
+- This tree is the canonical route inventory source for DocuNotion synchronization.
