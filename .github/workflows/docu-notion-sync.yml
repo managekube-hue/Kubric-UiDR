@@ -1,0 +1,23 @@
+name: Sync Notion to Docusaurus
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Notion sync action placeholder
+        run: |
+          echo "TODO: Replace with official docu-notion action from upstream documentation."
+          echo "Required secrets: NOTION_TOKEN, NOTION_ROOT_PAGE_ID"
+          echo "Export target for this repo: ./docs/docs (Docusaurus docs content root)"
+          echo "Do not export to repository root."

@@ -18,4 +18,8 @@ Both workflows are configured to auto-commit only `docs/docs/**`:
 - `.github/workflows/docu-notion.yml`
 - `.github/workflows/sync-notion-docs.yml`
 
-This prevents Notion automation from overwriting homepage/contributor/platform/open-source/contact hero and headline layers.
+This prevents Notion automation from overwriting homepage/contributor/platform/open-source/contact hero and headline layers, including generated marketing routes under `docs/src/pages/platform/*`.
+
+Additional scaffold workflow:
+
+- `.github/workflows/docu-notion-sync.yml`

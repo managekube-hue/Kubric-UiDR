@@ -87,32 +87,32 @@ const config: Config = {
         {
           to: '/',
           position: 'left',
-          label: 'Home',
+          label: '🏠 Home',
         },
         {
           to: '/platform',
           position: 'left',
-          label: 'Platform',
+          label: '📋 Platform',
         },
         {
-          to: '/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R740_HARDWARE',
+          to: '/docs/intro',
           position: 'left',
-          label: 'Documentation',
+          label: '📚 Documentation',
         },
         {
           to: '/contributors',
           position: 'left',
-          label: 'Contributors',
+          label: '🤝 Contributors',
         },
         {
           to: '/open-source',
           position: 'left',
-          label: 'Open Source',
+          label: '📜 Open Source',
         },
         {
           to: '/contact',
           position: 'left',
-          label: 'Contact',
+          label: '📞 Contact',
         },
         {
           href: 'https://github.com/kubric/kubric-uidr',

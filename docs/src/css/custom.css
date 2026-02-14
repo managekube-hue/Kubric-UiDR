@@ -321,7 +321,7 @@ pre {
 }
 
 .enterpriseHero {
-  background: linear-gradient(180deg, #020617 0%, #0f172a 65%, #1e293b 100%);
+  background: linear-gradient(180deg, #1e40af 0%, #1d4ed8 26%, #0f172a 70%, #020617 100%);
   padding: 4.85rem 0 3.2rem;
   border-bottom: 1px solid var(--ifm-color-gray-200);
 }
@@ -338,6 +338,7 @@ pre {
   line-height: 1.08;
   letter-spacing: -0.018em;
   color: #f8fafc;
+  text-transform: uppercase;
 }
 
 .enterpriseHero__eyebrow {
@@ -405,6 +406,14 @@ pre {
   transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
+.enterpriseCard--raised {
+  box-shadow: 0 14px 30px rgba(2, 6, 23, 0.22);
+}
+
+.enterpriseCardGrid--raised {
+  margin-bottom: 1.5rem;
+}
+
 .enterpriseCard:hover {
   transform: translateY(-3px);
   border-color: var(--ifm-color-gray-300);
@@ -442,6 +451,91 @@ pre {
   border-radius: 0.75rem;
   padding: 1rem 1.1rem;
   background: var(--ifm-background-surface-color, #ffffff);
+}
+
+.moduleBandStatement {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--ifm-link-color);
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, var(--ifm-link-color) 8%, transparent);
+}
+
+.moduleWhySection {
+  margin-top: 1.5rem;
+}
+
+.roadmapSection {
+  margin-top: 1.5rem;
+}
+
+.roadmapList {
+  margin: 0.6rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.roadmapList li {
+  margin-bottom: 0.55rem;
+}
+
+.contributorCta {
+  margin-top: 1.6rem;
+}
+
+.marketingBreadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.9rem;
+}
+
+.marketingBreadcrumbs__item a {
+  color: #bfdbfe;
+  text-decoration: none;
+}
+
+.marketingBreadcrumbs__item a:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+
+.marketingBreadcrumbs__sep {
+  margin-right: 0.45rem;
+  color: #93c5fd;
+}
+
+.kubricWordmarkWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.55rem;
+}
+
+.kubricWordmarkShutter {
+  display: inline-flex;
+  gap: 0.08em;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #dbeafe;
+  text-shadow: 0 6px 16px rgba(15, 23, 42, 0.45);
+}
+
+.kubricWordmarkLetter {
+  display: inline-block;
+}
+
+.kubricWordmarkCursor {
+  color: #93c5fd;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  line-height: 1;
+}
+
+.footer {
+  background: linear-gradient(180deg, #020617 0%, #000000 100%) !important;
 }
 
 .enterpriseButton {
