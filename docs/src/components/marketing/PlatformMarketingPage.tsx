@@ -15,7 +15,7 @@ export default function PlatformMarketingPage({page}: Props): JSX.Element {
   ];
 
   return (
-    <>
+    <div className="enterprisePage">
       <section className="enterpriseHero">
         <div className="enterpriseHero__inner">
           <MarketingBreadcrumbs items={breadcrumbs} />
@@ -82,6 +82,6 @@ export default function PlatformMarketingPage({page}: Props): JSX.Element {
           </Link>
         </section>
       </main>
-    </>
+    </div>
   );
 }

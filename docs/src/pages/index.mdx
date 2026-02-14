@@ -5,55 +5,57 @@ title: Kubric Enterprise Platform
 import AnimatedKubricWordmark from '@site/src/components/marketing/AnimatedKubricWordmark';
 import MarketingBreadcrumbs from '@site/src/components/marketing/MarketingBreadcrumbs';
 
-<section className="enterpriseHero">
-  <div className="enterpriseHero__inner">
-    <MarketingBreadcrumbs items={[{label: 'Home', href: '/'}]} />
-    <p className="enterpriseHero__eyebrow">Kubric</p>
-    <AnimatedKubricWordmark />
-    <h1>UNIFIED INFRASTRUCTURE DETECTION & RESPONSE</h1>
-    <p>
-      Unified Infrastructure Detection & Response for enterprise-grade autonomous security operations.
-    </p>
-    <div className="enterpriseHero__actions">
-      <a className="enterpriseButton enterpriseButton--primary" href="/docs/intro">View Documentation</a>
-      <a className="enterpriseButton" href="/contributors">Join as Contributor</a>
-    </div>
-    <p className="enterpriseHero__proof">Security-first controls · Auditable workflows · Open-core architecture</p>
-    <div className="enterpriseHero__band" aria-hidden="true">
-      <img src="/img/kubric-hero-band.svg" alt="" />
-    </div>
-  </div>
-</section>
-
-<main className="enterpriseHome">
-  <section>
-    <h2>Module Cards</h2>
-    <div className="enterpriseCardGrid enterpriseCardGrid--raised">
-      <article className="enterpriseCard enterpriseCard--raised"><h3>CORE</h3><p>Infrastructure, hardware, networking, hypervisor, data, bus, and security roots.</p><a className="enterpriseCard__cta" href="/docs/K-CORE-01_INFRASTRUCTURE">Open module</a></article>
-      <article className="enterpriseCard enterpriseCard--raised"><h3>XRO</h3><p>Super Agent runtime: CoreSec, NetGuard, PerfTrace, Watchdog, and provisioning.</p><a className="enterpriseCard__cta" href="/docs/K-XRO-02_SUPER_AGENT">Open module</a></article>
-      <article className="enterpriseCard enterpriseCard--raised"><h3>KAI</h3><p>AI orchestration with personas, workflows, guardrails, RAG, and auditability.</p><a className="enterpriseCard__cta" href="/docs/K-KAI-03_ORCHESTRATION">Open module</a></article>
-      <article className="enterpriseCard enterpriseCard--raised"><h3>SOC</h3><p>Detection, threat intelligence, vulnerability operations, and forensics.</p><a className="enterpriseCard__cta" href="/platform/soc">Open module</a></article>
-      <article className="enterpriseCard enterpriseCard--raised"><h3>NOC</h3><p>Configuration, backup/DR, performance, and patch operations.</p><a className="enterpriseCard__cta" href="/platform/noc">Open module</a></article>
-      <article className="enterpriseCard enterpriseCard--raised"><h3>GRC / PSA</h3><p>Compliance governance, evidence pipelines, business services, and ITSM.</p><a className="enterpriseCard__cta" href="/platform/grc">Open module</a></article>
+<div className="enterprisePage">
+  <section className="enterpriseHero">
+    <div className="enterpriseHero__inner">
+      <MarketingBreadcrumbs items={[{label: 'Home', href: '/'}]} />
+      <p className="enterpriseHero__eyebrow">Kubric</p>
+      <AnimatedKubricWordmark />
+      <h1>UNIFIED INFRASTRUCTURE DETECTION & RESPONSE</h1>
+      <p>
+        Unified Infrastructure Detection & Response for enterprise-grade autonomous security operations.
+      </p>
+      <div className="enterpriseHero__actions">
+        <a className="enterpriseButton enterpriseButton--primary" href="/docs/intro">View Documentation</a>
+        <a className="enterpriseButton" href="/contributors">Join as Contributor</a>
+      </div>
+      <p className="enterpriseHero__proof">Security-first controls · Auditable workflows · Open-core architecture</p>
+      <div className="enterpriseHero__band" aria-hidden="true">
+        <img src="/img/kubric-hero-band.svg" alt="" />
+      </div>
     </div>
   </section>
 
-  <section className="enterpriseWhy">
-    <h2>Why Kubric</h2>
-    <p>
-      Kubric combines technical depth with operational clarity. The platform is structured for enterprise
-      trust: deterministic workflows, auditable actions, security-first controls, and implementation-ready
-      documentation that scales from engineer to CISO.
-    </p>
-    <p>
-      This is documentation for execution, not marketing. Each domain is organized to support progressive
-      disclosure: architecture first, then operational detail, then implementation artifacts.
-    </p>
-  </section>
+  <main className="enterpriseHome">
+    <section>
+      <h2>Module Cards</h2>
+      <div className="enterpriseCardGrid enterpriseCardGrid--raised">
+        <article className="enterpriseCard enterpriseCard--raised"><h3>CORE</h3><p>Infrastructure, hardware, networking, hypervisor, data, bus, and security roots.</p><a className="enterpriseCard__cta" href="/docs/K-CORE-01_INFRASTRUCTURE">Open module</a></article>
+        <article className="enterpriseCard enterpriseCard--raised"><h3>XRO</h3><p>Super Agent runtime: CoreSec, NetGuard, PerfTrace, Watchdog, and provisioning.</p><a className="enterpriseCard__cta" href="/docs/K-XRO-02_SUPER_AGENT">Open module</a></article>
+        <article className="enterpriseCard enterpriseCard--raised"><h3>KAI</h3><p>AI orchestration with personas, workflows, guardrails, RAG, and auditability.</p><a className="enterpriseCard__cta" href="/docs/K-KAI-03_ORCHESTRATION">Open module</a></article>
+        <article className="enterpriseCard enterpriseCard--raised"><h3>SOC</h3><p>Detection, threat intelligence, vulnerability operations, and forensics.</p><a className="enterpriseCard__cta" href="/platform/soc">Open module</a></article>
+        <article className="enterpriseCard enterpriseCard--raised"><h3>NOC</h3><p>Configuration, backup/DR, performance, and patch operations.</p><a className="enterpriseCard__cta" href="/platform/noc">Open module</a></article>
+        <article className="enterpriseCard enterpriseCard--raised"><h3>GRC / PSA</h3><p>Compliance governance, evidence pipelines, business services, and ITSM.</p><a className="enterpriseCard__cta" href="/platform/grc">Open module</a></article>
+      </div>
+    </section>
 
-  <section className="enterpriseWhy contributorCta">
-    <h2>Contribute to production readiness</h2>
-    <p>Join module teams to help move roadmap milestones from design to production operations.</p>
-    <a className="enterpriseButton enterpriseButton--primary" href="/contributors">Become a Contributor</a>
-  </section>
-</main>
+    <section className="enterpriseWhy">
+      <h2>Why Kubric</h2>
+      <p>
+        Kubric combines technical depth with operational clarity. The platform is structured for enterprise
+        trust: deterministic workflows, auditable actions, security-first controls, and implementation-ready
+        documentation that scales from engineer to CISO.
+      </p>
+      <p>
+        This is documentation for execution, not marketing. Each domain is organized to support progressive
+        disclosure: architecture first, then operational detail, then implementation artifacts.
+      </p>
+    </section>
+
+    <section className="enterpriseWhy contributorCta">
+      <h2>Contribute to production readiness</h2>
+      <p>Join module teams to help move roadmap milestones from design to production operations.</p>
+      <a className="enterpriseButton enterpriseButton--primary" href="/contributors">Become a Contributor</a>
+    </section>
+  </main>
+</div>

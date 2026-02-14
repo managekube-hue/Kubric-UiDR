@@ -125,8 +125,8 @@
 }
 
 .main-wrapper {
-  max-width: 1440px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   width: 100%;
 }
 
@@ -321,9 +321,15 @@ pre {
 }
 
 .enterpriseHero {
-  background: linear-gradient(180deg, #1e40af 0%, #1d4ed8 26%, #0f172a 70%, #020617 100%);
+  background: transparent;
   padding: 4.85rem 0 3.2rem;
-  border-bottom: 1px solid var(--ifm-color-gray-200);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.enterprisePage {
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  width: 100%;
+  background: linear-gradient(180deg, #1e40af 0%, #1d4ed8 24%, #0f172a 60%, #020617 100%);
 }
 
 .enterpriseHero__inner {
@@ -387,6 +393,12 @@ pre {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2.15rem 1.5rem 3.8rem;
+  color: #e2e8f0;
+}
+
+.enterpriseHome h2,
+.enterpriseHome h3 {
+  color: #f8fafc;
 }
 
 .enterpriseCardGrid {
@@ -398,11 +410,11 @@ pre {
 }
 
 .enterpriseCard {
-  background: var(--ifm-background-surface-color, #ffffff);
-  border: 1px solid var(--ifm-color-gray-200);
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 0.75rem;
   padding: 1.08rem;
-  box-shadow: 0 4px 12px rgba(2, 6, 23, 0.08);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.36);
   transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -416,8 +428,8 @@ pre {
 
 .enterpriseCard:hover {
   transform: translateY(-3px);
-  border-color: var(--ifm-color-gray-300);
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.12);
+  border-color: rgba(147, 197, 253, 0.55);
+  box-shadow: 0 16px 34px rgba(2, 6, 23, 0.45);
 }
 
 .enterpriseCard h3 {
@@ -427,6 +439,7 @@ pre {
 
 .enterpriseCard p {
   margin: 0;
+  color: #cbd5e1;
 }
 
 .enterpriseCard__cta {
@@ -434,32 +447,38 @@ pre {
   margin-top: 0.9rem;
   font-weight: 600;
   padding: 0.45rem 0.7rem;
-  border: 1px solid var(--ifm-color-gray-300);
+  border: 1px solid rgba(147, 197, 253, 0.45);
   border-radius: 0.45rem;
   text-decoration: none;
+  color: #bfdbfe;
   transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 }
 
 .enterpriseCard__cta:hover {
-  border-color: var(--ifm-link-color);
-  color: var(--ifm-link-hover-color);
-  background: color-mix(in srgb, var(--ifm-link-color) 8%, transparent);
+  border-color: #93c5fd;
+  color: #ffffff;
+  background: rgba(59, 130, 246, 0.2);
 }
 
 .enterpriseWhy {
-  border: 1px solid var(--ifm-color-gray-200);
+  border: 1px solid rgba(148, 163, 184, 0.26);
   border-radius: 0.75rem;
   padding: 1rem 1.1rem;
-  background: var(--ifm-background-surface-color, #ffffff);
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.enterpriseWhy p {
+  color: #cbd5e1;
 }
 
 .moduleBandStatement {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
-  border-left: 4px solid var(--ifm-link-color);
+  border-left: 4px solid #60a5fa;
   padding: 0.65rem 0.9rem;
   border-radius: 0.3rem;
-  background: color-mix(in srgb, var(--ifm-link-color) 8%, transparent);
+  background: rgba(30, 64, 175, 0.35);
+  color: #dbeafe;
 }
 
 .moduleWhySection {
