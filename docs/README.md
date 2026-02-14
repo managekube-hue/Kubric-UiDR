@@ -1,19 +1,15 @@
-# Docusaurus 2
+# Kubric Docs Content Root
 
-This directory is a brief example of a [Docusaurus](https://v2.docusaurus.io) site that can be deployed to Vercel with zero configuration.
+This directory contains the technical documentation content rendered under `/docs/*`.
 
-## Deploy Your Own
+## Purpose
 
-Deploy your own Docusaurus project with Vercel.
+- Parent/group/implementation pages that map to Kubric module structure
+- Source content for DocuNotion 1:1 synchronization
+- Sidebar navigation IDs referenced by `sidebars.js`
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/docusaurus-2&template=docusaurus-2)
+## Operational Rules
 
-_Live Example: https://docusaurus-2-template.vercel.app_
-
-### How We Created This Example
-
-To get started with Docusaurus on Vercel, you can use the [Docusaurus CLI](https://v2.docusaurus.io/docs/installation#scaffold-project-website) to initialize the project:
-
-```shell
-npx create-docusaurus@latest my-website classic
-```
+- Treat this directory as canonical content for documentation sync.
+- Keep route/tree consistency with `REPO-TREE-MAPPING.md`.
+- Website shell (`src/pages`) is code-managed and separate from sync content.

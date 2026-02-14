@@ -1,5 +1,7 @@
 # Kubric Platform - File Structure Reference
 
+> Status: Historical migration reference only. Canonical mapping is in `REPO-TREE-MAPPING.md`.
+
 This repository uses a modular architecture organized into 10 main modules with standardized naming conventions.
 
 ## Module Overview

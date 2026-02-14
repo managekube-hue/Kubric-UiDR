@@ -1,5 +1,15 @@
 # Kubric Security Platform
 
+## Canonical Documentation (Read This First)
+
+- Primary project overview: `README.md` (this file)
+- Canonical tree + Notion mapping: `REPO-TREE-MAPPING.md`
+- Route inventory for Notion: `ROUTES-BREADCRUMBS.md` / `ROUTES-BREADCRUMBS.json` / `ROUTES-BREADCRUMBS.csv`
+
+Historical migration notes are retained but non-canonical:
+- `README-STRUCTURE.md`
+- `MIGRATION-SUMMARY.md`
+
 A comprehensive, modular security orchestration and response platform built on enterprise-grade infrastructure.
 
 ## Overview
