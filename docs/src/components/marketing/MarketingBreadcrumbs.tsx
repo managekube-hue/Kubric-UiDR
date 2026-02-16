@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {type ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 
 interface BreadcrumbItem {
@@ -10,7 +10,7 @@ interface Props {
   items: BreadcrumbItem[];
 }
 
-export default function MarketingBreadcrumbs({items}: Props): JSX.Element {
+export default function MarketingBreadcrumbs({items}: Props): ReactNode {
   return (
     <nav className="marketingBreadcrumbs" aria-label="Breadcrumbs">
       {items.map((item, index) => (

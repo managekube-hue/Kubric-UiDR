@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {type ReactNode} from 'react';
 import Link from '@docusaurus/Link';
 import type {PlatformPageContent} from '@site/src/lib/marketing/platformContent';
 import MarketingBreadcrumbs from '@site/src/components/marketing/MarketingBreadcrumbs';
@@ -7,7 +7,7 @@ interface Props {
   page: PlatformPageContent;
 }
 
-export default function PlatformMarketingPage({page}: Props): JSX.Element {
+export default function PlatformMarketingPage({page}: Props): ReactNode {
   const breadcrumbs = [
     {label: 'Home', href: '/'},
     {label: 'Platform', href: '/platform'},

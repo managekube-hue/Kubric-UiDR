@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {type ReactNode} from 'react';
 import {motion} from 'framer-motion';
 
 const letters = 'KUBRIC'.split('');
 
-export default function AnimatedKubricWordmark(): JSX.Element {
+export default function AnimatedKubricWordmark(): ReactNode {
   return (
     <div className="kubricWordmarkWrap" aria-label="Kubric animated wordmark">
       <motion.div
