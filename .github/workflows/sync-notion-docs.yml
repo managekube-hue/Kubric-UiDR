@@ -1,4 +1,4 @@
-name: 📝 Sync Notion to Docusaurus
+name: DOCUSAURUS_SYNC
 
 on:
   schedule:
@@ -12,7 +12,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  sync-notion:
+  docusaurus-sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,10 +27,13 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'docs/yarn.lock'
 
-      - name: Validate Notion secrets
-        id: notion_secrets
+      - name: Validate DOCUSAURUS_SYNC settings
+        id: docusaurus_sync
         run: |
-          if [ -z "${{ secrets.NOTION_DATABASE_ID }}" ]; then
+          if [ "${{ secrets.DOCUSAURUS_SYNC }}" != "true" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping sync: DOCUSAURUS_SYNC secret is not 'true'."
+          elif [ -z "${{ secrets.NOTION_DATABASE_ID }}" ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "Skipping Notion sync: NOTION_DATABASE_ID is not configured."
           elif [ -z "${{ secrets.NOTION_API_KEY }}${{ secrets.DOCU_NOTION_INTEGRATION_TOKEN }}" ]; then
@@ -41,19 +44,19 @@ jobs:
           fi
 
       - name: Install dependencies
-        if: steps.notion_secrets.outputs.ready == 'true'
+        if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
           cd docs
           yarn install --frozen-lockfile
 
       - name: Install Notion SDK
-        if: steps.notion_secrets.outputs.ready == 'true'
+        if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
           cd docs
           yarn add -D @notionhq/client marked dotenv
 
       - name: Create Notion Sync Script
-        if: steps.notion_secrets.outputs.ready == 'true'
+        if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
           mkdir -p .github/scripts
           cat > .github/scripts/notion-sync.js << 'SCRIPT_EOF'
@@ -247,7 +250,7 @@ jobs:
           SCRIPT_EOF
 
       - name: Pull from Notion
-        if: steps.notion_secrets.outputs.ready == 'true'
+        if: steps.docusaurus_sync.outputs.ready == 'true'
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY || secrets.DOCU_NOTION_INTEGRATION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
@@ -256,7 +259,7 @@ jobs:
           node ../.github/scripts/notion-sync.js
 
       - name: Commit docs-content changes only
-        if: steps.notion_secrets.outputs.ready == 'true'
+        if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -267,12 +270,12 @@ jobs:
             (git commit -m "📝 Sync from Notion: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push origin main)
 
       - name: Build documentation
-        if: steps.notion_secrets.outputs.ready == 'true'
+        if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
           cd docs
           yarn build
         continue-on-error: true
 
       - name: Trigger Vercel deployment
-        if: success() && steps.notion_secrets.outputs.ready == 'true'
+        if: success() && steps.docusaurus_sync.outputs.ready == 'true'
         run: echo "Skipping direct Vercel API deployment. Use single Git-integrated Vercel project for deploys."
