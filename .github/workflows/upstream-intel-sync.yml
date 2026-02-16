@@ -1,0 +1,44 @@
+name: Upstream Intel Sync
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Sync upstream intelligence
+        run: |
+          chmod +x scripts/sync-upstream-intel.sh
+          ./scripts/sync-upstream-intel.sh
+
+      - name: Validate upstream intelligence
+        run: |
+          go run ./cmd/validate
+
+      - name: Normalize to canonical NDJSON
+        run: |
+          go run ./cmd/intel-normalize
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add third_party/intelligence
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: sync upstream intelligence"
+          git push origin main
