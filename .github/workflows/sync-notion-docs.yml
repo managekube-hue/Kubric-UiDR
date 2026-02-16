@@ -45,7 +45,7 @@ jobs:
         if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
           cd docs
-          yarn install --frozen-lockfile
+          yarn install --non-interactive
 
       - name: Install Notion SDK
         if: steps.docusaurus_sync.outputs.ready == 'true'
@@ -56,8 +56,8 @@ jobs:
       - name: Create Notion Sync Script
         if: steps.docusaurus_sync.outputs.ready == 'true'
         run: |
-          mkdir -p .github/scripts
-          cat > .github/scripts/notion-sync.js << 'SCRIPT_EOF'
+          mkdir -p docs/scripts
+          cat > docs/scripts/notion-sync.js << 'SCRIPT_EOF'
           const { Client } = require('@notionhq/client');
           const fs = require('fs');
           const path = require('path');
@@ -183,11 +183,11 @@ jobs:
               markdown += await convertNotionBlocks(blocks.results);
               
               // Determine file path from K-ID
-              const [module] = kid.split('-');
-              const moduleDir = MODULE_MAP[module];
+              const modulePrefix = kid.split('-').slice(0, 2).join('-');
+              const moduleDir = MODULE_MAP[modulePrefix];
               
               if (!moduleDir) {
-                console.warn(`⚠️  Unknown module prefix: ${module}`);
+                console.warn(`⚠️  Unknown module prefix: ${modulePrefix}`);
                 return;
               }
               
@@ -254,7 +254,7 @@ jobs:
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
           cd docs
-          node ../.github/scripts/notion-sync.js
+          node scripts/notion-sync.js
 
       - name: Commit docs-content changes only
         if: steps.docusaurus_sync.outputs.ready == 'true'
