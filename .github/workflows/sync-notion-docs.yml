@@ -24,8 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
-          cache-dependency-path: 'docs/yarn.lock'
 
       - name: Validate DOCUSAURUS_SYNC settings
         id: docusaurus_sync
