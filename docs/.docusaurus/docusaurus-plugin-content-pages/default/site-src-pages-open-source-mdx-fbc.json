@@ -1,0 +1,11 @@
+{
+  "type": "mdx",
+  "permalink": "/open-source",
+  "source": "@site/src/pages/open-source.mdx",
+  "title": "Open Source",
+  "description": "Open Source",
+  "frontMatter": {
+    "title": "Open Source"
+  },
+  "unlisted": false
+}

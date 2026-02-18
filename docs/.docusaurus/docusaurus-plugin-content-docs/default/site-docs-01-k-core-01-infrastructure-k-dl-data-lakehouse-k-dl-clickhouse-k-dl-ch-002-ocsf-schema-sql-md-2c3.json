@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql",
+  "title": "K-DL-CH-002_OCSF_Schema.sql",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-DL-DATALAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002OCSF_Schema.sql",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DL-CH-002_OCSF_Schema.sql"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DL-CH-001_Cluster_Config.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config"
+  },
+  "next": {
+    "title": "K-DL-CH-003_TTL_Cold_Storage.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-003_TTL_Cold_Storage"
+  }
+}

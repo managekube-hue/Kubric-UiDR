@@ -1,0 +1,28 @@
+{
+  "id": "K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts",
+  "title": "K-PSA-PTL-LIB-001_api_client.ts",
+  "description": "Source: 06K-PSA-06BUSINESS/K-PSA-PTLPORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001api_client.ts",
+  "source": "@site/docs/06_K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts.md",
+  "sourceDirName": "06_K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP",
+  "slug": "/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts",
+  "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/06_K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-PSA-PTL-LIB-001_api_client.ts"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-PSA-PTL-DASH-006_BillingChart.tsx",
+    "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-006_BillingChart.tsx"
+  },
+  "next": {
+    "title": "K-PSA-PTL-LIB-002_nats_eventsource.ts",
+    "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-002_nats_eventsource.ts"
+  }
+}

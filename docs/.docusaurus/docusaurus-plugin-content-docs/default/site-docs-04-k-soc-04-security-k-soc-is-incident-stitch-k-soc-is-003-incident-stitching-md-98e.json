@@ -1,0 +1,28 @@
+{
+  "id": "K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching",
+  "title": "K-SOC-IS-003_incident_stitching.md",
+  "description": "Source: 04K-SOC-04SECURITY/K-SOC-ISINCIDENTSTITCH/K-SOC-IS-003incidentstitching.md",
+  "source": "@site/docs/04_K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching.md",
+  "sourceDirName": "04_K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH",
+  "slug": "/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching",
+  "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/04_K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-SOC-IS-003_incident_stitching.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-SOC-IS-002_graph_correlation.py",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-002_graph_correlation.py"
+  },
+  "next": {
+    "title": "K-SOC-IS-004_forensic_chain.md",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-004_forensic_chain"
+  }
+}

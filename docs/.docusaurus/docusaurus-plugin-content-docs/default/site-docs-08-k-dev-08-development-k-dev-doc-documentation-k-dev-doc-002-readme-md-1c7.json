@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README",
+  "title": "K-DEV-DOC-002_README.md",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-DOCDOCUMENTATION/K-DEV-DOC-002README.md",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-DOC-002_README.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-DOC-001_architecture.md",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture"
+  },
+  "next": {
+    "title": "K-DEV-DOC-003_LICENSE",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-003_LICENSE"
+  }
+}

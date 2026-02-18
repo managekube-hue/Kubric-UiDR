@@ -1,0 +1,5 @@
+---
+title: K-NET-001_10G_SFP_Config.md
+---
+
+Source: `01_K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-001_10G_SFP_Config.md`

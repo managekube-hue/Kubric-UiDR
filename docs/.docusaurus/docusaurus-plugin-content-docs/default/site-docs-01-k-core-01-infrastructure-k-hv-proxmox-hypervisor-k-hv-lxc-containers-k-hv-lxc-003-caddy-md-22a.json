@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy",
+  "title": "K-HV-LXC-003_Caddy.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-HV-PROXMOXHYPERVISOR/K-HV-LXCCONTAINERS/K-HV-LXC-003_Caddy.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-HV-LXC-003_Caddy.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-HV-LXC-002_n8n.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-002_n8n"
+  },
+  "next": {
+    "title": "K-HV-LXC-004_Woodpecker_CI.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "intro",
+  "title": "UIDR Execution Lanes",
+  "description": "Docusaurus mirrors the repository runtime tree exactly under ordered lanes 00–12:",
+  "source": "@site/docs/intro.md",
+  "sourceDirName": ".",
+  "slug": "/intro",
+  "permalink": "/docs/intro",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/intro.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "UIDR Execution Lanes"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEPLOY-SM-002_nats_single.conf",
+    "permalink": "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-SMALL/K-DEPLOY-SM-002_nats_single.conf"
+  }
+}

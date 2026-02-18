@@ -1,0 +1,28 @@
+{
+  "id": "K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify",
+  "title": "K-NOC-BR-004_backup_verify.md",
+  "description": "Source: 05K-NOC-05OPERATIONS/K-NOC-BRBACKUPDR/K-NOC-BR-004backupverify.md",
+  "source": "@site/docs/05_K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify.md",
+  "sourceDirName": "05_K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR",
+  "slug": "/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify",
+  "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/05_K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-NOC-BR-004_backup_verify.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-NOC-BR-003_s3_cold_lifecycle.go",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-003_s3_cold_lifecycle.go"
+  },
+  "next": {
+    "title": "K-NOC-BR-005_velero_backup.go",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-005_velero_backup.go"
+  }
+}

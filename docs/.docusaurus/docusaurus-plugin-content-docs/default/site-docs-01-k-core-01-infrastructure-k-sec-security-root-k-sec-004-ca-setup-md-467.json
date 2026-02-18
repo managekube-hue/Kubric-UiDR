@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup",
+  "title": "K-SEC-004_CA_Setup.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-SEC-SECURITYROOT/K-SEC-004CA_Setup.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-SEC-004_CA_Setup.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-SEC-003_Blake3_Fingerprint.go",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-003_Blake3_Fingerprint.go"
+  },
+  "next": {
+    "title": "K-SEC-005_Vault_Policies.hcl",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-005_Vault_Policies.hcl"
+  }
+}

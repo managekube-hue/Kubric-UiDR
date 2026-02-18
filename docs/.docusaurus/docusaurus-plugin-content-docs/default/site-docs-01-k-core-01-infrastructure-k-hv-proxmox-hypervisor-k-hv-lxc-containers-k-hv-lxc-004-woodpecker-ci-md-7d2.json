@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI",
+  "title": "K-HV-LXC-004_Woodpecker_CI.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-HV-PROXMOXHYPERVISOR/K-HV-LXCCONTAINERS/K-HV-LXC-004WoodpeckerCI.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-HV-LXC-004_Woodpecker_CI.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-HV-LXC-003_Caddy.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy"
+  },
+  "next": {
+    "title": "K-HV-VM-001_Go_API_CloudInit.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-001_Go_API_CloudInit"
+  }
+}

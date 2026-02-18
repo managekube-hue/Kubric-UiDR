@@ -1,0 +1,5 @@
+---
+title: K-SEC-004_CA_Setup.md
+---
+
+Source: `01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup.md`

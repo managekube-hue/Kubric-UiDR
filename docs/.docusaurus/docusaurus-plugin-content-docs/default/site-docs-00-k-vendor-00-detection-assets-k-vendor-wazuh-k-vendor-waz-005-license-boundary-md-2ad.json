@@ -1,0 +1,28 @@
+{
+  "id": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary",
+  "title": "K-VENDOR-WAZ-005_license_boundary.md",
+  "description": "Source: 00K-VENDOR-00DETECTIONASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005license_boundary.md",
+  "source": "@site/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary.md",
+  "sourceDirName": "00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH",
+  "slug": "/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary",
+  "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-VENDOR-WAZ-005_license_boundary.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-VENDOR-WAZ-004_sca_rules.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-004_sca_rules"
+  },
+  "next": {
+    "title": "K-VENDOR-YAR-001_INDEX.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-001_INDEX"
+  }
+}

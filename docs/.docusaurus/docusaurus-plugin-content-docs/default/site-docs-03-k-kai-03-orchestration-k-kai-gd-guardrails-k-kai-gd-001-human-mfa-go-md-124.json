@@ -1,0 +1,28 @@
+{
+  "id": "K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go",
+  "title": "K-KAI-GD-001_human_mfa.go",
+  "description": "Source: 03K-KAI-03ORCHESTRATION/K-KAI-GDGUARDRAILS/K-KAI-GD-001human_mfa.go",
+  "source": "@site/docs/03_K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go.md",
+  "sourceDirName": "03_K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS",
+  "slug": "/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go",
+  "permalink": "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/03_K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-KAI-GD-001_human_mfa.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-KAI-TR-004_kiss_calculator.py",
+    "permalink": "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-004_kiss_calculator.py"
+  },
+  "next": {
+    "title": "K-KAI-GD-002_action_queue.sql",
+    "permalink": "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-002_action_queue.sql"
+  }
+}

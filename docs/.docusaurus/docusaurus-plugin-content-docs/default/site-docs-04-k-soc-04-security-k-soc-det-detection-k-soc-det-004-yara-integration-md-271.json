@@ -1,0 +1,28 @@
+{
+  "id": "K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration",
+  "title": "K-SOC-DET-004_yara_integration.md",
+  "description": "Source: 04K-SOC-04SECURITY/K-SOC-DETDETECTION/K-SOC-DET-004yara_integration.md",
+  "source": "@site/docs/04_K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration.md",
+  "sourceDirName": "04_K-SOC-04_SECURITY/K-SOC-DET_DETECTION",
+  "slug": "/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration",
+  "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/04_K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-SOC-DET-004_yara_integration.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-SOC-DET-003_mitre_mapper.py",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-003_mitre_mapper.py"
+  },
+  "next": {
+    "title": "K-SOC-DET-005_suricata_rules.md",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-005_suricata_rules"
+  }
+}

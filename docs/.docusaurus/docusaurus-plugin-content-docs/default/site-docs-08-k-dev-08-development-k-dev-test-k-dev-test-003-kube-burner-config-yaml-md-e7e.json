@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml",
+  "title": "K-DEV-TEST-003_kube_burner_config.yaml",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003kubeburner_config.yaml",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-TEST",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-TEST-003_kube_burner_config.yaml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-TEST-002_vegeta_attack.sh",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-002_vegeta_attack.sh"
+  },
+  "next": {
+    "title": "K-DEV-TEST-004_chaos_mesh_experiment.yaml",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-004_chaos_mesh_experiment.yaml"
+  }
+}

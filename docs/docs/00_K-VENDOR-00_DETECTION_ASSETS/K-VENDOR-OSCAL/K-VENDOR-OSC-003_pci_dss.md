@@ -1,0 +1,5 @@
+---
+title: K-VENDOR-OSC-003_pci_dss.md
+---
+
+Source: `00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-003_pci_dss.md`

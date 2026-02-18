@@ -14,20 +14,20 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@cmfcmf/docusaurus-search-local": "1.1.0",
     "@docusaurus/core": "3.7.0",
-    "@docusaurus/module-type-aliases": "3.7.0",
-    "@docusaurus/plugin-client-redirects": "3.7.0",
+    "@docusaurus/preset-classic": "3.7.0",
     "@docusaurus/plugin-content-docs": "3.7.0",
     "@docusaurus/plugin-content-pages": "3.7.0",
     "@docusaurus/plugin-google-gtag": "3.7.0",
-    "@docusaurus/plugin-ideal-image": "3.7.0",
-    "@docusaurus/plugin-pwa": "3.7.0",
     "@docusaurus/plugin-sitemap": "3.7.0",
-    "@docusaurus/preset-classic": "3.7.0",
-    "@docusaurus/theme-live-codeblock": "3.7.0",
+    "@docusaurus/plugin-pwa": "3.7.0",
+    "@docusaurus/plugin-ideal-image": "3.7.0",
+    "@docusaurus/plugin-client-redirects": "3.7.0",
     "@docusaurus/theme-mermaid": "3.7.0",
+    "@docusaurus/theme-live-codeblock": "3.7.0",
     "@docusaurus/theme-search-algolia": "3.7.0",
+    "@docusaurus/module-type-aliases": "3.7.0",
+    "@cmfcmf/docusaurus-search-local": "1.1.0",
     "@mdx-js/react": "^2.3.0",
     "clsx": "^2.0.0",
     "framer-motion": "^11.11.17",
@@ -36,7 +36,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@docusaurus/tsconfig": "3.7.0",
     "@types/node": "^20.10.0",
     "typescript": "^5.3.3"
   },

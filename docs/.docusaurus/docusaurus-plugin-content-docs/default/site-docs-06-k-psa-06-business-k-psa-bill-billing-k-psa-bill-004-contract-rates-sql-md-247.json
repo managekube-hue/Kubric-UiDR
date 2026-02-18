@@ -1,0 +1,28 @@
+{
+  "id": "K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql",
+  "title": "K-PSA-BILL-004_contract_rates.sql",
+  "description": "Source: 06K-PSA-06BUSINESS/K-PSA-BILLBILLING/K-PSA-BILL-004contract_rates.sql",
+  "source": "@site/docs/06_K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql.md",
+  "sourceDirName": "06_K-PSA-06_BUSINESS/K-PSA-BILL_BILLING",
+  "slug": "/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql",
+  "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/06_K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-PSA-BILL-004_contract_rates.sql"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-PSA-BILL-003_hle_constants.go",
+    "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-003_hle_constants.go"
+  },
+  "next": {
+    "title": "K-PSA-BILL-005_pdf_generator.md",
+    "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-005_pdf_generator"
+  }
+}

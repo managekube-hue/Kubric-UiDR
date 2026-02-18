@@ -1,0 +1,28 @@
+{
+  "id": "K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go",
+  "title": "K-NOC-PT-002_manifest_signer.go",
+  "description": "Source: 05K-NOC-05OPERATIONS/K-NOC-PTPATCHMGMT/K-NOC-PT-002manifestsigner.go",
+  "source": "@site/docs/05_K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go.md",
+  "sourceDirName": "05_K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT",
+  "slug": "/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go",
+  "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/05_K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-NOC-PT-002_manifest_signer.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-NOC-PT-001_delta_generator.go",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-001_delta_generator.go"
+  },
+  "next": {
+    "title": "K-PSA-BILL-001_usage_aggregator.go",
+    "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-001_usage_aggregator.go"
+  }
+}

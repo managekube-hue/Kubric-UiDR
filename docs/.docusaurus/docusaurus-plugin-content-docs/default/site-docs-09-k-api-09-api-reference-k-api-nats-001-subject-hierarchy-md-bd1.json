@@ -1,0 +1,28 @@
+{
+  "id": "K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy",
+  "title": "K-API-NATS-001_subject_hierarchy.md",
+  "description": "Source: 09K-API-09APIREFERENCE/K-API-NATS-001subject_hierarchy.md",
+  "source": "@site/docs/09_K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy.md",
+  "sourceDirName": "09_K-API-09_API_REFERENCE",
+  "slug": "/K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy",
+  "permalink": "/docs/K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/09_K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-API-NATS-001_subject_hierarchy.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-TOOLS-008_jmespath_querier.py",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-008_jmespath_querier.py"
+  },
+  "next": {
+    "title": "K-API-OPEN-001_provisioning.yaml",
+    "permalink": "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-001_provisioning.yaml"
+  }
+}

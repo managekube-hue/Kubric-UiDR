@@ -1,0 +1,28 @@
+{
+  "id": "K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs",
+  "title": "K-XRO-PT-001_main.rs",
+  "description": "Source: 02K-XRO-02SUPERAGENT/K-XRO-PTPERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs",
+  "source": "@site/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs.md",
+  "sourceDirName": "02_K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC",
+  "slug": "/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs",
+  "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-XRO-PT-001_main.rs"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-XRO-PT-006_Baseline_Schema.json",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-006_Baseline_Schema.json"
+  },
+  "next": {
+    "title": "K-XRO-PT-002_perf_event_open.rs",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-002_perf_event_open.rs"
+  }
+}

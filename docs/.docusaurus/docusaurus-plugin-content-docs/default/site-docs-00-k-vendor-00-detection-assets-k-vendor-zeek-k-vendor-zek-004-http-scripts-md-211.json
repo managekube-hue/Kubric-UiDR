@@ -1,0 +1,28 @@
+{
+  "id": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts",
+  "title": "K-VENDOR-ZEK-004_http_scripts.md",
+  "description": "Source: 00K-VENDOR-00DETECTIONASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004http_scripts.md",
+  "source": "@site/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts.md",
+  "sourceDirName": "00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK",
+  "slug": "/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts",
+  "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-VENDOR-ZEK-004_http_scripts.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-VENDOR-ZEK-003_intel_framework.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-003_intel_framework"
+  },
+  "next": {
+    "title": "K-VENDOR-ZEK-005_ja3_tls.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-005_ja3_tls"
+  }
+}

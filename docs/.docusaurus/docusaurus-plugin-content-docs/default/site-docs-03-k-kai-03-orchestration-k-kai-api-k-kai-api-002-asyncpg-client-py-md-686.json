@@ -1,0 +1,28 @@
+{
+  "id": "K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py",
+  "title": "K-KAI-API-002_asyncpg_client.py",
+  "description": "Source: 03K-KAI-03ORCHESTRATION/K-KAI-API/K-KAI-API-002asyncpgclient.py",
+  "source": "@site/docs/03_K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py.md",
+  "sourceDirName": "03_K-KAI-03_ORCHESTRATION/K-KAI-API",
+  "slug": "/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py",
+  "permalink": "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/03_K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-KAI-API-002_asyncpg_client.py"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-KAI-API-001_fastapi_server.py",
+    "permalink": "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-001_fastapi_server.py"
+  },
+  "next": {
+    "title": "K-KAI-API-003_psycopg2_fallback.py",
+    "permalink": "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-003_psycopg2_fallback.py"
+  }
+}

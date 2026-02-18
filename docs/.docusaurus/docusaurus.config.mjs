@@ -4,15 +4,16 @@
  * Modify the docusaurus.config.js file at your site's root instead.
  */
 export default {
-  "title": "My Site",
-  "tagline": "Dinosaurs are cool",
-  "url": "https://your-docusaurus-test-site.com",
+  "title": "Kubric Enterprise Platform",
+  "tagline": "Enterprise Security Operations & Orchestration",
+  "favicon": "img/favicon.ico",
+  "url": "https://kubric-platform.vercel.app",
   "baseUrl": "/",
+  "organizationName": "kubric",
+  "projectName": "kubric-platform",
   "onBrokenLinks": "warn",
   "onBrokenMarkdownLinks": "warn",
-  "favicon": "img/favicon.ico",
-  "organizationName": "facebook",
-  "projectName": "docusaurus",
+  "trailingSlash": false,
   "i18n": {
     "defaultLocale": "en",
     "locales": [
@@ -25,177 +26,269 @@ export default {
     [
       "classic",
       {
-        "docs": false,
+        "docs": {
+          "sidebarPath": "./sidebars.js",
+          "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/",
+          "routeBasePath": "/docs",
+          "include": [
+            "**/*.{md,mdx}"
+          ],
+          "exclude": [
+            "**/README.md",
+            "**/node_modules/**",
+            "**/tutorial-basics/**",
+            "**/tutorial-extras/**",
+            "**/product/**"
+          ],
+          "showLastUpdateTime": true,
+          "showLastUpdateAuthor": true
+        },
+        "sitemap": {
+          "changefreq": "weekly",
+          "priority": 0.5,
+          "filename": "sitemap.xml"
+        },
         "blog": false,
         "theme": {
-          "customCss": "/workspaces/Kubric-UiDR/docs/src/css/custom.css"
+          "customCss": "./src/css/custom.css"
         }
       }
     ]
   ],
   "themeConfig": {
+    "image": "img/kubric-og.png",
+    "metadata": [
+      {
+        "name": "description",
+        "content": "Kubric: Enterprise Security Operations & Orchestration Platform"
+      },
+      {
+        "name": "keywords",
+        "content": "SOC, NOC, GRC, security operations, automation, orchestration"
+      }
+    ],
+    "colorMode": {
+      "defaultMode": "dark",
+      "disableSwitch": true,
+      "respectPrefersColorScheme": false
+    },
+    "announcementBar": {
+      "id": "kubric-announcement",
+      "content": "Enterprise Security Operations Platform — Version 1.0",
+      "backgroundColor": "#0f172a",
+      "textColor": "#FFFFFF",
+      "isCloseable": true
+    },
     "navbar": {
-      "style": "primary",
-      "title": "My Site",
+      "title": "Kubric UIDR",
+      "hideOnScroll": false,
+      "style": "dark",
       "logo": {
-        "alt": "My Site Logo",
-        "src": "img/logo.svg"
+        "alt": "Kubric Logo",
+        "src": "img/logo.svg",
+        "height": 32
       },
       "items": [
         {
-          "href": "https://github.com/managekube-hue/Kubric-UiDR",
-          "label": "GitHub",
-          "position": "right"
+          "to": "/",
+          "position": "left",
+          "label": "Home"
+        },
+        {
+          "to": "/platform",
+          "position": "left",
+          "label": "Platform"
+        },
+        {
+          "to": "/docs/intro",
+          "position": "left",
+          "label": "Documentation"
+        },
+        {
+          "to": "/contributors",
+          "position": "left",
+          "label": "Contributors"
+        },
+        {
+          "to": "/open-source",
+          "position": "left",
+          "label": "Open Source"
+        },
+        {
+          "to": "/contact",
+          "position": "left",
+          "label": "Contact"
+        },
+        {
+          "href": "https://github.com/kubric/kubric-uidr",
+          "position": "right",
+          "className": "header-github-link",
+          "aria-label": "GitHub repository"
         }
-      ],
-      "hideOnScroll": false
-    },
-    "colorMode": {
-      "defaultMode": "light",
-      "disableSwitch": false,
-      "respectPrefersColorScheme": true
+      ]
     },
     "footer": {
       "style": "dark",
       "links": [
         {
-          "title": "More",
+          "title": "Core Modules",
+          "items": [
+            {
+              "label": "Platform",
+              "to": "/docs/01_K-CORE-01_INFRASTRUCTURE"
+            },
+            {
+              "label": "Orchestration",
+              "to": "/docs/03_K-KAI-03_ORCHESTRATION"
+            },
+            {
+              "label": "Security Operations",
+              "to": "/docs/04_K-SOC-04_SECURITY"
+            }
+          ]
+        },
+        {
+          "title": "Enterprise",
+          "items": [
+            {
+              "label": "Business & Billing",
+              "to": "/docs/06_K-PSA-06_BUSINESS"
+            },
+            {
+              "label": "Compliance & GRC",
+              "to": "/docs/07_K-GRC-07_COMPLIANCE"
+            },
+            {
+              "label": "Development",
+              "to": "/docs/08_K-DEV-08_DEVELOPMENT"
+            }
+          ]
+        },
+        {
+          "title": "Reference",
+          "items": [
+            {
+              "label": "API Reference",
+              "to": "/docs/09_K-API-09_API_REFERENCE"
+            },
+            {
+              "label": "Super Agent",
+              "to": "/docs/02_K-XRO-02_SUPER_AGENT"
+            },
+            {
+              "label": "ITIL Framework",
+              "to": "/docs/10_K-ITIL-10_ITIL_MATRIX"
+            }
+          ]
+        },
+        {
+          "title": "Community",
           "items": [
             {
               "label": "GitHub",
-              "href": "https://github.com/managekube-hue/Kubric-UiDR"
+              "href": "https://github.com/kubric/kubric-uidr"
+            },
+            {
+              "label": "Issues",
+              "href": "https://github.com/kubric/kubric-uidr/issues"
             }
           ]
         }
       ],
-      "copyright": "Copyright © 2026 ManageKube Hue. Built with Docusaurus."
+      "copyright": "<div style=\"text-align: center; color: #FFFFFF;\">\n        <p style=\"margin: 0 0 8px 0; font-weight: 600;\">© 2026 Kubric Platform</p>\n        <p style=\"margin: 0; font-size: 0.9em;\">Enterprise Security Operations & Orchestration</p>\n      </div>"
     },
     "prism": {
       "theme": {
         "plain": {
-          "color": "#393A34",
-          "backgroundColor": "#f6f8fa"
+          "backgroundColor": "hsl(220, 13%, 18%)",
+          "color": "hsl(220, 14%, 71%)",
+          "textShadow": "0 1px rgba(0, 0, 0, 0.3)"
         },
         "styles": [
           {
             "types": [
               "comment",
               "prolog",
-              "doctype",
               "cdata"
             ],
             "style": {
-              "color": "#999988",
-              "fontStyle": "italic"
+              "color": "hsl(220, 10%, 40%)"
             }
           },
           {
             "types": [
-              "namespace"
-            ],
-            "style": {
-              "opacity": 0.7
-            }
-          },
-          {
-            "types": [
-              "string",
-              "attr-value"
-            ],
-            "style": {
-              "color": "#e3116c"
-            }
-          },
-          {
-            "types": [
+              "doctype",
               "punctuation",
-              "operator"
+              "entity"
             ],
             "style": {
-              "color": "#393A34"
+              "color": "hsl(220, 14%, 71%)"
             }
           },
           {
             "types": [
-              "entity",
-              "url",
-              "symbol",
-              "number",
-              "boolean",
-              "variable",
-              "constant",
-              "property",
-              "regex",
-              "inserted"
-            ],
-            "style": {
-              "color": "#36acaa"
-            }
-          },
-          {
-            "types": [
-              "atrule",
-              "keyword",
               "attr-name",
-              "selector"
+              "class-name",
+              "maybe-class-name",
+              "boolean",
+              "constant",
+              "number",
+              "atrule"
             ],
             "style": {
-              "color": "#00a4db"
+              "color": "hsl(29, 54%, 61%)"
             }
           },
           {
             "types": [
-              "function",
-              "deleted",
-              "tag"
-            ],
-            "style": {
-              "color": "#d73a49"
-            }
-          },
-          {
-            "types": [
-              "function-variable"
-            ],
-            "style": {
-              "color": "#6f42c1"
-            }
-          },
-          {
-            "types": [
-              "tag",
-              "selector",
               "keyword"
             ],
             "style": {
-              "color": "#00009f"
-            }
-          }
-        ]
-      },
-      "darkTheme": {
-        "plain": {
-          "color": "#F8F8F2",
-          "backgroundColor": "#282A36"
-        },
-        "styles": [
-          {
-            "types": [
-              "prolog",
-              "constant",
-              "builtin"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)"
+              "color": "hsl(286, 60%, 67%)"
             }
           },
           {
             "types": [
+              "property",
+              "tag",
+              "symbol",
+              "deleted",
+              "important"
+            ],
+            "style": {
+              "color": "hsl(355, 65%, 65%)"
+            }
+          },
+          {
+            "types": [
+              "selector",
+              "string",
+              "char",
+              "builtin",
               "inserted",
+              "regex",
+              "attr-value"
+            ],
+            "style": {
+              "color": "hsl(95, 38%, 62%)"
+            }
+          },
+          {
+            "types": [
+              "variable",
+              "operator",
               "function"
             ],
             "style": {
-              "color": "rgb(80, 250, 123)"
+              "color": "hsl(207, 82%, 66%)"
+            }
+          },
+          {
+            "types": [
+              "url"
+            ],
+            "style": {
+              "color": "hsl(187, 47%, 55%)"
             }
           },
           {
@@ -203,66 +296,193 @@ export default {
               "deleted"
             ],
             "style": {
-              "color": "rgb(255, 85, 85)"
+              "textDecorationLine": "line-through"
             }
           },
           {
             "types": [
-              "changed"
+              "inserted"
             ],
             "style": {
-              "color": "rgb(255, 184, 108)"
+              "textDecorationLine": "underline"
             }
           },
           {
             "types": [
-              "punctuation",
-              "symbol"
+              "italic"
             ],
             "style": {
-              "color": "rgb(248, 248, 242)"
-            }
-          },
-          {
-            "types": [
-              "string",
-              "char",
-              "tag",
-              "selector"
-            ],
-            "style": {
-              "color": "rgb(255, 121, 198)"
-            }
-          },
-          {
-            "types": [
-              "keyword",
-              "variable"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)",
               "fontStyle": "italic"
             }
           },
           {
             "types": [
-              "comment"
+              "important",
+              "bold"
             ],
             "style": {
-              "color": "rgb(98, 114, 164)"
+              "fontWeight": "bold"
             }
           },
           {
             "types": [
-              "attr-name"
+              "important"
             ],
             "style": {
-              "color": "rgb(241, 250, 140)"
+              "color": "hsl(220, 14%, 71%)"
             }
           }
         ]
       },
-      "additionalLanguages": [],
+      "darkTheme": {
+        "plain": {
+          "backgroundColor": "hsl(220, 13%, 18%)",
+          "color": "hsl(220, 14%, 71%)",
+          "textShadow": "0 1px rgba(0, 0, 0, 0.3)"
+        },
+        "styles": [
+          {
+            "types": [
+              "comment",
+              "prolog",
+              "cdata"
+            ],
+            "style": {
+              "color": "hsl(220, 10%, 40%)"
+            }
+          },
+          {
+            "types": [
+              "doctype",
+              "punctuation",
+              "entity"
+            ],
+            "style": {
+              "color": "hsl(220, 14%, 71%)"
+            }
+          },
+          {
+            "types": [
+              "attr-name",
+              "class-name",
+              "maybe-class-name",
+              "boolean",
+              "constant",
+              "number",
+              "atrule"
+            ],
+            "style": {
+              "color": "hsl(29, 54%, 61%)"
+            }
+          },
+          {
+            "types": [
+              "keyword"
+            ],
+            "style": {
+              "color": "hsl(286, 60%, 67%)"
+            }
+          },
+          {
+            "types": [
+              "property",
+              "tag",
+              "symbol",
+              "deleted",
+              "important"
+            ],
+            "style": {
+              "color": "hsl(355, 65%, 65%)"
+            }
+          },
+          {
+            "types": [
+              "selector",
+              "string",
+              "char",
+              "builtin",
+              "inserted",
+              "regex",
+              "attr-value"
+            ],
+            "style": {
+              "color": "hsl(95, 38%, 62%)"
+            }
+          },
+          {
+            "types": [
+              "variable",
+              "operator",
+              "function"
+            ],
+            "style": {
+              "color": "hsl(207, 82%, 66%)"
+            }
+          },
+          {
+            "types": [
+              "url"
+            ],
+            "style": {
+              "color": "hsl(187, 47%, 55%)"
+            }
+          },
+          {
+            "types": [
+              "deleted"
+            ],
+            "style": {
+              "textDecorationLine": "line-through"
+            }
+          },
+          {
+            "types": [
+              "inserted"
+            ],
+            "style": {
+              "textDecorationLine": "underline"
+            }
+          },
+          {
+            "types": [
+              "italic"
+            ],
+            "style": {
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "types": [
+              "important",
+              "bold"
+            ],
+            "style": {
+              "fontWeight": "bold"
+            }
+          },
+          {
+            "types": [
+              "important"
+            ],
+            "style": {
+              "color": "hsl(220, 14%, 71%)"
+            }
+          }
+        ]
+      },
+      "additionalLanguages": [
+        "bash",
+        "python",
+        "typescript",
+        "yaml",
+        "json",
+        "sql",
+        "rust",
+        "go",
+        "java",
+        "javascript",
+        "jsx"
+      ],
       "magicComments": [
         {
           "className": "theme-code-block-highlighted-line",
@@ -274,6 +494,14 @@ export default {
         }
       ]
     },
+    "algolia": {
+      "appId": "PLACEHOLDER",
+      "apiKey": "PLACEHOLDER",
+      "indexName": "kubric-docs",
+      "contextualSearch": true,
+      "searchParameters": {},
+      "searchPagePath": "search"
+    },
     "docs": {
       "versionPersistence": "localStorage",
       "sidebar": {
@@ -281,21 +509,108 @@ export default {
         "autoCollapseCategories": false
       }
     },
-    "metadata": [],
+    "blog": {
+      "sidebar": {
+        "groupByYear": true
+      }
+    },
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3
+    },
+    "mermaid": {
+      "theme": {
+        "dark": "dark",
+        "light": "default"
+      },
+      "options": {}
+    },
+    "liveCodeBlock": {
+      "playgroundPosition": "bottom"
     }
   },
+  "plugins": [
+    [
+      "@docusaurus/plugin-ideal-image",
+      {
+        "quality": 85,
+        "max": 1920,
+        "min": 640,
+        "steps": 2,
+        "disableInDev": false
+      }
+    ],
+    [
+      "@docusaurus/plugin-pwa",
+      {
+        "offlineModeActivationStrategies": [
+          "appInstalled",
+          "standalone",
+          "queryString"
+        ],
+        "pwaHead": [
+          {
+            "tagName": "link",
+            "rel": "manifest",
+            "href": "/manifest.json"
+          },
+          {
+            "tagName": "meta",
+            "name": "theme-color",
+            "content": "#0f172a"
+          }
+        ]
+      }
+    ]
+  ],
+  "themes": [
+    "@docusaurus/theme-mermaid",
+    "@docusaurus/theme-live-codeblock"
+  ],
+  "markdown": {
+    "mermaid": true,
+    "format": "mdx",
+    "mdx1Compat": {
+      "comments": true,
+      "admonitions": true,
+      "headingIds": true
+    },
+    "anchors": {
+      "maintainCase": false
+    }
+  },
+  "scripts": [
+    {
+      "src": "https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js",
+      "async": true
+    }
+  ],
+  "customFields": {
+    "organization": "Kubric",
+    "productVersion": "1.0.0"
+  },
   "baseUrlIssueBanner": true,
+  "future": {
+    "experimental_faster": {
+      "swcJsLoader": false,
+      "swcJsMinimizer": false,
+      "swcHtmlMinimizer": false,
+      "lightningCssMinimizer": false,
+      "mdxCrossCompilerCache": false,
+      "rspackBundler": false
+    },
+    "experimental_storage": {
+      "type": "localStorage",
+      "namespace": false
+    },
+    "experimental_router": "browser"
+  },
+  "onBrokenAnchors": "warn",
   "onDuplicateRoutes": "warn",
   "staticDirectories": [
     "static"
   ],
-  "customFields": {},
-  "plugins": [],
-  "themes": [],
-  "scripts": [],
+  "headTags": [],
   "stylesheets": [],
   "clientModules": [],
   "titleDelimiter": "|",

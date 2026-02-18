@@ -1,0 +1,5 @@
+---
+title: K-K8S-MESH-002_Linkerd_Config.yaml
+---
+
+Source: `01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-002_Linkerd_Config.yaml`

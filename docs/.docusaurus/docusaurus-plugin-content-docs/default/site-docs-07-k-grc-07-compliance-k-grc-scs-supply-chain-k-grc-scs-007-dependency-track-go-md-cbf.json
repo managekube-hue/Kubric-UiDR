@@ -1,0 +1,28 @@
+{
+  "id": "K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go",
+  "title": "K-GRC-SCS-007_dependency_track.go",
+  "description": "Source: 07K-GRC-07COMPLIANCE/K-GRC-SCSSUPPLYCHAIN/K-GRC-SCS-007dependencytrack.go",
+  "source": "@site/docs/07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go.md",
+  "sourceDirName": "07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN",
+  "slug": "/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go",
+  "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-GRC-SCS-007_dependency_track.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-GRC-SCS-006_osv_api_check.py",
+    "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-006_osv_api_check.py"
+  },
+  "next": {
+    "title": "K-GRC-SCS-008_cyclonedx_sbom.py",
+    "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-008_cyclonedx_sbom.py"
+  }
+}

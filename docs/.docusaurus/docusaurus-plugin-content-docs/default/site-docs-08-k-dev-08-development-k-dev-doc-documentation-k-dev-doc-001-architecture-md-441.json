@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture",
+  "title": "K-DEV-DOC-001_architecture.md",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-DOCDOCUMENTATION/K-DEV-DOC-001architecture.md",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-DOC-001_architecture.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-CICD-GHA-011_sonarqube_scanner.sh",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-011_sonarqube_scanner.sh"
+  },
+  "next": {
+    "title": "K-DEV-DOC-002_README.md",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README"
+  }
+}

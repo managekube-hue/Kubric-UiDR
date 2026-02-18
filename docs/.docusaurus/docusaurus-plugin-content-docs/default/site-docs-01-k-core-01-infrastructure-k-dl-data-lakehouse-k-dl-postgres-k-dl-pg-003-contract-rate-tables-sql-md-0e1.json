@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql",
+  "title": "K-DL-PG-003_Contract_Rate_Tables.sql",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-DL-DATALAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003ContractRateTables.sql",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DL-PG-003_Contract_Rate_Tables.sql"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DL-PG-002_RLS_Policies.sql",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-002_RLS_Policies.sql"
+  },
+  "next": {
+    "title": "K-DL-PG-004_OSCAL_Ingestion.sql",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-004_OSCAL_Ingestion.sql"
+  }
+}

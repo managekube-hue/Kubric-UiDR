@@ -1,0 +1,28 @@
+{
+  "id": "K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml",
+  "title": "K-NOC-PM-005_thanos_compactor.yaml",
+  "description": "Source: 05K-NOC-05OPERATIONS/K-NOC-PMPERFORMANCE/K-NOC-PM-005thanos_compactor.yaml",
+  "source": "@site/docs/05_K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml.md",
+  "sourceDirName": "05_K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE",
+  "slug": "/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml",
+  "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/05_K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-NOC-PM-005_thanos_compactor.yaml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-NOC-PM-004_prometheus_recording_rules.yaml",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-004_prometheus_recording_rules.yaml"
+  },
+  "next": {
+    "title": "K-NOC-PM-006_grafana_datasources.yaml",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-006_grafana_datasources.yaml"
+  }
+}

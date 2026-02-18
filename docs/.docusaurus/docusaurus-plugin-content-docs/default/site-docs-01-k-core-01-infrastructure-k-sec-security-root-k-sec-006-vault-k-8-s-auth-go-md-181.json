@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go",
+  "title": "K-SEC-006_Vault_K8s_Auth.go",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-SEC-SECURITYROOT/K-SEC-006VaultK8sAuth.go",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-SEC-006_Vault_K8s_Auth.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-SEC-005_Vault_Policies.hcl",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-005_Vault_Policies.hcl"
+  },
+  "next": {
+    "title": "K-XRO-CS-001_Cargo.toml",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-001_Cargo.toml"
+  }
+}

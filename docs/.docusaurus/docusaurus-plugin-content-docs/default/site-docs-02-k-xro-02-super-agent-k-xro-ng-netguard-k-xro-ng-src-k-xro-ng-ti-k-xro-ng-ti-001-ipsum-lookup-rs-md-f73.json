@@ -1,0 +1,28 @@
+{
+  "id": "K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs",
+  "title": "K-XRO-NG-TI-001_ipsum_lookup.rs",
+  "description": "Source: 02K-XRO-02SUPERAGENT/K-XRO-NGNETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001ipsumlookup.rs",
+  "source": "@site/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs.md",
+  "sourceDirName": "02_K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI",
+  "slug": "/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs",
+  "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-XRO-NG-TI-001_ipsum_lookup.rs"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-XRO-NG-RITA-003_exfil_detector.go",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-003_exfil_detector.go"
+  },
+  "next": {
+    "title": "K-XRO-PT-001_Cargo.toml",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-001_Cargo.toml"
+  }
+}

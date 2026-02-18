@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1",
+  "title": "K-MB-SUB-013_security.alert.v1.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-MB-MESSAGEBUS/K-MB-SUBJECTMAPPING/K-MB-SUB-013_security.alert.v1.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-MB-SUB-013_security.alert.v1.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-MB-SUB-012_comm.alert.v1.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-012_comm.alert.v1"
+  },
+  "next": {
+    "title": "K-MB-SUB-014_remediation.task.v1.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-014_remediation.task.v1"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css",
+  "title": "K-PSA-PTL-THEME-001_tenant_branding.css",
+  "description": "Source: 06K-PSA-06BUSINESS/K-PSA-PTLPORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001tenant_branding.css",
+  "source": "@site/docs/06_K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css.md",
+  "sourceDirName": "06_K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME",
+  "slug": "/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css",
+  "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/06_K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-PSA-PTL-THEME-001_tenant_branding.css"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-PSA-PTL-LIB-002_nats_eventsource.ts",
+    "permalink": "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-002_nats_eventsource.ts"
+  },
+  "next": {
+    "title": "K-GRC-CA-001_lula_validator.go",
+    "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-001_lula_validator.go"
+  }
+}

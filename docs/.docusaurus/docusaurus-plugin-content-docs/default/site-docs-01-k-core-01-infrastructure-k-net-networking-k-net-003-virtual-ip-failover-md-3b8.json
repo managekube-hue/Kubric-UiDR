@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover",
+  "title": "K-NET-003_Virtual_IP_Failover.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003VirtualIP_Failover.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-NET-003_Virtual_IP_Failover.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-NET-002_Corosync_Heartbeat.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-002_Corosync_Heartbeat"
+  },
+  "next": {
+    "title": "K-NET-004_HAProxy_Keepalived.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-004_HAProxy_Keepalived"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go",
+  "title": "K-SOC-ID-002_neo4j_graph.go",
+  "description": "Source: 04K-SOC-04SECURITY/K-SOC-IDIDENTITY/K-SOC-ID-002neo4j_graph.go",
+  "source": "@site/docs/04_K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go.md",
+  "sourceDirName": "04_K-SOC-04_SECURITY/K-SOC-ID_IDENTITY",
+  "slug": "/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go",
+  "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/04_K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-SOC-ID-002_neo4j_graph.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-SOC-ID-001_bloodhound_analysis.go",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-001_bloodhound_analysis.go"
+  },
+  "next": {
+    "title": "K-SOC-ID-003_cypher_ad_paths.md",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-003_cypher_ad_paths"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync",
+  "title": "K-DL-MIG-003_atlas_ci_sync.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-DL-DATALAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003atlascisync.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DL-MIG-003_atlas_ci_sync.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DL-MIG-002_liquibase_k8s.yaml",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-002_liquibase_k8s.yaml"
+  },
+  "next": {
+    "title": "K-DL-PG-001_UAR_Asset_Table.sql",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-001_UAR_Asset_Table.sql"
+  }
+}

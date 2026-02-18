@@ -1,0 +1,28 @@
+{
+  "id": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2",
+  "title": "K-VENDOR-OSC-005_soc2.md",
+  "description": "Source: 00K-VENDOR-00DETECTIONASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005soc2.md",
+  "source": "@site/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2.md",
+  "sourceDirName": "00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL",
+  "slug": "/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2",
+  "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-VENDOR-OSC-005_soc2.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-VENDOR-OSC-004_iso_27001.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-004_iso_27001"
+  },
+  "next": {
+    "title": "K-VENDOR-OSQ-001_INDEX.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-001_INDEX"
+  }
+}

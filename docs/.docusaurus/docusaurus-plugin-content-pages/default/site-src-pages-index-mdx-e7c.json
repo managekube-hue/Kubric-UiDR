@@ -1,0 +1,11 @@
+{
+  "type": "mdx",
+  "permalink": "/",
+  "source": "@site/src/pages/index.mdx",
+  "title": "Kubric Enterprise Platform",
+  "description": "Kubric",
+  "frontMatter": {
+    "title": "Kubric Enterprise Platform"
+  },
+  "unlisted": false
+}

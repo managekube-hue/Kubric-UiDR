@@ -1,0 +1,28 @@
+{
+  "id": "K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go",
+  "title": "K-XRO-WD-003_manifest_signer.go",
+  "description": "Source: 02K-XRO-02SUPERAGENT/K-XRO-WDWATCHDOG/K-XRO-WD-003manifestsigner.go",
+  "source": "@site/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go.md",
+  "sourceDirName": "02_K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG",
+  "slug": "/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go",
+  "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-XRO-WD-003_manifest_signer.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-XRO-WD-002_zstd_delta.go",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-002_zstd_delta.go"
+  },
+  "next": {
+    "title": "K-XRO-WD-004_go_tuf_updater.go",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-004_go_tuf_updater.go"
+  }
+}

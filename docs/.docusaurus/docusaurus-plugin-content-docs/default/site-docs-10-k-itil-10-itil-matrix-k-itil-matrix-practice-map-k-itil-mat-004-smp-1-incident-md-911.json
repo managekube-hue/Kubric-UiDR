@@ -1,0 +1,28 @@
+{
+  "id": "K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident",
+  "title": "K-ITIL-MAT-004_SMP1_Incident.md",
+  "description": "Source: 10K-ITIL-10ITILMATRIX/K-ITIL-MATRIXPRACTICEMAP/K-ITIL-MAT-004SMP1_Incident.md",
+  "source": "@site/docs/10_K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident.md",
+  "sourceDirName": "10_K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP",
+  "slug": "/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident",
+  "permalink": "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/10_K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-ITIL-MAT-004_SMP1_Incident.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-ITIL-MAT-003_GMP6_InfoSec.md",
+    "permalink": "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-003_GMP6_InfoSec"
+  },
+  "next": {
+    "title": "K-ITIL-MAT-005_SMP10_Change.md",
+    "permalink": "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-005_SMP10_Change"
+  }
+}

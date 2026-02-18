@@ -1,0 +1,28 @@
+{
+  "id": "K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard",
+  "title": "K-GRC-SCS-003_openssf_scorecard.md",
+  "description": "Source: 07K-GRC-07COMPLIANCE/K-GRC-SCSSUPPLYCHAIN/K-GRC-SCS-003openssfscorecard.md",
+  "source": "@site/docs/07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard.md",
+  "sourceDirName": "07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN",
+  "slug": "/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard",
+  "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-GRC-SCS-003_openssf_scorecard.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-GRC-SCS-002_grype_scanner.py",
+    "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-002_grype_scanner.py"
+  },
+  "next": {
+    "title": "K-GRC-SCS-004_sbom_generation.md",
+    "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-004_sbom_generation"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml",
+  "title": "K-DEV-GIT-016_bandit_config.yaml",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-GITGITOPS/K-DEV-GIT-016bandit_config.yaml",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-GIT-016_bandit_config.yaml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-GIT-015_pylintrc",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-015_pylintrc"
+  },
+  "next": {
+    "title": "K-DEV-GIT-017_safety_policy.yml",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-017_safety_policy.yml"
+  }
+}

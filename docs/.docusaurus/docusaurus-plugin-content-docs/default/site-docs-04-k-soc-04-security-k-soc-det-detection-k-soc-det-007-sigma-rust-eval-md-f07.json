@@ -1,0 +1,28 @@
+{
+  "id": "K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval",
+  "title": "K-SOC-DET-007_sigma_rust_eval.md",
+  "description": "Source: 04K-SOC-04SECURITY/K-SOC-DETDETECTION/K-SOC-DET-007sigmarusteval.md",
+  "source": "@site/docs/04_K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval.md",
+  "sourceDirName": "04_K-SOC-04_SECURITY/K-SOC-DET_DETECTION",
+  "slug": "/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval",
+  "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/04_K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-SOC-DET-007_sigma_rust_eval.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-SOC-DET-006_custom_detections.md",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-006_custom_detections"
+  },
+  "next": {
+    "title": "K-SOC-DET-008_tetragon_k8s_ebpf.md",
+    "permalink": "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-008_tetragon_k8s_ebpf"
+  }
+}

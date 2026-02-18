@@ -1,0 +1,28 @@
+{
+  "id": "K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json",
+  "title": "K-DEPLOY-DASH-003_tuf_root.json",
+  "description": "Source: 12K-DEPLOY-12TOPOLOGIES/K-DEPLOY-DASH-003tufroot.json",
+  "source": "@site/docs/12_K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json.md",
+  "sourceDirName": "12_K-DEPLOY-12_TOPOLOGIES",
+  "slug": "/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json",
+  "permalink": "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/12_K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEPLOY-DASH-003_tuf_root.json"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEPLOY-DASH-002_prometheus_rules.yaml",
+    "permalink": "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-002_prometheus_rules.yaml"
+  },
+  "next": {
+    "title": "K-DEPLOY-LG-001_terraform_aws_eks.tf",
+    "permalink": "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-001_terraform_aws_eks.tf"
+  }
+}

@@ -70,3 +70,8 @@ test-results.xml
 tmp/
 temp/
 .cache/
+
+# Generated tree snapshots (do not commit)
+EXISTING-FILE-TREE.txt
+EXISTING-K-TREE.txt
+CURRENT-NESTED-TREE.md

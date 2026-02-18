@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/platform/grc",
+  "source": "@site/src/pages/platform/grc.mdx",
+  "title": "Platform GRC",
+  "description": "Kubric GRC platform overview.",
+  "frontMatter": {
+    "title": "Platform GRC",
+    "description": "Kubric GRC platform overview."
+  },
+  "unlisted": false
+}

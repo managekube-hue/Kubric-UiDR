@@ -1,0 +1,28 @@
+{
+  "id": "K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs",
+  "title": "K-XRO-WD-001_agent_orchestrator.rs",
+  "description": "Source: 02K-XRO-02SUPERAGENT/K-XRO-WDWATCHDOG/K-XRO-WD-001agentorchestrator.rs",
+  "source": "@site/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs.md",
+  "sourceDirName": "02_K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG",
+  "slug": "/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs",
+  "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/02_K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-XRO-WD-001_agent_orchestrator.rs"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-XRO-SD-002_tetragon_ebpf.md",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-SD_SIDECARS/K-XRO-SD-002_tetragon_ebpf"
+  },
+  "next": {
+    "title": "K-XRO-WD-002_zstd_delta.go",
+    "permalink": "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-002_zstd_delta.go"
+  }
+}

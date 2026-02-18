@@ -1,0 +1,28 @@
+{
+  "id": "K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto",
+  "title": "K-API-PB-001_ocsf_schema.proto",
+  "description": "Source: 09K-API-09APIREFERENCE/K-API-PBPROTOBUF/K-API-PB-001ocsfschema.proto",
+  "source": "@site/docs/09_K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto.md",
+  "sourceDirName": "09_K-API-09_API_REFERENCE/K-API-PB_PROTOBUF",
+  "slug": "/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto",
+  "permalink": "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/09_K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-API-PB-001_ocsf_schema.proto"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-API-OPEN-009_alerts.yaml",
+    "permalink": "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-009_alerts.yaml"
+  },
+  "next": {
+    "title": "K-API-PB-002_build_rs.rs",
+    "permalink": "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-002_build_rs.rs"
+  }
+}

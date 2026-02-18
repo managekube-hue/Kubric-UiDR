@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py",
+  "title": "K-DEV-TOOLS-001_click_cli.py",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001clickcli.py",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-TOOLS",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-TOOLS-001_click_cli.py"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-TEST-009_hypothesis_property_tests.py",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-009_hypothesis_property_tests.py"
+  },
+  "next": {
+    "title": "K-DEV-TOOLS-002_typer_cli.py",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-002_typer_cli.py"
+  }
+}

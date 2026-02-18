@@ -1,0 +1,5 @@
+---
+title: K-HV-VM-001_Go_API_CloudInit.md
+---
+
+Source: `01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-001_Go_API_CloudInit.md`

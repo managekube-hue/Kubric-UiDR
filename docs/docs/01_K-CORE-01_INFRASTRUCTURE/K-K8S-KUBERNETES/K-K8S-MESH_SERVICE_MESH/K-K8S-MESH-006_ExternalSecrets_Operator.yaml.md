@@ -1,0 +1,5 @@
+---
+title: K-K8S-MESH-006_ExternalSecrets_Operator.yaml
+---
+
+Source: `01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-006_ExternalSecrets_Operator.yaml`

@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml",
+  "title": "K-DEV-BLD-008_workspace_cargo.toml",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-BLDBUILDTOOLCHAIN/K-DEV-BLD-008workspacecargo.toml",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-BLD-008_workspace_cargo.toml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-BLD-007_chi_jwt_auth.go",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-007_chi_jwt_auth.go"
+  },
+  "next": {
+    "title": "K-DEV-BLD-009_buf_protobuf.yaml",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-009_buf_protobuf.yaml"
+  }
+}

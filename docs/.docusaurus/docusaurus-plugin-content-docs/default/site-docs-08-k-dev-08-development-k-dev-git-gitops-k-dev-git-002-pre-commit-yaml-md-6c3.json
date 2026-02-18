@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml",
+  "title": "K-DEV-GIT-002_pre-commit.yaml",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-GITGITOPS/K-DEV-GIT-002pre-commit.yaml",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-GIT-002_pre-commit.yaml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-GIT-001_gitea_setup.md",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-001_gitea_setup"
+  },
+  "next": {
+    "title": "K-DEV-GIT-003_molt-scanner.sh",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-003_molt-scanner.sh"
+  }
+}

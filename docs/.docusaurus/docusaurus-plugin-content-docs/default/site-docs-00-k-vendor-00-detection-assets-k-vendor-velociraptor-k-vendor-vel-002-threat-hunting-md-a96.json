@@ -1,0 +1,28 @@
+{
+  "id": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting",
+  "title": "K-VENDOR-VEL-002_threat_hunting.md",
+  "description": "Source: 00K-VENDOR-00DETECTIONASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002threat_hunting.md",
+  "source": "@site/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting.md",
+  "sourceDirName": "00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR",
+  "slug": "/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting",
+  "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-VENDOR-VEL-002_threat_hunting.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-VENDOR-VEL-001_INDEX.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-001_INDEX"
+  },
+  "next": {
+    "title": "K-VENDOR-VEL-003_forensic_artifacts.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-003_forensic_artifacts"
+  }
+}

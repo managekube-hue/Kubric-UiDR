@@ -1,0 +1,28 @@
+{
+  "id": "K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go",
+  "title": "K-NOC-MDM-002_headwind_android.go",
+  "description": "Source: 05K-NOC-05OPERATIONS/K-NOC-MDM-002headwindandroid.go",
+  "source": "@site/docs/05_K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go.md",
+  "sourceDirName": "05_K-NOC-05_OPERATIONS",
+  "slug": "/K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go",
+  "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/05_K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-NOC-MDM-002_headwind_android.go"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-NOC-MDM-001_micromdm_ios.go",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-001_micromdm_ios.go"
+  },
+  "next": {
+    "title": "K-NOC-MDM-003_android_enterprise.md",
+    "permalink": "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-003_android_enterprise"
+  }
+}

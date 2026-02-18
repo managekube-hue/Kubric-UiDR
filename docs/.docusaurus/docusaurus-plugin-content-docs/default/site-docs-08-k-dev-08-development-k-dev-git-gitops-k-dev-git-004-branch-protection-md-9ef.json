@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection",
+  "title": "K-DEV-GIT-004_branch_protection.md",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-GITGITOPS/K-DEV-GIT-004branch_protection.md",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-GIT-004_branch_protection.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-GIT-003_molt-scanner.sh",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-003_molt-scanner.sh"
+  },
+  "next": {
+    "title": "K-DEV-GIT-005_ruff_config.toml",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-005_ruff_config.toml"
+  }
+}

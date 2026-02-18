@@ -1,0 +1,11 @@
+{
+  "type": "mdx",
+  "permalink": "/contributors",
+  "source": "@site/src/pages/contributors.mdx",
+  "title": "Contributors",
+  "description": "Contributors",
+  "frontMatter": {
+    "title": "Contributors"
+  },
+  "unlisted": false
+}

@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml",
+  "title": "K-K8S-GO-004_Kustomize_Overlays.yaml",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004KustomizeOverlays.yaml",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-K8S-GO-004_Kustomize_Overlays.yaml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-K8S-GO-003_Helm_Values.yaml",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-003_Helm_Values.yaml"
+  },
+  "next": {
+    "title": "K-K8S-GO-005_Gatekeeper_OPA.yaml",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-005_Gatekeeper_OPA.yaml"
+  }
+}

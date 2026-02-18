@@ -1,0 +1,5 @@
+---
+title: K-VENDOR-000_INDEX.md
+---
+
+Source: `00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-000_INDEX.md`

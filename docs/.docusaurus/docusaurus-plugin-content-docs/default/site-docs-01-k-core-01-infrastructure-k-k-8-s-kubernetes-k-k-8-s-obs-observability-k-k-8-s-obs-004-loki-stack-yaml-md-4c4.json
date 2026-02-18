@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml",
+  "title": "K-K8S-OBS-004_Loki_Stack.yaml",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBSOBSERVABILITY/K-K8S-OBS-004Loki_Stack.yaml",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-K8S-OBS-004_Loki_Stack.yaml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-K8S-OBS-003_Grafana_Deployment.yaml",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-003_Grafana_Deployment.yaml"
+  },
+  "next": {
+    "title": "K-K8S-OBS-005_Tempo_Tracing.yaml",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-005_Tempo_Tracing.yaml"
+  }
+}

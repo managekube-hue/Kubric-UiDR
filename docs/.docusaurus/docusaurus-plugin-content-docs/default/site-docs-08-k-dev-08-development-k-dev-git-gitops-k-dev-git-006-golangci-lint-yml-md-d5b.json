@@ -1,0 +1,28 @@
+{
+  "id": "K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml",
+  "title": "K-DEV-GIT-006_golangci_lint.yml",
+  "description": "Source: 08K-DEV-08DEVELOPMENT/K-DEV-GITGITOPS/K-DEV-GIT-006golangci_lint.yml",
+  "source": "@site/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml.md",
+  "sourceDirName": "08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS",
+  "slug": "/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml",
+  "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/08_K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DEV-GIT-006_golangci_lint.yml"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DEV-GIT-005_ruff_config.toml",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-005_ruff_config.toml"
+  },
+  "next": {
+    "title": "K-DEV-GIT-007_clippy_config.toml",
+    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-007_clippy_config.toml"
+  }
+}

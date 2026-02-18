@@ -1,0 +1,28 @@
+{
+  "id": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists",
+  "title": "K-VENDOR-MISP-004_warninglists.md",
+  "description": "Source: 00K-VENDOR-00DETECTIONASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004warninglists.md",
+  "source": "@site/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists.md",
+  "sourceDirName": "00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP",
+  "slug": "/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists",
+  "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-VENDOR-MISP-004_warninglists.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-VENDOR-MISP-003_galaxies.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-003_galaxies"
+  },
+  "next": {
+    "title": "K-VENDOR-MISP-005_objects.md",
+    "permalink": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-005_objects"
+  }
+}

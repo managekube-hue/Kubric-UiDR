@@ -1,27 +1,19 @@
 ---
-sidebar_position: 1
-title: Kubric Documentation Root
+title: UIDR Execution Lanes
 ---
 
-# Kubric UIDR Documentation Root
+Docusaurus mirrors the repository runtime tree exactly under ordered lanes 00–12:
 
-This is the root of the single documentation tree used for implementation and Notion mapping.
-
-## Module entry points
-
-- [CORE Infrastructure](/docs/K-CORE-01_INFRASTRUCTURE)
-- [XRO Super Agent](/docs/K-XRO-02_SUPER_AGENT)
-- [KAI Orchestration](/docs/K-KAI-03_ORCHESTRATION)
-- [SOC Security Operations](/docs/K-SOC-04_SECURITY)
-- [NOC Operations](/docs/K-NOC-05_OPERATIONS)
-- [GRC Compliance](/docs/K-GRC-07_COMPLIANCE)
-- [PSA Business](/docs/K-PSA-06_BUSINESS)
-- [Development](/docs/K-DEV-08_DEVELOPMENT)
-- [API Reference](/docs/K-API-09_API_REFERENCE)
-- [ITIL Matrix](/docs/K-ITIL-10_ITIL_MATRIX)
-
-## Tree policy
-
-- Every parent branch has an index page.
-- Child implementation pages live under their parent module/group path.
-- This tree is the canonical route inventory source for DocuNotion synchronization.
+- 00_K-VENDOR-00_DETECTION_ASSETS
+- 01_K-CORE-01_INFRASTRUCTURE
+- 02_K-XRO-02_SUPER_AGENT
+- 03_K-KAI-03_ORCHESTRATION
+- 04_K-SOC-04_SECURITY
+- 05_K-NOC-05_OPERATIONS
+- 06_K-PSA-06_BUSINESS
+- 07_K-GRC-07_COMPLIANCE
+- 08_K-DEV-08_DEVELOPMENT
+- 09_K-API-09_API_REFERENCE
+- 10_K-ITIL-10_ITIL_MATRIX
+- 11_K-MAP-11_DR_MODULE_MAPPING
+- 12_K-DEPLOY-12_TOPOLOGIES

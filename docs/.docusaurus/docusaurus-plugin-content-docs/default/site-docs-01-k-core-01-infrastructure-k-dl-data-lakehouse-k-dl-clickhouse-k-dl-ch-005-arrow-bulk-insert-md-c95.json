@@ -1,0 +1,28 @@
+{
+  "id": "K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert",
+  "title": "K-DL-CH-005_Arrow_Bulk_Insert.md",
+  "description": "Source: 01K-CORE-01INFRASTRUCTURE/K-DL-DATALAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005ArrowBulkInsert.md",
+  "source": "@site/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert.md",
+  "sourceDirName": "01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE",
+  "slug": "/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert",
+  "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "Author",
+  "lastUpdatedAt": 1539502055000,
+  "frontMatter": {
+    "title": "K-DL-CH-005_Arrow_Bulk_Insert.md"
+  },
+  "sidebar": "docs",
+  "previous": {
+    "title": "K-DL-CH-004_Agent_Decision_History.sql",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-004_Agent_Decision_History.sql"
+  },
+  "next": {
+    "title": "K-DL-DUCK-001_embedded_analytics.md",
+    "permalink": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-DUCKDB/K-DL-DUCK-001_embedded_analytics"
+  }
+}

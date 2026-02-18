@@ -1,0 +1,5 @@
+---
+title: K-ITIL-MAT-008_SMP3_Problem.md
+---
+
+Source: `10_K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-008_SMP3_Problem.md`

@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/platform/kai",
+  "source": "@site/src/pages/platform/kai.mdx",
+  "title": "Platform KAI",
+  "description": "Kubric KAI platform overview.",
+  "frontMatter": {
+    "title": "Platform KAI",
+    "description": "Kubric KAI platform overview."
+  },
+  "unlisted": false
+}
