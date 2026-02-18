@@ -1,7 +1,7 @@
 {
   "id": "intro",
-  "title": "UIDR Execution Lanes",
-  "description": "Docusaurus mirrors the repository runtime tree exactly under ordered lanes 00–12:",
+  "title": "Documentation",
+  "description": "Complete technical reference for Kubric UIDR. This page sits in front of the full repository-mirrored documentation tree.",
   "source": "@site/docs/intro.md",
   "sourceDirName": ".",
   "slug": "/intro",
@@ -12,8 +12,8 @@
   "tags": [],
   "version": "current",
   "lastUpdatedBy": "ManageKube-Kubric",
-  "lastUpdatedAt": 1771387661000,
+  "lastUpdatedAt": 1771393586000,
   "frontMatter": {
-    "title": "UIDR Execution Lanes"
+    "title": "Documentation"
   }
 }

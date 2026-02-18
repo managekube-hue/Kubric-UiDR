@@ -82,2272 +82,2272 @@
       "plugin": "c141421f"
     }
   },
-  "/docs-75e": {
+  "/docs-f95": {
     "__comp": "5e95c892",
     "__context": {
       "plugin": "aba21aa0"
     }
   },
-  "/docs-779": {
+  "/docs-f56": {
     "__comp": "a7bd4aaa",
     "__props": "0058b4c6"
   },
-  "/docs-a6a": {
+  "/docs-881": {
     "__comp": "a94703ab"
   },
-  "/docs/intro-0cf": {
+  "/docs/intro-677": {
     "__comp": "17896441",
     "content": "0e384e19"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy-274": {
+  "/docs/K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy-969": {
     "__comp": "17896441",
     "content": "bd120295"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-001_provisioning.yaml-edc": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-001_provisioning.yaml-9c2": {
     "__comp": "17896441",
     "content": "2c7b48c5"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-002_triage.yaml-14e": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-002_triage.yaml-424": {
     "__comp": "17896441",
     "content": "760b1552"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-003_billing.yaml-090": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-003_billing.yaml-425": {
     "__comp": "17896441",
     "content": "68dc4feb"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-004_vdr_scan.yaml-206": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-004_vdr_scan.yaml-78d": {
     "__comp": "17896441",
     "content": "00905f6c"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-005_grc_compliance.yaml-ee0": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-005_grc_compliance.yaml-86e": {
     "__comp": "17896441",
     "content": "925d570d"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-006_identity_graph.yaml-9cd": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-006_identity_graph.yaml-cc1": {
     "__comp": "17896441",
     "content": "ba0b51db"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-007_ndr_flow.yaml-619": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-007_ndr_flow.yaml-392": {
     "__comp": "17896441",
     "content": "dc1b68c1"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-008_health.yaml-7b1": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-008_health.yaml-ed3": {
     "__comp": "17896441",
     "content": "2491bd24"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-009_alerts.yaml-7f7": {
+  "/docs/K-API-09_API_REFERENCE/K-API-OPENAPI/K-API-OPEN-009_alerts.yaml-55a": {
     "__comp": "17896441",
     "content": "29be0d98"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto-bae": {
+  "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-001_ocsf_schema.proto-472": {
     "__comp": "17896441",
     "content": "b57851ec"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-002_build_rs.rs-875": {
+  "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-002_build_rs.rs-8dd": {
     "__comp": "17896441",
     "content": "66a089d5"
   },
-  "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-003_ocsf_deploy.proto-d09": {
+  "/docs/K-API-09_API_REFERENCE/K-API-PB_PROTOBUF/K-API-PB-003_ocsf_deploy.proto-541": {
     "__comp": "17896441",
     "content": "d3ca22ab"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config-1d6": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config-a98": {
     "__comp": "17896441",
     "content": "e0cb85a8"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql-566": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-002_OCSF_Schema.sql-3df": {
     "__comp": "17896441",
     "content": "2c373031"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-003_TTL_Cold_Storage-526": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-003_TTL_Cold_Storage-418": {
     "__comp": "17896441",
     "content": "66f121c6"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-004_Agent_Decision_History.sql-3e6": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-004_Agent_Decision_History.sql-f4b": {
     "__comp": "17896441",
     "content": "efe44149"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert-c67": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-005_Arrow_Bulk_Insert-682": {
     "__comp": "17896441",
     "content": "c95c3f26"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-DUCKDB/K-DL-DUCK-001_embedded_analytics-8be": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-DUCKDB/K-DL-DUCK-001_embedded_analytics-4e7": {
     "__comp": "17896441",
     "content": "967e07a9"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-DUCKDB/K-DL-DUCK-002_ml_feature_compute.sql-376": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-DUCKDB/K-DL-DUCK-002_ml_feature_compute.sql-441": {
     "__comp": "17896441",
     "content": "aa83b4c7"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-001_golang_migrate_setup-1d7": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-001_golang_migrate_setup-b41": {
     "__comp": "17896441",
     "content": "a4143876"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-002_liquibase_k8s.yaml-3c3": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-002_liquibase_k8s.yaml-c14": {
     "__comp": "17896441",
     "content": "a8362aad"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync-ce4": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-MIGRATIONS/K-DL-MIG-003_atlas_ci_sync-d14": {
     "__comp": "17896441",
     "content": "1182e6cd"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-001_UAR_Asset_Table.sql-807": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-001_UAR_Asset_Table.sql-5cc": {
     "__comp": "17896441",
     "content": "4a91bfae"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-002_RLS_Policies.sql-5d8": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-002_RLS_Policies.sql-48d": {
     "__comp": "17896441",
     "content": "667e2cfe"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql-a84": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-003_Contract_Rate_Tables.sql-b1e": {
     "__comp": "17896441",
     "content": "0e134190"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-004_OSCAL_Ingestion.sql-a45": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-004_OSCAL_Ingestion.sql-291": {
     "__comp": "17896441",
     "content": "808b5cdc"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-005_Atlas_Schema_HCL.hcl-2d9": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-005_Atlas_Schema_HCL.hcl-bd9": {
     "__comp": "17896441",
     "content": "f25d0a7a"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-001_Cluster_Bootstrap-37a": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-001_Cluster_Bootstrap-920": {
     "__comp": "17896441",
     "content": "ae8b0ee4"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-002_Ceph_Storage-943": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-002_Ceph_Storage-657": {
     "__comp": "17896441",
     "content": "71175485"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-003_Chrony_PTP_TimeSync-973": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-003_Chrony_PTP_TimeSync-842": {
     "__comp": "17896441",
     "content": "7aacc86e"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-001_Gitea-3ec": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-001_Gitea-67b": {
     "__comp": "17896441",
     "content": "d53db2a5"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-002_n8n-5e8": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-002_n8n-6cc": {
     "__comp": "17896441",
     "content": "ce67f123"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy-4b6": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-003_Caddy-2a8": {
     "__comp": "17896441",
     "content": "22a51a95"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI-305": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI-e10": {
     "__comp": "17896441",
     "content": "7d2aa47c"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-001_Go_API_CloudInit-dbb": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-001_Go_API_CloudInit-c27": {
     "__comp": "17896441",
     "content": "7d4892f7"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-002_ClickHouse_StatefulSet-367": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-002_ClickHouse_StatefulSet-7be": {
     "__comp": "17896441",
     "content": "1b2ed726"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-003_PostgreSQL_RLS-6ef": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-003_PostgreSQL_RLS-27f": {
     "__comp": "17896441",
     "content": "e33a65f8"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-004_Ollama_LLM-4a6": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-004_Ollama_LLM-d32": {
     "__comp": "17896441",
     "content": "0b2a9a42"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-005_vLLM_GPU_Node-d1e": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-VM_TEMPLATES/K-HV-VM-005_vLLM_GPU_Node-b29": {
     "__comp": "17896441",
     "content": "6999a8ae"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-001_Node1_Config-aa0": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-001_Node1_Config-a49": {
     "__comp": "17896441",
     "content": "18591f2f"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-002_Node2_Config-e91": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-002_Node2_Config-bdd": {
     "__comp": "17896441",
     "content": "ecd4918b"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-003_Node3_Config-50b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-003_Node3_Config-f06": {
     "__comp": "17896441",
     "content": "39517ead"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-004_iDRAC9_Network-6ee": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-004_iDRAC9_Network-504": {
     "__comp": "17896441",
     "content": "c9a79143"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-005_RAM_Expansion-5cd": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-HW-R630_HARDWARE/K-HW-005_RAM_Expansion-a03": {
     "__comp": "17896441",
     "content": "5b4e5aa4"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-001_ClickHouse_StatefulSet.yaml-2ae": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-001_ClickHouse_StatefulSet.yaml-0ef": {
     "__comp": "17896441",
     "content": "586c6d7f"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-002_NATS_StatefulSet.yaml-219": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-002_NATS_StatefulSet.yaml-f1b": {
     "__comp": "17896441",
     "content": "52a5d3fb"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-003_PostgreSQL_StatefulSet.yaml-8c7": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-003_PostgreSQL_StatefulSet.yaml-c14": {
     "__comp": "17896441",
     "content": "5bb601c0"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-004_API_Deployment.yaml-a0b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-004_API_Deployment.yaml-a36": {
     "__comp": "17896441",
     "content": "737a9f07"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-001_ArgoCD_Application.yaml-ffa": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-001_ArgoCD_Application.yaml-908": {
     "__comp": "17896441",
     "content": "9be37875"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-002_Flux_GitRepository.yaml-3c8": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-002_Flux_GitRepository.yaml-e4e": {
     "__comp": "17896441",
     "content": "6be47aec"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-003_Helm_Values.yaml-909": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-003_Helm_Values.yaml-8da": {
     "__comp": "17896441",
     "content": "d17020b4"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml-a0b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-004_Kustomize_Overlays.yaml-ecc": {
     "__comp": "17896441",
     "content": "062fa714"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-005_Gatekeeper_OPA.yaml-02b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-GITOPS/K-K8S-GO-005_Gatekeeper_OPA.yaml-065": {
     "__comp": "17896441",
     "content": "5098fc4a"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-001_Istio_ServiceMesh.yaml-62a": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-001_Istio_ServiceMesh.yaml-23d": {
     "__comp": "17896441",
     "content": "0e9f1fbe"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-002_Linkerd_Config.yaml-cfd": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-002_Linkerd_Config.yaml-fd9": {
     "__comp": "17896441",
     "content": "6f925b33"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-003_Cilium_CNI.yaml-8dc": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-003_Cilium_CNI.yaml-7f3": {
     "__comp": "17896441",
     "content": "e56d7cfa"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-004_Hubble_ServiceMap.yaml-a68": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-004_Hubble_ServiceMap.yaml-dcb": {
     "__comp": "17896441",
     "content": "70ead3fa"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-005_CertManager_Vault.yaml-f08": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-005_CertManager_Vault.yaml-d53": {
     "__comp": "17896441",
     "content": "c0ef640a"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-006_ExternalSecrets_Operator.yaml-aa2": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-MESH_SERVICE_MESH/K-K8S-MESH-006_ExternalSecrets_Operator.yaml-006": {
     "__comp": "17896441",
     "content": "a1cfc4d7"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-001_Prometheus_Operator.yaml-34a": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-001_Prometheus_Operator.yaml-a77": {
     "__comp": "17896441",
     "content": "5b68e89d"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-002_Thanos_Sidecar.yaml-815": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-002_Thanos_Sidecar.yaml-830": {
     "__comp": "17896441",
     "content": "cc47ef33"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-003_Grafana_Deployment.yaml-2e4": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-003_Grafana_Deployment.yaml-a56": {
     "__comp": "17896441",
     "content": "5d2e745a"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml-cd2": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-004_Loki_Stack.yaml-767": {
     "__comp": "17896441",
     "content": "4c400957"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-005_Tempo_Tracing.yaml-faf": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-OBS_OBSERVABILITY/K-K8S-OBS-005_Tempo_Tracing.yaml-9cf": {
     "__comp": "17896441",
     "content": "df4e2ebb"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-POLICY/K-K8S-POL-001_SealedSecrets_Controller.yaml-59b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-POLICY/K-K8S-POL-001_SealedSecrets_Controller.yaml-300": {
     "__comp": "17896441",
     "content": "8e812d8d"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-POLICY/K-K8S-POL-002_NetworkPolicy_Defaults.yaml-287": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-POLICY/K-K8S-POL-002_NetworkPolicy_Defaults.yaml-ee2": {
     "__comp": "17896441",
     "content": "71168a9d"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-POLICY/K-K8S-POL-003_ResourceQuota.yaml-b8e": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-K8S-KUBERNETES/K-K8S-POLICY/K-K8S-POL-003_ResourceQuota.yaml-c98": {
     "__comp": "17896441",
     "content": "cfc14a30"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-001_NATS_Cluster.yaml-f04": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-001_NATS_Cluster.yaml-e59": {
     "__comp": "17896441",
     "content": "e90b8907"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-002_JetStream_Config-373": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-002_JetStream_Config-062": {
     "__comp": "17896441",
     "content": "79c5954f"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-003_mTLS_Cert_Rotation-8a3": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-003_mTLS_Cert_Rotation-30f": {
     "__comp": "17896441",
     "content": "04e2ccc3"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-004_ZeroMQ_IPC-f91": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-004_ZeroMQ_IPC-7a1": {
     "__comp": "17896441",
     "content": "181ee9fc"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-001_edr.process.v1-37e": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-001_edr.process.v1-53e": {
     "__comp": "17896441",
     "content": "08044ca9"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-002_edr.file.v1-a18": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-002_edr.file.v1-461": {
     "__comp": "17896441",
     "content": "bba3847b"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-003_ndr.flow.v1-9e8": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-003_ndr.flow.v1-ed2": {
     "__comp": "17896441",
     "content": "44f9e496"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-004_ndr.beacon.v1-796": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-004_ndr.beacon.v1-ea1": {
     "__comp": "17896441",
     "content": "d7828c9f"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-005_itdr.auth.v1-27f": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-005_itdr.auth.v1-4f0": {
     "__comp": "17896441",
     "content": "591ebe00"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-006_vdr.vuln.v1-a6f": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-006_vdr.vuln.v1-536": {
     "__comp": "17896441",
     "content": "1c53e232"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-007_grc.drift.v1-681": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-007_grc.drift.v1-9b5": {
     "__comp": "17896441",
     "content": "71c95f4a"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-008_svc.ticket.v1-02b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-008_svc.ticket.v1-3a8": {
     "__comp": "17896441",
     "content": "191060de"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-009_billing.usage.v1-c54": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-009_billing.usage.v1-edb": {
     "__comp": "17896441",
     "content": "d6aa299a"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-010_health.score.v1-a31": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-010_health.score.v1-1d6": {
     "__comp": "17896441",
     "content": "3c8a93ce"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-011_ti.ioc.v1-8fe": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-011_ti.ioc.v1-6c7": {
     "__comp": "17896441",
     "content": "cf180182"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-012_comm.alert.v1-101": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-012_comm.alert.v1-688": {
     "__comp": "17896441",
     "content": "bce26c7c"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1-0f6": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-013_security.alert.v1-3cf": {
     "__comp": "17896441",
     "content": "25df6bd8"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-014_remediation.task.v1-30b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-014_remediation.task.v1-567": {
     "__comp": "17896441",
     "content": "89d233e9"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-015_asset.provisioned.v1-e23": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-MB-MESSAGE_BUS/K-MB-SUBJECT_MAPPING/K-MB-SUB-015_asset.provisioned.v1-ce3": {
     "__comp": "17896441",
     "content": "cf847712"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-001_10G_SFP_Config-287": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-001_10G_SFP_Config-5c9": {
     "__comp": "17896441",
     "content": "97ad9048"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-002_Corosync_Heartbeat-aa8": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-002_Corosync_Heartbeat-2cc": {
     "__comp": "17896441",
     "content": "d3e79072"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover-188": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-003_Virtual_IP_Failover-fee": {
     "__comp": "17896441",
     "content": "3b810247"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-004_HAProxy_Keepalived-20b": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-NET-NETWORKING/K-NET-004_HAProxy_Keepalived-22d": {
     "__comp": "17896441",
     "content": "30dd91d7"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-001_HashiCorp_Vault-2b1": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-001_HashiCorp_Vault-1b9": {
     "__comp": "17896441",
     "content": "715499b8"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-002_TPM_Root_of_Trust-a8d": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-002_TPM_Root_of_Trust-809": {
     "__comp": "17896441",
     "content": "63b86fd2"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-003_Blake3_Fingerprint.go-a3f": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-003_Blake3_Fingerprint.go-8c3": {
     "__comp": "17896441",
     "content": "7fbac042"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup-586": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-004_CA_Setup-6b7": {
     "__comp": "17896441",
     "content": "4670093b"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-005_Vault_Policies.hcl-629": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-005_Vault_Policies.hcl-1d7": {
     "__comp": "17896441",
     "content": "0129eb07"
   },
-  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go-e6a": {
+  "/docs/K-CORE-01_INFRASTRUCTURE/K-SEC-SECURITY_ROOT/K-SEC-006_Vault_K8s_Auth.go-363": {
     "__comp": "17896441",
     "content": "181b728e"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-000_INDEX-ca9": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-000_INDEX-b99": {
     "__comp": "17896441",
     "content": "6731d98b"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-001_grafana_overview.json-d9f": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-001_grafana_overview.json-42f": {
     "__comp": "17896441",
     "content": "b2338f59"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-002_prometheus_rules.yaml-2b3": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-002_prometheus_rules.yaml-c2e": {
     "__comp": "17896441",
     "content": "e0b2d052"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json-d66": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-DASH-003_tuf_root.json-a0b": {
     "__comp": "17896441",
     "content": "314052ed"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-001_terraform_aws_eks.tf-f0c": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-001_terraform_aws_eks.tf-013": {
     "__comp": "17896441",
     "content": "853ecf42"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-002_vpc_config.tf-6b4": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-002_vpc_config.tf-1cf": {
     "__comp": "17896441",
     "content": "f310826b"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-003_node_groups.tf-7e0": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-003_node_groups.tf-088": {
     "__comp": "17896441",
     "content": "7ce5c474"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-MEDIUM/K-DEPLOY-MD-001_kustomize_overlay.yaml-024": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-MEDIUM/K-DEPLOY-MD-001_kustomize_overlay.yaml-d60": {
     "__comp": "17896441",
     "content": "0025eab0"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-MEDIUM/K-DEPLOY-MD-002_scale_config.yaml-914": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-MEDIUM/K-DEPLOY-MD-002_scale_config.yaml-a68": {
     "__comp": "17896441",
     "content": "8da0d13b"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-SMALL/K-DEPLOY-SM-001_docker-compose.yml-16e": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-SMALL/K-DEPLOY-SM-001_docker-compose.yml-2f0": {
     "__comp": "17896441",
     "content": "079c1e91"
   },
-  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-SMALL/K-DEPLOY-SM-002_nats_single.conf-c13": {
+  "/docs/K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-SMALL/K-DEPLOY-SM-002_nats_single.conf-fa9": {
     "__comp": "17896441",
     "content": "0e94cdfa"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-001_Makefile-908": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-001_Makefile-2be": {
     "__comp": "17896441",
     "content": "a4a1039c"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-002_rust-toolchain.toml-111": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-002_rust-toolchain.toml-965": {
     "__comp": "17896441",
     "content": "ce0e242c"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-003_go.mod-08d": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-003_go.mod-c8c": {
     "__comp": "17896441",
     "content": "c95d3755"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-004_package.json-9e4": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-004_package.json-785": {
     "__comp": "17896441",
     "content": "e0c1ba2e"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-005_cobra_cli.go-e54": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-005_cobra_cli.go-421": {
     "__comp": "17896441",
     "content": "52b7cac5"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-006_chi_cors_middleware.go-4cb": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-006_chi_cors_middleware.go-df2": {
     "__comp": "17896441",
     "content": "78884ac1"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-007_chi_jwt_auth.go-127": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-007_chi_jwt_auth.go-3bf": {
     "__comp": "17896441",
     "content": "a70c4ace"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml-120": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-008_workspace_cargo.toml-9ea": {
     "__comp": "17896441",
     "content": "f599503b"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-009_buf_protobuf.yaml-8e9": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-009_buf_protobuf.yaml-4be": {
     "__comp": "17896441",
     "content": "cdd48e9a"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-010_requirements_kai_core.txt-124": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-010_requirements_kai_core.txt-590": {
     "__comp": "17896441",
     "content": "d660e57d"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-011_requirements_kai_full.txt-097": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-011_requirements_kai_full.txt-5c7": {
     "__comp": "17896441",
     "content": "bf9216f1"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-001_self_hosted_runner-73e": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-001_self_hosted_runner-f56": {
     "__comp": "17896441",
     "content": "91bce20a"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-002_woodpecker_pipeline.yml-d3b": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-002_woodpecker_pipeline.yml-6e1": {
     "__comp": "17896441",
     "content": "57f502ee"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-003_jenkins_x_config.yaml-840": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-003_jenkins_x_config.yaml-df4": {
     "__comp": "17896441",
     "content": "ea817b19"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-001_build-agents.yml-0b6": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-001_build-agents.yml-b3b": {
     "__comp": "17896441",
     "content": "9969750e"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-002_test-api.yml-88f": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-002_test-api.yml-f3b": {
     "__comp": "17896441",
     "content": "edc6d027"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-003_deploy-k8s.yml-866": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-003_deploy-k8s.yml-51b": {
     "__comp": "17896441",
     "content": "66b7ba24"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-004_drone_config.yml-b95": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-004_drone_config.yml-5d8": {
     "__comp": "17896441",
     "content": "b78759f3"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-005_tekton_pipeline.yaml-2be": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-005_tekton_pipeline.yaml-52a": {
     "__comp": "17896441",
     "content": "c53d5189"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-006_concourse_pipeline.yml-d68": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-006_concourse_pipeline.yml-de7": {
     "__comp": "17896441",
     "content": "4143b99a"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-007_dagger_ci.go-e32": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-007_dagger_ci.go-f8e": {
     "__comp": "17896441",
     "content": "81f3ba0a"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-008_earthly_Earthfile-169": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-008_earthly_Earthfile-b7d": {
     "__comp": "17896441",
     "content": "d0e2a7e3"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-009_cosign_signing.sh-848": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-009_cosign_signing.sh-685": {
     "__comp": "17896441",
     "content": "8012f3ea"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-010_snyk_scan.sh-851": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-010_snyk_scan.sh-f72": {
     "__comp": "17896441",
     "content": "d455a535"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-011_sonarqube_scanner.sh-c70": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-CICD/K-DEV-CICD-GHA_WORKFLOWS/K-DEV-CICD-GHA-011_sonarqube_scanner.sh-d0c": {
     "__comp": "17896441",
     "content": "6a76cf62"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture-437": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-001_architecture-677": {
     "__comp": "17896441",
     "content": "44146259"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README-39a": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-002_README-353": {
     "__comp": "17896441",
     "content": "1c726984"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-003_LICENSE-54e": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-003_LICENSE-d1d": {
     "__comp": "17896441",
     "content": "69499fab"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-004_NOTICE-7ee": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-004_NOTICE-a14": {
     "__comp": "17896441",
     "content": "c2f2fab4"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-005_license_compliance_matrix-5bc": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/K-DEV-DOC-005_license_compliance_matrix-28c": {
     "__comp": "17896441",
     "content": "e61698f5"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-001_gitea_setup-8e0": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-001_gitea_setup-d1f": {
     "__comp": "17896441",
     "content": "ac8898bb"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml-48f": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-002_pre-commit.yaml-714": {
     "__comp": "17896441",
     "content": "6c3bc9d0"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-003_molt-scanner.sh-45c": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-003_molt-scanner.sh-7ea": {
     "__comp": "17896441",
     "content": "8844d3b6"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection-1e6": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-004_branch_protection-e31": {
     "__comp": "17896441",
     "content": "9ef3d31f"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-005_ruff_config.toml-b33": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-005_ruff_config.toml-163": {
     "__comp": "17896441",
     "content": "61b0254c"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml-990": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-006_golangci_lint.yml-00d": {
     "__comp": "17896441",
     "content": "d5b3e409"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-007_clippy_config.toml-f95": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-007_clippy_config.toml-84e": {
     "__comp": "17896441",
     "content": "4e9167d6"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-008_eslint_config.js-53a": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-008_eslint_config.js-ff5": {
     "__comp": "17896441",
     "content": "d2644966"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-009_pre_commit_config.yaml-868": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-009_pre_commit_config.yaml-9ad": {
     "__comp": "17896441",
     "content": "ed626710"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-010_commitlint_config.js-e1d": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-010_commitlint_config.js-1ba": {
     "__comp": "17896441",
     "content": "924a86cf"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-011_semantic_release.json-23c": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-011_semantic_release.json-20f": {
     "__comp": "17896441",
     "content": "7c4a4457"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-012_black_config.toml-331": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-012_black_config.toml-57b": {
     "__comp": "17896441",
     "content": "ba296326"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-013_isort_config.cfg-274": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-013_isort_config.cfg-a98": {
     "__comp": "17896441",
     "content": "ba6cc2fe"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-014_mypy_config.ini-5e5": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-014_mypy_config.ini-667": {
     "__comp": "17896441",
     "content": "e51ecce3"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-015_pylintrc-a43": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-015_pylintrc-ff5": {
     "__comp": "17896441",
     "content": "e74231c9"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml-ad4": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-016_bandit_config.yaml-f85": {
     "__comp": "17896441",
     "content": "daeef983"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-017_safety_policy.yml-1d7": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-GIT_GITOPS/K-DEV-GIT-017_safety_policy.yml-9e5": {
     "__comp": "17896441",
     "content": "42aa053f"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-001_docker-compose.yml-c26": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-001_docker-compose.yml-e45": {
     "__comp": "17896441",
     "content": "6bb0bc40"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-002_docker-compose-small.yml-207": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-002_docker-compose-small.yml-235": {
     "__comp": "17896441",
     "content": "45e5f705"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-001_clickhouse_users.xml-f6c": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-001_clickhouse_users.xml-469": {
     "__comp": "17896441",
     "content": "d8e515e1"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-002_postgres_init.sql-c99": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-002_postgres_init.sql-6c7": {
     "__comp": "17896441",
     "content": "a0bc1129"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-003_nats_cluster.conf-a9e": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-003_nats_cluster.conf-171": {
     "__comp": "17896441",
     "content": "eae57ce4"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-004_vault_dev.hcl-090": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-LOCAL_LOCAL_STACK/K-DEV-LOCAL-CONFIG/K-DEV-LOCAL-CFG-004_vault_dev.hcl-df8": {
     "__comp": "17896441",
     "content": "8acfb9bb"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-001_k6_load_test.js-506": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-001_k6_load_test.js-a3f": {
     "__comp": "17896441",
     "content": "cdd548f0"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-002_vegeta_attack.sh-96f": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-002_vegeta_attack.sh-c6a": {
     "__comp": "17896441",
     "content": "c48a77b3"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml-462": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-003_kube_burner_config.yaml-706": {
     "__comp": "17896441",
     "content": "e7e461ad"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-004_chaos_mesh_experiment.yaml-d45": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-004_chaos_mesh_experiment.yaml-630": {
     "__comp": "17896441",
     "content": "bf4a3eca"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-005_litmus_chaos_engine.yaml-771": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-005_litmus_chaos_engine.yaml-7ec": {
     "__comp": "17896441",
     "content": "19089ee5"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-006_pytest_xdist_config.ini-d8c": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-006_pytest_xdist_config.ini-32f": {
     "__comp": "17896441",
     "content": "7c22eedc"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-007_factory_boy_factories.py-898": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-007_factory_boy_factories.py-61b": {
     "__comp": "17896441",
     "content": "903c8b2e"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-008_faker_data_gen.py-fd3": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-008_faker_data_gen.py-485": {
     "__comp": "17896441",
     "content": "a4f598b2"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-009_hypothesis_property_tests.py-74e": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TEST/K-DEV-TEST-009_hypothesis_property_tests.py-f04": {
     "__comp": "17896441",
     "content": "aef53cb9"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py-bfc": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-001_click_cli.py-0de": {
     "__comp": "17896441",
     "content": "8cd07dac"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-002_typer_cli.py-362": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-002_typer_cli.py-6bc": {
     "__comp": "17896441",
     "content": "d1d84094"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-003_rich_output.py-eec": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-003_rich_output.py-20d": {
     "__comp": "17896441",
     "content": "baedef07"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-004_tqdm_progress.py-bdc": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-004_tqdm_progress.py-545": {
     "__comp": "17896441",
     "content": "dbb3e6f0"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-005_colorama_windows.py-0ee": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-005_colorama_windows.py-c9c": {
     "__comp": "17896441",
     "content": "4b79ea8b"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-006_tabulate_tables.py-f39": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-006_tabulate_tables.py-657": {
     "__comp": "17896441",
     "content": "c782cca8"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-007_jsonpath_extractor.py-422": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-007_jsonpath_extractor.py-aa8": {
     "__comp": "17896441",
     "content": "ac719b01"
   },
-  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-008_jmespath_querier.py-801": {
+  "/docs/K-DEV-08_DEVELOPMENT/K-DEV-TOOLS/K-DEV-TOOLS-008_jmespath_querier.py-d2d": {
     "__comp": "17896441",
     "content": "50ded8ae"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-001_lula_validator.go-7a2": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-001_lula_validator.go-a6d": {
     "__comp": "17896441",
     "content": "73b1b16a"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-002_openscap_binding.py-161": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-002_openscap_binding.py-205": {
     "__comp": "17896441",
     "content": "3c05122a"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-003_kyverno_policy.go-c43": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-CA_COMPLIANCE_AUTO/K-GRC-CA-003_kyverno_policy.go-e22": {
     "__comp": "17896441",
     "content": "0f5bbc30"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-001_immutable_audit.sql-c16": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-001_immutable_audit.sql-a98": {
     "__comp": "17896441",
     "content": "873965eb"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-002_blake3_signer.go-47c": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-002_blake3_signer.go-645": {
     "__comp": "17896441",
     "content": "813279f0"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-003_legal_hold-ee0": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-003_legal_hold-d8b": {
     "__comp": "17896441",
     "content": "83849a49"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-004_evidence_export-440": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-EV_EVIDENCE_VAULT/K-GRC-EV-004_evidence_export-d50": {
     "__comp": "17896441",
     "content": "0673b9cc"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-001_nist_800_53_oscal-bba": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-001_nist_800_53_oscal-09a": {
     "__comp": "17896441",
     "content": "ef02a933"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-002_pci_dss_oscal-482": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-002_pci_dss_oscal-6d6": {
     "__comp": "17896441",
     "content": "84d7fa60"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-003_iso_27001_oscal-786": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-003_iso_27001_oscal-8a4": {
     "__comp": "17896441",
     "content": "dd118d7a"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-004_soc2_oscal-fbc": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-FW-004_soc2_oscal-707": {
     "__comp": "17896441",
     "content": "bcbdf51b"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-001_nist_ingest.py-dda": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-001_nist_ingest.py-8c0": {
     "__comp": "17896441",
     "content": "a2ddd40e"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-002_soc2_mapper.py-79c": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-002_soc2_mapper.py-3c3": {
     "__comp": "17896441",
     "content": "f04b9bc0"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-003_iso_mapping.sql-bf6": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-003_iso_mapping.sql-9bd": {
     "__comp": "17896441",
     "content": "7c93e51f"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-004_compliance_trestle.py-dc7": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-004_compliance_trestle.py-26e": {
     "__comp": "17896441",
     "content": "c30aa667"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-005_regscale_ingest.py-eb8": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-OSCAL/K-GRC-OSCAL-005_regscale_ingest.py-bc1": {
     "__comp": "17896441",
     "content": "54e5f505"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-001_sbom_syft.go-854": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-001_sbom_syft.go-c5f": {
     "__comp": "17896441",
     "content": "a0873b5c"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-002_grype_scanner.py-af8": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-002_grype_scanner.py-3f8": {
     "__comp": "17896441",
     "content": "53dbd2ef"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard-5cf": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-003_openssf_scorecard-2a6": {
     "__comp": "17896441",
     "content": "176e53e0"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-004_sbom_generation-40f": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-004_sbom_generation-eda": {
     "__comp": "17896441",
     "content": "6e12988b"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-005_sigstore_cosign.sh-00c": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-005_sigstore_cosign.sh-a9d": {
     "__comp": "17896441",
     "content": "9a99fab5"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-006_osv_api_check.py-615": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-006_osv_api_check.py-faf": {
     "__comp": "17896441",
     "content": "93907d9d"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go-e74": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go-ef8": {
     "__comp": "17896441",
     "content": "cbfe97c2"
   },
-  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-008_cyclonedx_sbom.py-152": {
+  "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-008_cyclonedx_sbom.py-ee1": {
     "__comp": "17896441",
     "content": "069d43be"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-AUDIT_AUDIT_READINESS/K-ITIL-AUD-001_KIC_evidence_map-d5c": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-AUDIT_AUDIT_READINESS/K-ITIL-AUD-001_KIC_evidence_map-262": {
     "__comp": "17896441",
     "content": "dcf60db5"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-AUDIT_AUDIT_READINESS/K-ITIL-AUD-002_soc2_iso_crosswalk.cs-a19": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-AUDIT_AUDIT_READINESS/K-ITIL-AUD-002_soc2_iso_crosswalk.cs-2d3": {
     "__comp": "17896441",
     "content": "82c68b74"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-001_GMP1_Strategy-835": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-001_GMP1_Strategy-68c": {
     "__comp": "17896441",
     "content": "34be91b1"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-002_GMP5_Risk-dc8": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-002_GMP5_Risk-d41": {
     "__comp": "17896441",
     "content": "cfb18af8"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-003_GMP6_InfoSec-008": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-003_GMP6_InfoSec-dec": {
     "__comp": "17896441",
     "content": "13053305"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident-c0b": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-004_SMP1_Incident-be1": {
     "__comp": "17896441",
     "content": "91181b28"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-005_SMP10_Change-884": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-005_SMP10_Change-c0d": {
     "__comp": "17896441",
     "content": "a03b02f1"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-006_SMP12_Deployment-c97": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-006_SMP12_Deployment-3ca": {
     "__comp": "17896441",
     "content": "caa6bf3a"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-007_TMP2_Infrastructure-1a2": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-007_TMP2_Infrastructure-e94": {
     "__comp": "17896441",
     "content": "f2873628"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-008_SMP3_Problem-806": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-008_SMP3_Problem-673": {
     "__comp": "17896441",
     "content": "30e8128f"
   },
-  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-009_SMP7_ServiceLevel-f15": {
+  "/docs/K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-009_SMP7_ServiceLevel-52d": {
     "__comp": "17896441",
     "content": "20a8ba01"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-001_fastapi_server.py-bd9": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-001_fastapi_server.py-fb0": {
     "__comp": "17896441",
     "content": "6ebfbc85"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py-353": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-002_asyncpg_client.py-362": {
     "__comp": "17896441",
     "content": "68663a9e"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-003_psycopg2_fallback.py-4a5": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-003_psycopg2_fallback.py-b8b": {
     "__comp": "17896441",
     "content": "58469313"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-004_clickhouse_connect.py-a16": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-004_clickhouse_connect.py-3c1": {
     "__comp": "17896441",
     "content": "de4f2d43"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-005_aiokafka_consumer.py-4e7": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-005_aiokafka_consumer.py-55a": {
     "__comp": "17896441",
     "content": "ca43cc63"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-006_nats_py_client.py-51d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-006_nats_py_client.py-815": {
     "__comp": "17896441",
     "content": "ec6c3065"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-007_anyio_backend.py-200": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-007_anyio_backend.py-e1f": {
     "__comp": "17896441",
     "content": "ea57928e"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-008_asgiref_sync.py-654": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-008_asgiref_sync.py-cc4": {
     "__comp": "17896441",
     "content": "a0737854"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-009_socketio_realtime.py-5d4": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-API/K-KAI-API-009_socketio_realtime.py-6c3": {
     "__comp": "17896441",
     "content": "d1be98a9"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-AUDIT/K-KAI-AUD-001_decision_history.sql-6ca": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-AUDIT/K-KAI-AUD-001_decision_history.sql-9f5": {
     "__comp": "17896441",
     "content": "6107670b"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-AUDIT/K-KAI-AUD-002_merkle_signer.go-cf0": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-AUDIT/K-KAI-AUD-002_merkle_signer.go-9a6": {
     "__comp": "17896441",
     "content": "ef544cbf"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-ANALYST/K-KAI-AN-001_cortex_analyzer_chain.py-852": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-ANALYST/K-KAI-AN-001_cortex_analyzer_chain.py-12b": {
     "__comp": "17896441",
     "content": "dafae1dc"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-ANALYST/K-KAI-AN-002_observable_enrichment.py-ad5": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-ANALYST/K-KAI-AN-002_observable_enrichment.py-576": {
     "__comp": "17896441",
     "content": "9c71cbbe"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-001_billing_clerk.py-8a5": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-001_billing_clerk.py-0c9": {
     "__comp": "17896441",
     "content": "589ed1b3"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-002_clickhouse_audit.py-b39": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-002_clickhouse_audit.py-fd8": {
     "__comp": "17896441",
     "content": "2d103100"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-003_hle_calculator.py-c2d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-003_hle_calculator.py-d9f": {
     "__comp": "17896441",
     "content": "c5e58b6f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-004_invoice_renderer.py-81c": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-BILL/K-KAI-BL-004_invoice_renderer.py-521": {
     "__comp": "17896441",
     "content": "67554d79"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-COMM/K-KAI-CM-001_comm_agent.py-aeb": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-COMM/K-KAI-CM-001_comm_agent.py-b12": {
     "__comp": "17896441",
     "content": "a3b61977"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-COMM/K-KAI-CM-002_vapi_phone.py-e84": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-COMM/K-KAI-CM-002_vapi_phone.py-605": {
     "__comp": "17896441",
     "content": "3433bf3a"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-COMM/K-KAI-CM-003_twilio_sms.py-25b": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-COMM/K-KAI-CM-003_twilio_sms.py-669": {
     "__comp": "17896441",
     "content": "324efa87"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-DEPLOY/K-KAI-DEP-001_deploy_agent.py-c55": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-DEPLOY/K-KAI-DEP-001_deploy_agent.py-e3b": {
     "__comp": "17896441",
     "content": "7709e603"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-DEPLOY/K-KAI-DEP-002_saltstack_client.py-ea5": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-DEPLOY/K-KAI-DEP-002_saltstack_client.py-3cb": {
     "__comp": "17896441",
     "content": "a75554bc"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-DEPLOY/K-KAI-DEP-003_fleet_rollout.py-65d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-DEPLOY/K-KAI-DEP-003_fleet_rollout.py-ce5": {
     "__comp": "17896441",
     "content": "ac47fdd5"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-FORESIGHT/K-KAI-FS-001_lstm_baseline.py-c41": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-FORESIGHT/K-KAI-FS-001_lstm_baseline.py-652": {
     "__comp": "17896441",
     "content": "d67814f6"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-FORESIGHT/K-KAI-FS-002_epss_enrichment.py-49d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-FORESIGHT/K-KAI-FS-002_epss_enrichment.py-e02": {
     "__comp": "17896441",
     "content": "82ec2656"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-FORESIGHT/K-KAI-FS-003_hikari_trainer.py-0bc": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-FORESIGHT/K-KAI-FS-003_hikari_trainer.py-b40": {
     "__comp": "17896441",
     "content": "6ab0a08f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-001_housekeeper.py-8dd": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-001_housekeeper.py-f63": {
     "__comp": "17896441",
     "content": "2b11229a"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-002_ansible_runner.py-ece": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-002_ansible_runner.py-de2": {
     "__comp": "17896441",
     "content": "626ed581"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-003_criticality_check.py-2f9": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-003_criticality_check.py-cd6": {
     "__comp": "17896441",
     "content": "f7ac177d"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-004_rollback.py-92f": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HOUSE/K-KAI-HS-004_rollback.py-2dd": {
     "__comp": "17896441",
     "content": "b1f796f7"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HUNTER/K-KAI-HU-001_velociraptor_artifacts.py-949": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HUNTER/K-KAI-HU-001_velociraptor_artifacts.py-742": {
     "__comp": "17896441",
     "content": "ba1ed62c"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HUNTER/K-KAI-HU-002_sigma_hunting_runner.py-d0e": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-HUNTER/K-KAI-HU-002_sigma_hunting_runner.py-68d": {
     "__comp": "17896441",
     "content": "9cb88d4e"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-INVEST/K-KAI-IV-001_misp_galaxy_query.py-6b6": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-INVEST/K-KAI-IV-001_misp_galaxy_query.py-5cc": {
     "__comp": "17896441",
     "content": "b248b4fd"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-INVEST/K-KAI-IV-002_graph_investigation.py-c70": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-INVEST/K-KAI-IV-002_graph_investigation.py-4ea": {
     "__comp": "17896441",
     "content": "be069ac2"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-KEEPER/K-KAI-KP-001_remediation_planner.py-349": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-KEEPER/K-KAI-KP-001_remediation_planner.py-0a0": {
     "__comp": "17896441",
     "content": "e712b2ab"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-KEEPER/K-KAI-KP-002_cortex_subprocess.py-8af": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-KEEPER/K-KAI-KP-002_cortex_subprocess.py-523": {
     "__comp": "17896441",
     "content": "cfd453d8"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-KEEPER/K-KAI-KP-003_vault_secret_fetcher.py-748": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-KEEPER/K-KAI-KP-003_vault_secret_fetcher.py-16a": {
     "__comp": "17896441",
     "content": "d28a63ab"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-RISK/K-KAI-RISK-001_pyfair_model.py-8fd": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-RISK/K-KAI-RISK-001_pyfair_model.py-6da": {
     "__comp": "17896441",
     "content": "61ce8ab9"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-RISK/K-KAI-RISK-002_epss_scorer.py-a6e": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-RISK/K-KAI-RISK-002_epss_scorer.py-6d2": {
     "__comp": "17896441",
     "content": "7c9b77d4"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-RISK/K-KAI-RISK-003_ssvc_decision.py-5c5": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-RISK/K-KAI-RISK-003_ssvc_decision.py-a67": {
     "__comp": "17896441",
     "content": "024eae73"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SENTINEL/K-KAI-SEN-001_health_score_publisher.py-a64": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SENTINEL/K-KAI-SEN-001_health_score_publisher.py-b8b": {
     "__comp": "17896441",
     "content": "82af7f7a"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SENTINEL/K-KAI-SEN-002_churn_risk_model.py-ce2": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SENTINEL/K-KAI-SEN-002_churn_risk_model.py-0c2": {
     "__comp": "17896441",
     "content": "604de1bd"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SENTINEL/K-KAI-SEN-003_hibp_credential_score.py-256": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SENTINEL/K-KAI-SEN-003_hibp_credential_score.py-203": {
     "__comp": "17896441",
     "content": "86b13303"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SIMULATE/K-KAI-SIM-001_ltv_predictor.py-178": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SIMULATE/K-KAI-SIM-001_ltv_predictor.py-f39": {
     "__comp": "17896441",
     "content": "d45b0115"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SIMULATE/K-KAI-SIM-002_churn_simulator.py-654": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SIMULATE/K-KAI-SIM-002_churn_simulator.py-d34": {
     "__comp": "17896441",
     "content": "cdd817c4"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SIMULATE/K-KAI-SIM-003_dynamic_pricing.py-453": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-SIMULATE/K-KAI-SIM-003_dynamic_pricing.py-309": {
     "__comp": "17896441",
     "content": "69ca5663"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-001_triage_agent.py-a30": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-001_triage_agent.py-c99": {
     "__comp": "17896441",
     "content": "b57fb1ff"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-002_llama3_reasoning.py-943": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-002_llama3_reasoning.py-797": {
     "__comp": "17896441",
     "content": "f2895282"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-003_ocsf_analyzer.py-557": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-003_ocsf_analyzer.py-387": {
     "__comp": "17896441",
     "content": "8668ccfe"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-004_kiss_calculator.py-f55": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-CP_CREWAI_PERSONAS/K-KAI-TRIAGE/K-KAI-TR-004_kiss_calculator.py-56e": {
     "__comp": "17896441",
     "content": "96010611"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go-eb3": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-001_human_mfa.go-a84": {
     "__comp": "17896441",
     "content": "124249dc"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-002_action_queue.sql-9a2": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-002_action_queue.sql-42a": {
     "__comp": "17896441",
     "content": "c901c038"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-003_criticality_5.py-d35": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-003_criticality_5.py-b09": {
     "__comp": "17896441",
     "content": "89bd957f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-004_prompt_injection.py-f5c": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-GD_GUARDRAILS/K-KAI-GD-004_prompt_injection.py-326": {
     "__comp": "17896441",
     "content": "c7fdb22f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-001_polars_dataframe.py-6ba": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-001_polars_dataframe.py-91a": {
     "__comp": "17896441",
     "content": "b9324f44"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-002_pyarrow_parquet.py-749": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-002_pyarrow_parquet.py-ca7": {
     "__comp": "17896441",
     "content": "5c49e03f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-003_fastparquet_io.py-8f1": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-003_fastparquet_io.py-a9c": {
     "__comp": "17896441",
     "content": "137cbb79"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-004_orjson_serializer.py-73b": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-004_orjson_serializer.py-d8a": {
     "__comp": "17896441",
     "content": "2e873d95"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-005_ujson_fallback.py-99a": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-005_ujson_fallback.py-b59": {
     "__comp": "17896441",
     "content": "6650f718"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-006_msgpack_encoder.py-47d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-006_msgpack_encoder.py-31e": {
     "__comp": "17896441",
     "content": "4dff6546"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-007_dpkt_pcap_parser.py-693": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-007_dpkt_pcap_parser.py-ff8": {
     "__comp": "17896441",
     "content": "45aad075"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-008_scapy_probe.py-847": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-008_scapy_probe.py-4a6": {
     "__comp": "17896441",
     "content": "b4d282b1"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-009_pcap_capture.py-83c": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-009_pcap_capture.py-ed4": {
     "__comp": "17896441",
     "content": "2b927ee1"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-010_geoip2_resolver.py-c89": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-LIBS/K-KAI-LIBS-010_geoip2_resolver.py-d5d": {
     "__comp": "17896441",
     "content": "76bab475"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-001_tensorboard_logger.py-02f": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-001_tensorboard_logger.py-e00": {
     "__comp": "17896441",
     "content": "d902e463"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-002_clearml_experiment.py-977": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-002_clearml_experiment.py-b1e": {
     "__comp": "17896441",
     "content": "3c126190"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-003_pyspark_distributed.py-916": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-003_pyspark_distributed.py-fba": {
     "__comp": "17896441",
     "content": "a8958a9c"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-004_openai_fallback.py-9f8": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-004_openai_fallback.py-4d5": {
     "__comp": "17896441",
     "content": "241c05dd"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-005_anthropic_long_context.py-db4": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-005_anthropic_long_context.py-00f": {
     "__comp": "17896441",
     "content": "66f2b3b5"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-006_cohere_embeddings.py-fe0": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-006_cohere_embeddings.py-b62": {
     "__comp": "17896441",
     "content": "31d0ce7a"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-007_hikari_preprocessor.py-ab0": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-007_hikari_preprocessor.py-481": {
     "__comp": "17896441",
     "content": "6244a804"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-008_ember_xgboost.py-857": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-008_ember_xgboost.py-931": {
     "__comp": "17896441",
     "content": "e2b8b545"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-009_unswnb15_random_forest.py-98c": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-009_unswnb15_random_forest.py-b90": {
     "__comp": "17896441",
     "content": "a3695e20"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-010_mordor_lstm_baseline.py-663": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-010_mordor_lstm_baseline.py-27f": {
     "__comp": "17896441",
     "content": "9736b40b"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-011_vllm_server.py-ee7": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-011_vllm_server.py-8e2": {
     "__comp": "17896441",
     "content": "2471c16d"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-012_model_tiering-c03": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-ML-012_model_tiering-939": {
     "__comp": "17896441",
     "content": "11b468af"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-001_vector_search.sql-c8b": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-001_vector_search.sql-18b": {
     "__comp": "17896441",
     "content": "3e72e2b8"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-002_oscal_embeddings.py-d5c": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-002_oscal_embeddings.py-5f0": {
     "__comp": "17896441",
     "content": "744d5bc4"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-003_ciso_assistant.py-fe3": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-003_ciso_assistant.py-920": {
     "__comp": "17896441",
     "content": "9537c0be"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-004_cohere_embeddings.py-f33": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-RAG/K-KAI-RAG-004_cohere_embeddings.py-81a": {
     "__comp": "17896441",
     "content": "685df76f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-n8n/K-KAI-WF-n8n-001_security_triage.json-58b": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-n8n/K-KAI-WF-n8n-001_security_triage.json-db3": {
     "__comp": "17896441",
     "content": "3cddd54b"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-n8n/K-KAI-WF-n8n-002_drift_housekeeper.json-dae": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-n8n/K-KAI-WF-n8n-002_drift_housekeeper.json-001": {
     "__comp": "17896441",
     "content": "376180a9"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-n8n/K-KAI-WF-n8n-003_heartbeat_billing.json-c5d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-n8n/K-KAI-WF-n8n-003_heartbeat_billing.json-e66": {
     "__comp": "17896441",
     "content": "929172da"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-001_patch_workflow.go-d42": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-001_patch_workflow.go-011": {
     "__comp": "17896441",
     "content": "fefd4d29"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-002_retry_state.go-e0d": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-002_retry_state.go-192": {
     "__comp": "17896441",
     "content": "3c071b7e"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-003_celery_tasks.py-2da": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-003_celery_tasks.py-50c": {
     "__comp": "17896441",
     "content": "4bd2b58f"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-004_flower_monitor.py-3aa": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-004_flower_monitor.py-611": {
     "__comp": "17896441",
     "content": "4bb8f875"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-005_dramatiq_worker.py-1e5": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-005_dramatiq_worker.py-ee4": {
     "__comp": "17896441",
     "content": "afc20eee"
   },
-  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-006_huey_scheduler.py-bcf": {
+  "/docs/K-KAI-03_ORCHESTRATION/K-KAI-WF_WORKFLOW/K-KAI-WF-TEMPORAL/K-KAI-WF-TEMP-006_huey_scheduler.py-261": {
     "__comp": "17896441",
     "content": "bc9cfd73"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-000_MASTER_INDEX-fd7": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-000_MASTER_INDEX-7d0": {
     "__comp": "17896441",
     "content": "f37fabcd"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-001_EDR_Endpoint-cc2": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-001_EDR_Endpoint-bc9": {
     "__comp": "17896441",
     "content": "1f04a3f5"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-002_ITDR_Identity-63b": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-002_ITDR_Identity-4dd": {
     "__comp": "17896441",
     "content": "3c73252f"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-003_NDR_Network-65a": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-003_NDR_Network-4f5": {
     "__comp": "17896441",
     "content": "5d058243"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-004_CDR_Cloud-c0a": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-004_CDR_Cloud-27f": {
     "__comp": "17896441",
     "content": "f6bf3cff"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-005_SDR_SaaS-b4f": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-005_SDR_SaaS-cd0": {
     "__comp": "17896441",
     "content": "04d7d711"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-006_ADR_Application-9dc": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-006_ADR_Application-c74": {
     "__comp": "17896441",
     "content": "67c1db09"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-007_DDR_Data-251": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-007_DDR_Data-72c": {
     "__comp": "17896441",
     "content": "65d83740"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-008_VDR_Vulnerability-958": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-008_VDR_Vulnerability-fff": {
     "__comp": "17896441",
     "content": "f30e0544"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-009_MDR_Managed-ebb": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-009_MDR_Managed-bc7": {
     "__comp": "17896441",
     "content": "dace3b7f"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-010_TI_ThreatIntel-639": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-010_TI_ThreatIntel-98c": {
     "__comp": "17896441",
     "content": "96447369"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-011_CFDR_ConfigDrift-6ee": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-011_CFDR_ConfigDrift-a5e": {
     "__comp": "17896441",
     "content": "1080bb0c"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-012_BDR_Backup-48c": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-012_BDR_Backup-5da": {
     "__comp": "17896441",
     "content": "1cca93cf"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-013_NPM_NetworkPerf-c5c": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-013_NPM_NetworkPerf-cb7": {
     "__comp": "17896441",
     "content": "59f93e3f"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-014_UEM_EndpointMgmt-c96": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-014_UEM_EndpointMgmt-2c5": {
     "__comp": "17896441",
     "content": "34eb1a2f"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-015_MDM_Mobile-986": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-015_MDM_Mobile-0fe": {
     "__comp": "17896441",
     "content": "acd8bd58"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-016_APM_AppPerf-fa0": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-016_APM_AppPerf-692": {
     "__comp": "17896441",
     "content": "07ff82a4"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-017_GRC_Governance-1ac": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-017_GRC_Governance-d6d": {
     "__comp": "17896441",
     "content": "7190d422"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-018_KAI_AILayer-b2c": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-018_KAI_AILayer-632": {
     "__comp": "17896441",
     "content": "e78f3938"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-019_PSA_Business-134": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-019_PSA_Business-e1b": {
     "__comp": "17896441",
     "content": "a26294c1"
   },
-  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-020_LICENSE_COMPLIANCE-832": {
+  "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-020_LICENSE_COMPLIANCE-faf": {
     "__comp": "17896441",
     "content": "c4442c08"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-001_restic_scheduler.go-423": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-001_restic_scheduler.go-7d1": {
     "__comp": "17896441",
     "content": "61f8b5dc"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-002_kopia_snapshots.go-bc7": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-002_kopia_snapshots.go-cd5": {
     "__comp": "17896441",
     "content": "75804631"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-003_s3_cold_lifecycle.go-3be": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-003_s3_cold_lifecycle.go-cc5": {
     "__comp": "17896441",
     "content": "57b6c63c"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify-694": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-004_backup_verify-abd": {
     "__comp": "17896441",
     "content": "9cf43709"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-005_velero_backup.go-c14": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-005_velero_backup.go-c1a": {
     "__comp": "17896441",
     "content": "99da48ae"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-006_velero_restore.go-fa6": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-006_velero_restore.go-9d9": {
     "__comp": "17896441",
     "content": "2508ba03"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-007_proxmox_vm_backup.go-569": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-007_proxmox_vm_backup.go-f7e": {
     "__comp": "17896441",
     "content": "61cfb8f2"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-008_minio_object_store.go-bb1": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-008_minio_object_store.go-3a0": {
     "__comp": "17896441",
     "content": "30d7d71d"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-009_bareos_config-d01": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-BR_BACKUP_DR/K-NOC-BR-009_bareos_config-af5": {
     "__comp": "17896441",
     "content": "70e7c808"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-001_osquery_drift.go-65d": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-001_osquery_drift.go-f3a": {
     "__comp": "17896441",
     "content": "0a5182c4"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-002_desired_state-c69": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-002_desired_state-7fd": {
     "__comp": "17896441",
     "content": "7637b56b"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-003_saltstack_reactor-c36": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-003_saltstack_reactor-67d": {
     "__comp": "17896441",
     "content": "aa7b2243"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-004_rudder_drift-4e4": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-004_rudder_drift-ee1": {
     "__comp": "17896441",
     "content": "12d48351"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-001_isolate_host.yml-996": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-001_isolate_host.yml-d1a": {
     "__comp": "17896441",
     "content": "f87af27a"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-002_patch_cve.yml-f30": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-002_patch_cve.yml-353": {
     "__comp": "17896441",
     "content": "a761c8b2"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-003_restart_service.yml-cb9": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-003_restart_service.yml-fa6": {
     "__comp": "17896441",
     "content": "a76180dd"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-004_rollback.yml-555": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-ANSIBLE/K-NOC-CM-ANS-004_rollback.yml-f26": {
     "__comp": "17896441",
     "content": "d3485cd7"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-SALTSTACK/K-NOC-CM-SALT-001_reactor_setup-010": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-SALTSTACK/K-NOC-CM-SALT-001_reactor_setup-49e": {
     "__comp": "17896441",
     "content": "2d3a1fb5"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-SALTSTACK/K-NOC-CM-SALT-002_state_apply.py-e5c": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-SALTSTACK/K-NOC-CM-SALT-002_state_apply.py-af2": {
     "__comp": "17896441",
     "content": "9e355bd1"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-SALTSTACK/K-NOC-CM-SALT-003_sls_templates-065": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-CM_CONFIG_MGMT/K-NOC-CM-SALTSTACK/K-NOC-CM-SALT-003_sls_templates-146": {
     "__comp": "17896441",
     "content": "81746d02"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-001_osquery_go_sdk.go-d9a": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-001_osquery_go_sdk.go-917": {
     "__comp": "17896441",
     "content": "c00241a9"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-002_fleetdm_policies.go-87c": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-002_fleetdm_policies.go-f77": {
     "__comp": "17896441",
     "content": "940b5e31"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-003_netbox_topology.py-e93": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-003_netbox_topology.py-85e": {
     "__comp": "17896441",
     "content": "7dd7605c"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-004_docker_sdk.go-5ef": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-INV_INVENTORY/K-NOC-INV-004_docker_sdk.go-de2": {
     "__comp": "17896441",
     "content": "1f3aff83"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-001_micromdm_ios.go-625": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-001_micromdm_ios.go-95a": {
     "__comp": "17896441",
     "content": "1b0b6b13"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go-da1": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-002_headwind_android.go-35a": {
     "__comp": "17896441",
     "content": "ba94953b"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-003_android_enterprise-c81": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-MDM-003_android_enterprise-91e": {
     "__comp": "17896441",
     "content": "733f91a0"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-001_otel_config.yaml-67e": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-001_otel_config.yaml-9f9": {
     "__comp": "17896441",
     "content": "89b6d9fe"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-002_anomaly_model.pkl-8b9": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-002_anomaly_model.pkl-8d9": {
     "__comp": "17896441",
     "content": "bb33bc9b"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-003_baseline_profiling-dcb": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-003_baseline_profiling-96f": {
     "__comp": "17896441",
     "content": "b9baee9f"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-004_prometheus_recording_rules.yaml-d76": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-004_prometheus_recording_rules.yaml-415": {
     "__comp": "17896441",
     "content": "ac4e6424"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml-3d7": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-005_thanos_compactor.yaml-705": {
     "__comp": "17896441",
     "content": "1f001221"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-006_grafana_datasources.yaml-255": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-006_grafana_datasources.yaml-c14": {
     "__comp": "17896441",
     "content": "b68ed958"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-007_loki_promtail.yaml-060": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-007_loki_promtail.yaml-559": {
     "__comp": "17896441",
     "content": "5f59d105"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-008_tempo_otlp_receiver.yaml-c03": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-008_tempo_otlp_receiver.yaml-2e7": {
     "__comp": "17896441",
     "content": "e42b74c1"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-009_victoriametrics_tsdb-eb7": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PM_PERFORMANCE/K-NOC-PM-009_victoriametrics_tsdb-3df": {
     "__comp": "17896441",
     "content": "8ae8479b"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-001_delta_generator.go-52e": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-001_delta_generator.go-e21": {
     "__comp": "17896441",
     "content": "671a590b"
   },
-  "/docs/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go-964": {
+  "/docs/K-NOC-05_OPERATIONS/K-NOC-PT_PATCH_MGMT/K-NOC-PT-002_manifest_signer.go-4a2": {
     "__comp": "17896441",
     "content": "ba01db3b"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BI_BUSINESS_INTEL/K-PSA-BI-001_qbr_engine-73f": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BI_BUSINESS_INTEL/K-PSA-BI-001_qbr_engine-8d3": {
     "__comp": "17896441",
     "content": "6c2a3765"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BI_BUSINESS_INTEL/K-PSA-BI-002_profitability-971": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BI_BUSINESS_INTEL/K-PSA-BI-002_profitability-f3c": {
     "__comp": "17896441",
     "content": "64c29db8"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BI_BUSINESS_INTEL/K-PSA-BI-003_grafana_qbr_export-5a7": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BI_BUSINESS_INTEL/K-PSA-BI-003_grafana_qbr_export-932": {
     "__comp": "17896441",
     "content": "5fe015e1"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-001_usage_aggregator.go-e87": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-001_usage_aggregator.go-f06": {
     "__comp": "17896441",
     "content": "7b09b5cc"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-002_pdf_renderer.go-00f": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-002_pdf_renderer.go-091": {
     "__comp": "17896441",
     "content": "9a682836"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-003_hle_constants.go-cf6": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-003_hle_constants.go-082": {
     "__comp": "17896441",
     "content": "43c3ae4f"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql-78e": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-004_contract_rates.sql-669": {
     "__comp": "17896441",
     "content": "247292ea"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-005_pdf_generator-969": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-005_pdf_generator-61b": {
     "__comp": "17896441",
     "content": "e9b68fb2"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-006_stripe_payments.go-181": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-BILL_BILLING/K-PSA-BILL-006_stripe_payments.go-3eb": {
     "__comp": "17896441",
     "content": "5b2bec2a"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-001_contract_tables.sql-931": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-001_contract_tables.sql-ecd": {
     "__comp": "17896441",
     "content": "8759ed81"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-002_risk_quoting.go-545": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-002_risk_quoting.go-66c": {
     "__comp": "17896441",
     "content": "2eab2e7d"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-003_pyfair_risk_model.py-9f0": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-003_pyfair_risk_model.py-ff7": {
     "__comp": "17896441",
     "content": "778dde72"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-004_ltv_model.py-f0a": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-CRM_CPQ/K-PSA-CRM-004_ltv_model.py-f89": {
     "__comp": "17896441",
     "content": "aed00373"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-001_ticket_state.go-226": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-001_ticket_state.go-3bb": {
     "__comp": "17896441",
     "content": "68608e87"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-002_sla_tracker.go-0ee": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-002_sla_tracker.go-75d": {
     "__comp": "17896441",
     "content": "52b702f0"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-003_service_desk.sql-e43": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-003_service_desk.sql-e1d": {
     "__comp": "17896441",
     "content": "4bfa62bf"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-004_multi_channel-2e8": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-004_multi_channel-846": {
     "__comp": "17896441",
     "content": "b9c91c7d"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-005_zammad_bridge.go-67e": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-ITSM/K-PSA-ITSM-005_zammad_bridge.go-6e9": {
     "__comp": "17896441",
     "content": "93afa169"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-001_kiss_scorecard-ad9": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-001_kiss_scorecard-cf9": {
     "__comp": "17896441",
     "content": "17b2d2a0"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-002_white_label-7ac": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-002_white_label-d91": {
     "__comp": "17896441",
     "content": "5dbf31f3"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-003_reasoning_playback-dd8": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-003_reasoning_playback-17b": {
     "__comp": "17896441",
     "content": "b7728cdc"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-001_AssetCard.tsx-fb1": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-001_AssetCard.tsx-926": {
     "__comp": "17896441",
     "content": "96c60c4a"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-002_DeploymentWizard.tsx-45e": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-002_DeploymentWizard.tsx-bd5": {
     "__comp": "17896441",
     "content": "734bb44e"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-003_ActionApproval.tsx-1af": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-003_ActionApproval.tsx-dd2": {
     "__comp": "17896441",
     "content": "e2c7996d"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-004_KissScorecard.tsx-6f6": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-004_KissScorecard.tsx-bf8": {
     "__comp": "17896441",
     "content": "bb367cc0"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-005_RiskDashboard.tsx-7b0": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-005_RiskDashboard.tsx-0a7": {
     "__comp": "17896441",
     "content": "6307febe"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-006_BillingChart.tsx-4c1": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-DASH/K-PSA-PTL-DASH-006_BillingChart.tsx-090": {
     "__comp": "17896441",
     "content": "90c34d8f"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts-11f": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-001_api_client.ts-ae5": {
     "__comp": "17896441",
     "content": "f822dc5d"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-002_nats_eventsource.ts-0b5": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-APP/K-PSA-PTL-LIB-002_nats_eventsource.ts-15d": {
     "__comp": "17896441",
     "content": "a6dfac6f"
   },
-  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css-cf7": {
+  "/docs/K-PSA-06_BUSINESS/K-PSA-PTL_PORTAL/K-PSA-PTL-THEME/K-PSA-PTL-THEME-001_tenant_branding.css-217": {
     "__comp": "17896441",
     "content": "d79386ba"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-001_sigma_compiler.go-00e": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-001_sigma_compiler.go-012": {
     "__comp": "17896441",
     "content": "54b2fd1f"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-002_sigma_sync.py-490": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-002_sigma_sync.py-f9b": {
     "__comp": "17896441",
     "content": "2fc97bbc"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-003_mitre_mapper.py-ad0": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-003_mitre_mapper.py-184": {
     "__comp": "17896441",
     "content": "5964e6f8"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration-65d": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-004_yara_integration-641": {
     "__comp": "17896441",
     "content": "271a40c0"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-005_suricata_rules-f2b": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-005_suricata_rules-110": {
     "__comp": "17896441",
     "content": "238dbc04"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-006_custom_detections-83f": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-006_custom_detections-c80": {
     "__comp": "17896441",
     "content": "321a5400"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval-7a5": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-007_sigma_rust_eval-ace": {
     "__comp": "17896441",
     "content": "f07f5af1"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-008_tetragon_k8s_ebpf-ae5": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-008_tetragon_k8s_ebpf-5a6": {
     "__comp": "17896441",
     "content": "235eb317"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-009_zeek_subprocess-708": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-DET_DETECTION/K-SOC-DET-009_zeek_subprocess-f66": {
     "__comp": "17896441",
     "content": "70b9d049"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-FR_FORENSICS/K-SOC-FR-001_evidence_capture.go-d10": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-FR_FORENSICS/K-SOC-FR-001_evidence_capture.go-67b": {
     "__comp": "17896441",
     "content": "e9993830"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-FR_FORENSICS/K-SOC-FR-002_blake3_evidence.go-3ac": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-FR_FORENSICS/K-SOC-FR-002_blake3_evidence.go-172": {
     "__comp": "17896441",
     "content": "3be3b412"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-001_bloodhound_analysis.go-5f9": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-001_bloodhound_analysis.go-caa": {
     "__comp": "17896441",
     "content": "7b3e6e7e"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go-c63": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-002_neo4j_graph.go-d2d": {
     "__comp": "17896441",
     "content": "07187d3d"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-003_cypher_ad_paths-257": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-003_cypher_ad_paths-c75": {
     "__comp": "17896441",
     "content": "ca635acb"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-004_azure_oauth_queries-17d": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-ID_IDENTITY/K-SOC-ID-004_azure_oauth_queries-74c": {
     "__comp": "17896441",
     "content": "4ec3916f"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-001_redis_state.go-9dc": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-001_redis_state.go-a29": {
     "__comp": "17896441",
     "content": "03b2fe8d"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-002_graph_correlation.py-8e2": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-002_graph_correlation.py-c61": {
     "__comp": "17896441",
     "content": "0afa648e"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching-388": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-003_incident_stitching-7ce": {
     "__comp": "17896441",
     "content": "98e9525f"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-004_forensic_chain-003": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-IS_INCIDENT_STITCH/K-SOC-IS-004_forensic_chain-861": {
     "__comp": "17896441",
     "content": "26a08a39"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-001_otx_puller.py-e01": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-001_otx_puller.py-110": {
     "__comp": "17896441",
     "content": "0940afd3"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-002_abuseipdb.py-300": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-002_abuseipdb.py-c13": {
     "__comp": "17896441",
     "content": "b18193c9"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-003_malware_bazaar.py-494": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-003_malware_bazaar.py-9f6": {
     "__comp": "17896441",
     "content": "fa75dfc7"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-004_phishing_tank.py-70b": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-004_phishing_tank.py-e87": {
     "__comp": "17896441",
     "content": "9e799eb6"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-005_hibp-ab3": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-005_hibp-90e": {
     "__comp": "17896441",
     "content": "2fbeb60e"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-006_cisa_kev-d26": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-006_cisa_kev-c77": {
     "__comp": "17896441",
     "content": "4bb166e5"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-007_stix2_parser.py-711": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-007_stix2_parser.py-423": {
     "__comp": "17896441",
     "content": "067b2f52"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-008_stix2_validator.py-262": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-008_stix2_validator.py-f11": {
     "__comp": "17896441",
     "content": "bcf50de1"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-009_shodan_enrich.py-360": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-009_shodan_enrich.py-c61": {
     "__comp": "17896441",
     "content": "b72f46eb"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-010_censys_discovery.py-c05": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-010_censys_discovery.py-27c": {
     "__comp": "17896441",
     "content": "822b7678"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-011_greynoise_filter.py-4c2": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-011_greynoise_filter.py-1f6": {
     "__comp": "17896441",
     "content": "265e92b2"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-012_wiz_cloud_ti.py-e5f": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-012_wiz_cloud_ti.py-627": {
     "__comp": "17896441",
     "content": "4f175f48"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-013_misp_pymisp_client.py-4d5": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-013_misp_pymisp_client.py-e51": {
     "__comp": "17896441",
     "content": "de099068"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-014_opencti_connector-a48": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-014_opencti_connector-fff": {
     "__comp": "17896441",
     "content": "e10f3cea"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-015_ipsum_blocklist.py-b3b": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-TI_THREAT_INTEL/K-SOC-TI-015_ipsum_blocklist.py-3b5": {
     "__comp": "17896441",
     "content": "b37da4f5"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-001_nuclei_engine.go-ea8": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-001_nuclei_engine.go-8d5": {
     "__comp": "17896441",
     "content": "49412e27"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-002_epss_worker.py-ce4": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-002_epss_worker.py-538": {
     "__comp": "17896441",
     "content": "61c0c056"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-003_cve_priority.sql-ad8": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-003_cve_priority.sql-d2f": {
     "__comp": "17896441",
     "content": "9b359b61"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-004_trivy_scanner.go-b1d": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-004_trivy_scanner.go-81f": {
     "__comp": "17896441",
     "content": "94c29343"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-005_grype_db.go-ba2": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-005_grype_db.go-dc6": {
     "__comp": "17896441",
     "content": "5cbbc0e4"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-006_syft_sbom_gen.go-5a8": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-006_syft_sbom_gen.go-d72": {
     "__comp": "17896441",
     "content": "efca1e57"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-007_openvas_rest-f56": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-007_openvas_rest-62a": {
     "__comp": "17896441",
     "content": "f4e1a1a4"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-008_checkov_iac.py-e0b": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-008_checkov_iac.py-05b": {
     "__comp": "17896441",
     "content": "38113b37"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-009_kics_engine.go-38a": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-009_kics_engine.go-0d2": {
     "__comp": "17896441",
     "content": "7caf86e7"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-010_ssvc_decision_tree.py-649": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-010_ssvc_decision_tree.py-181": {
     "__comp": "17896441",
     "content": "f7e3c109"
   },
-  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-011_nvd_api_puller.go-8d4": {
+  "/docs/K-SOC-04_SECURITY/K-SOC-VULN_VULNERABILITY/K-SOC-VULN-011_nvd_api_puller.go-5b6": {
     "__comp": "17896441",
     "content": "ae942c34"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-000_INDEX-d6e": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-000_INDEX-edf": {
     "__comp": "17896441",
     "content": "296a921a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-BLOODHOUND/K-VENDOR-BH-001_INDEX-9ea": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-BLOODHOUND/K-VENDOR-BH-001_INDEX-265": {
     "__comp": "17896441",
     "content": "f7abd8dd"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-BLOODHOUND/K-VENDOR-BH-002_windows_cypher-d85": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-BLOODHOUND/K-VENDOR-BH-002_windows_cypher-e60": {
     "__comp": "17896441",
     "content": "35f818ed"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-BLOODHOUND/K-VENDOR-BH-003_azure_cypher-a99": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-BLOODHOUND/K-VENDOR-BH-003_azure_cypher-4f4": {
     "__comp": "17896441",
     "content": "6c3858e8"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-001_INDEX-3fb": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-001_INDEX-bb2": {
     "__comp": "17896441",
     "content": "e1438f45"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-002_analyzers-554": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-002_analyzers-549": {
     "__comp": "17896441",
     "content": "cefd438c"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-003_responders-92d": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-003_responders-97e": {
     "__comp": "17896441",
     "content": "b28aca9c"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-004_license_boundary-e1c": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-CORTEX/K-VENDOR-COR-004_license_boundary-2c0": {
     "__comp": "17896441",
     "content": "51118dbe"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-001_INDEX-4ef": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-001_INDEX-44b": {
     "__comp": "17896441",
     "content": "bf46c67a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-002_falco_rules-063": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-002_falco_rules-725": {
     "__comp": "17896441",
     "content": "5ecc48c4"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-003_k8s_rules-226": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-003_k8s_rules-f3e": {
     "__comp": "17896441",
     "content": "148a318d"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-001_INDEX-802": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-001_INDEX-148": {
     "__comp": "17896441",
     "content": "10bd25bf"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-002_taxonomies-6ef": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-002_taxonomies-82c": {
     "__comp": "17896441",
     "content": "349d1589"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-003_galaxies-2db": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-003_galaxies-f86": {
     "__comp": "17896441",
     "content": "7d8b69b9"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists-d57": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-004_warninglists-d9e": {
     "__comp": "17896441",
     "content": "f93fd11c"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-005_objects-443": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-005_objects-7ef": {
     "__comp": "17896441",
     "content": "8ae2f4ff"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-006_sync_script.sh-eb2": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MISP/K-VENDOR-MISP-006_sync_script.sh-232": {
     "__comp": "17896441",
     "content": "d726b584"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-001_INDEX-bc3": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-001_INDEX-c7b": {
     "__comp": "17896441",
     "content": "b1276e6c"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-002_enterprise_attack-ebe": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-002_enterprise_attack-9be": {
     "__comp": "17896441",
     "content": "70a3740d"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-003_cwe_stix2-7c6": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-003_cwe_stix2-433": {
     "__comp": "17896441",
     "content": "a9cee098"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-004_capec_stix2-257": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-004_capec_stix2-a16": {
     "__comp": "17896441",
     "content": "57bb1d0e"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-005_sync_script.sh-4b7": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-005_sync_script.sh-dbd": {
     "__comp": "17896441",
     "content": "dfe34bb3"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-001_INDEX-7bd": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-001_INDEX-63a": {
     "__comp": "17896441",
     "content": "2f44f796"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-002_cve_templates-f1d": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-002_cve_templates-b4c": {
     "__comp": "17896441",
     "content": "f311e9d4"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-003_cloud_templates-a18": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-003_cloud_templates-f61": {
     "__comp": "17896441",
     "content": "dd560134"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-004_http_api_templates-19d": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-004_http_api_templates-e47": {
     "__comp": "17896441",
     "content": "b8e541ff"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-005_saas_templates-397": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-005_saas_templates-ab2": {
     "__comp": "17896441",
     "content": "f1ea6316"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-006_sync_script.sh-676": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-NUCLEI/K-VENDOR-NUC-006_sync_script.sh-688": {
     "__comp": "17896441",
     "content": "cbc33ca0"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/K-VENDOR-OSP-001_INDEX-ccd": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/K-VENDOR-OSP-001_INDEX-789": {
     "__comp": "17896441",
     "content": "57322b85"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/K-VENDOR-OSP-002_cis_benchmarks-91f": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/K-VENDOR-OSP-002_cis_benchmarks-7ae": {
     "__comp": "17896441",
     "content": "68e76b6e"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/K-VENDOR-OSP-003_stig_content-139": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/K-VENDOR-OSP-003_stig_content-56c": {
     "__comp": "17896441",
     "content": "e43fa67a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-001_INDEX-293": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-001_INDEX-855": {
     "__comp": "17896441",
     "content": "290bcae0"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-002_nist_800_53-1d2": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-002_nist_800_53-386": {
     "__comp": "17896441",
     "content": "2a9df84a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-003_pci_dss-93b": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-003_pci_dss-8df": {
     "__comp": "17896441",
     "content": "8fa7b63f"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-004_iso_27001-696": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-004_iso_27001-040": {
     "__comp": "17896441",
     "content": "4506aa82"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2-878": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2-404": {
     "__comp": "17896441",
     "content": "064baebf"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-001_INDEX-93b": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-001_INDEX-c39": {
     "__comp": "17896441",
     "content": "cac95ca0"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-002_incident_response-d3a": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-002_incident_response-43d": {
     "__comp": "17896441",
     "content": "77221c17"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-003_fim_packs-94a": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-003_fim_packs-497": {
     "__comp": "17896441",
     "content": "9de55d73"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-004_sync_script.sh-9e1": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/K-VENDOR-OSQ-004_sync_script.sh-599": {
     "__comp": "17896441",
     "content": "2a46ee8e"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-RUD-001_INDEX-186": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-RUD-001_INDEX-54e": {
     "__comp": "17896441",
     "content": "cbf119f6"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-RUD-002_techniques-6b6": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-RUD-002_techniques-f89": {
     "__comp": "17896441",
     "content": "7ed72a7b"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-RUD-003_license_boundary-611": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-RUD-003_license_boundary-6c0": {
     "__comp": "17896441",
     "content": "802480cb"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SHUFFLE/K-VENDOR-SHF-001_INDEX-45b": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SHUFFLE/K-VENDOR-SHF-001_INDEX-a3c": {
     "__comp": "17896441",
     "content": "74086349"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SHUFFLE/K-VENDOR-SHF-002_soar_workflows-1b1": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SHUFFLE/K-VENDOR-SHF-002_soar_workflows-5be": {
     "__comp": "17896441",
     "content": "ed834be3"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SHUFFLE/K-VENDOR-SHF-003_license_boundary-5e6": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SHUFFLE/K-VENDOR-SHF-003_license_boundary-472": {
     "__comp": "17896441",
     "content": "e235d6d1"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-001_INDEX-f9f": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-001_INDEX-de9": {
     "__comp": "17896441",
     "content": "42c5ac2c"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-002_windows_builtin-1c3": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-002_windows_builtin-167": {
     "__comp": "17896441",
     "content": "f33b6d2b"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-003_cloud_rules-552": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-003_cloud_rules-b6c": {
     "__comp": "17896441",
     "content": "9706a77b"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-004_saas_rules-7bf": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-004_saas_rules-9cc": {
     "__comp": "17896441",
     "content": "7bcebb07"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-005_hunting_rules-35f": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-005_hunting_rules-56b": {
     "__comp": "17896441",
     "content": "9c4d4847"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-006_sync_script.sh-d0c": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SIGMA/K-VENDOR-SIG-006_sync_script.sh-d33": {
     "__comp": "17896441",
     "content": "dcfe88d9"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-001_INDEX-0e1": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-001_INDEX-51c": {
     "__comp": "17896441",
     "content": "b13fee8a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-002_emerging_malware-774": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-002_emerging_malware-116": {
     "__comp": "17896441",
     "content": "4a9461bc"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-003_emerging_c2-484": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-003_emerging_c2-a03": {
     "__comp": "17896441",
     "content": "ada9f397"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-004_emerging_web-1bc": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-004_emerging_web-da2": {
     "__comp": "17896441",
     "content": "7e179e6f"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-005_emerging_data-fd1": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-005_emerging_data-79e": {
     "__comp": "17896441",
     "content": "b3470cd6"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-006_sync_script.sh-de1": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-SURICATA/K-VENDOR-SUR-006_sync_script.sh-aa6": {
     "__comp": "17896441",
     "content": "1b8c9dfa"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-001_INDEX-89f": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-001_INDEX-8c1": {
     "__comp": "17896441",
     "content": "18552e41"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-002_case_schema-055": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-002_case_schema-2c6": {
     "__comp": "17896441",
     "content": "6838bccb"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-003_alert_schema-3df": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-003_alert_schema-568": {
     "__comp": "17896441",
     "content": "fe10a829"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-004_license_boundary-752": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-THEHIVE/K-VENDOR-THV-004_license_boundary-cdc": {
     "__comp": "17896441",
     "content": "0b90eab7"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-001_INDEX-584": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-001_INDEX-e9d": {
     "__comp": "17896441",
     "content": "b8ccfe3a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting-9ba": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-002_threat_hunting-a54": {
     "__comp": "17896441",
     "content": "a9685179"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-003_forensic_artifacts-225": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-003_forensic_artifacts-1ba": {
     "__comp": "17896441",
     "content": "2b9bef1b"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-004_license_boundary-a3c": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-VELOCIRAPTOR/K-VENDOR-VEL-004_license_boundary-199": {
     "__comp": "17896441",
     "content": "7d4642c6"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-001_INDEX-ed2": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-001_INDEX-435": {
     "__comp": "17896441",
     "content": "b41c7c51"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-002_process_rules-0e2": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-002_process_rules-c14": {
     "__comp": "17896441",
     "content": "49a0d672"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-003_ad_rules-abc": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-003_ad_rules-72a": {
     "__comp": "17896441",
     "content": "6e5ee513"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-004_sca_rules-953": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-004_sca_rules-d55": {
     "__comp": "17896441",
     "content": "4c573992"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary-853": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-WAZUH/K-VENDOR-WAZ-005_license_boundary-3b2": {
     "__comp": "17896441",
     "content": "2adc7d74"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-001_INDEX-666": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-001_INDEX-b98": {
     "__comp": "17896441",
     "content": "03b3f8e1"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-002_malware_sigs-a4a": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-002_malware_sigs-58e": {
     "__comp": "17896441",
     "content": "20318390"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-003_pii_rules-907": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-003_pii_rules-630": {
     "__comp": "17896441",
     "content": "010565d2"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-004_sync_script.sh-cb2": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/K-VENDOR-YAR-004_sync_script.sh-504": {
     "__comp": "17896441",
     "content": "b87628ea"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-001_INDEX-1a7": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-001_INDEX-a7d": {
     "__comp": "17896441",
     "content": "ca8e645d"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-002_base_protocols-337": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-002_base_protocols-8a6": {
     "__comp": "17896441",
     "content": "b4d7ab3a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-003_intel_framework-d05": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-003_intel_framework-118": {
     "__comp": "17896441",
     "content": "5c7774d0"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts-bfa": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-004_http_scripts-242": {
     "__comp": "17896441",
     "content": "21150b0a"
   },
-  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-005_ja3_tls-bd4": {
+  "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-ZEEK/K-VENDOR-ZEK-005_ja3_tls-665": {
     "__comp": "17896441",
     "content": "90aa4d3f"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-001_Cargo.toml-4ce": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-001_Cargo.toml-6eb": {
     "__comp": "17896441",
     "content": "0cc123cd"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-002_eBPF_Compatibility-e2e": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-002_eBPF_Compatibility-d0a": {
     "__comp": "17896441",
     "content": "55a95d58"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-001_main.rs-958": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-001_main.rs-751": {
     "__comp": "17896441",
     "content": "19e7ee07"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-001_execve_hook.rs-a6c": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-001_execve_hook.rs-761": {
     "__comp": "17896441",
     "content": "50092404"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-002_openat2_hook.rs-3b2": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-002_openat2_hook.rs-339": {
     "__comp": "17896441",
     "content": "3e53acc9"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-003_map_pressure.rs-25a": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-EBPF/K-XRO-CS-EBPF-003_map_pressure.rs-7d7": {
     "__comp": "17896441",
     "content": "4cfa9245"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FIM/K-XRO-CS-FIM-001_inotify_watcher.rs-aad": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FIM/K-XRO-CS-FIM-001_inotify_watcher.rs-d67": {
     "__comp": "17896441",
     "content": "98bcb75e"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FIM/K-XRO-CS-FIM-002_blake3_baseline.rs-cc5": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FIM/K-XRO-CS-FIM-002_blake3_baseline.rs-152": {
     "__comp": "17896441",
     "content": "3985537f"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FORENSIC/K-XRO-CS-FR-001_memory_snapshot.rs-c81": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-FORENSIC/K-XRO-CS-FR-001_memory_snapshot.rs-bc8": {
     "__comp": "17896441",
     "content": "28dab8e2"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-GOVERNOR/K-XRO-CS-GV-001_token_bucket.rs-25f": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-GOVERNOR/K-XRO-CS-GV-001_token_bucket.rs-2ca": {
     "__comp": "17896441",
     "content": "86f971ed"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-ML/K-XRO-CS-ML-001_candle_inference.rs-cc8": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-ML/K-XRO-CS-ML-001_candle_inference.rs-915": {
     "__comp": "17896441",
     "content": "ce163d55"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-ML/K-XRO-CS-ML-002_tinyllama_loader.rs-a4f": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-ML/K-XRO-CS-ML-002_tinyllama_loader.rs-173": {
     "__comp": "17896441",
     "content": "388a6231"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-SIGMA/K-XRO-CS-SIG-001_sigma_evaluator.rs-517": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-SIGMA/K-XRO-CS-SIG-001_sigma_evaluator.rs-d61": {
     "__comp": "17896441",
     "content": "6edba1e8"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-SIGMA/K-XRO-CS-SIG-002_ocsf_event_bridge.rs-0cc": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-SIGMA/K-XRO-CS-SIG-002_ocsf_event_bridge.rs-8c3": {
     "__comp": "17896441",
     "content": "338f91a4"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-YARA/K-XRO-CS-YAR-001_yara_compiler.rs-507": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-YARA/K-XRO-CS-YAR-001_yara_compiler.rs-d62": {
     "__comp": "17896441",
     "content": "dab64a7c"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-YARA/K-XRO-CS-YAR-002_malware_scanner.rs-ab1": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-CS_CORESEC/K-XRO-CS-SRC/K-XRO-CS-YARA/K-XRO-CS-YAR-002_malware_scanner.rs-984": {
     "__comp": "17896441",
     "content": "c84d4af9"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-001_Cargo.toml-271": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-001_Cargo.toml-75c": {
     "__comp": "17896441",
     "content": "40825c70"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-002_10G_Validation-e8f": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-002_10G_Validation-ca0": {
     "__comp": "17896441",
     "content": "9fa608a2"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-001_main.rs-229": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-001_main.rs-b8d": {
     "__comp": "17896441",
     "content": "4ce0a0e4"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-DPI/K-XRO-NG-DPI-001_ndpi_ffi.rs-463": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-DPI/K-XRO-NG-DPI-001_ndpi_ffi.rs-9e8": {
     "__comp": "17896441",
     "content": "a884328d"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-DPI/K-XRO-NG-DPI-002_l7_classifier.rs-9c2": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-DPI/K-XRO-NG-DPI-002_l7_classifier.rs-0de": {
     "__comp": "17896441",
     "content": "396ce401"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-IDS/K-XRO-NG-IDS-001_rule_loader.rs-0b3": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-IDS/K-XRO-NG-IDS-001_rule_loader.rs-4ce": {
     "__comp": "17896441",
     "content": "f9c0a84f"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-IDS/K-XRO-NG-IDS-002_alert_publisher.rs-498": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-IDS/K-XRO-NG-IDS-002_alert_publisher.rs-25b": {
     "__comp": "17896441",
     "content": "363dc210"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-001_flow_analyzer.rs-1aa": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-001_flow_analyzer.rs-429": {
     "__comp": "17896441",
     "content": "6e168dd8"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-002_tls_sni.rs-4d0": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-002_tls_sni.rs-d55": {
     "__comp": "17896441",
     "content": "22e2ae15"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-003_af_packet_ring.rs-b14": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-003_af_packet_ring.rs-037": {
     "__comp": "17896441",
     "content": "f45409ed"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-004_dpdk_bypass.rs-fe7": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-PCAP/K-XRO-NG-PCAP-004_dpdk_bypass.rs-f08": {
     "__comp": "17896441",
     "content": "0fb7c39d"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-001_beacon_detector.go-092": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-001_beacon_detector.go-d8f": {
     "__comp": "17896441",
     "content": "ff4f3b0c"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-002_dns_tunnel.go-0ed": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-002_dns_tunnel.go-698": {
     "__comp": "17896441",
     "content": "bf832efa"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-003_exfil_detector.go-05d": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-RITA/K-XRO-NG-RITA-003_exfil_detector.go-1d5": {
     "__comp": "17896441",
     "content": "0eccb590"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs-d37": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-NG_NETGUARD/K-XRO-NG-SRC/K-XRO-NG-TI/K-XRO-NG-TI-001_ipsum_lookup.rs-941": {
     "__comp": "17896441",
     "content": "f73da3dc"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-001_Cargo.toml-aba": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-001_Cargo.toml-823": {
     "__comp": "17896441",
     "content": "d9cf320d"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-006_Baseline_Schema.json-0fb": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-006_Baseline_Schema.json-601": {
     "__comp": "17896441",
     "content": "fc099c26"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs-fac": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-001_main.rs-bda": {
     "__comp": "17896441",
     "content": "b17e0306"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-002_perf_event_open.rs-622": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-002_perf_event_open.rs-934": {
     "__comp": "17896441",
     "content": "ce693c76"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-003_prometheus.rs-665": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-003_prometheus.rs-fa1": {
     "__comp": "17896441",
     "content": "add3b894"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-004_otel_collector.rs-e72": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-004_otel_collector.rs-005": {
     "__comp": "17896441",
     "content": "375099e1"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-005_sysinfo_host_metrics.rs-cd7": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PT_PERFTRACE/K-XRO-PT-SRC/K-XRO-PT-005_sysinfo_host_metrics.rs-94f": {
     "__comp": "17896441",
     "content": "67718fc7"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-001_registration_handler.go-28c": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-001_registration_handler.go-717": {
     "__comp": "17896441",
     "content": "d54afe3e"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-002_install_script_gen.go-e0f": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-002_install_script_gen.go-2a5": {
     "__comp": "17896441",
     "content": "d29a8940"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-003_blake3_fingerprinter.go-186": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-PV_PROVISIONING/K-XRO-PV-003_blake3_fingerprinter.go-bfb": {
     "__comp": "17896441",
     "content": "67b8a86f"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-SD_SIDECARS/K-XRO-SD-001_rustdesk_remote-630": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-SD_SIDECARS/K-XRO-SD-001_rustdesk_remote-c73": {
     "__comp": "17896441",
     "content": "fc7e3fe5"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-SD_SIDECARS/K-XRO-SD-002_tetragon_ebpf-20a": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-SD_SIDECARS/K-XRO-SD-002_tetragon_ebpf-4db": {
     "__comp": "17896441",
     "content": "730fa0c5"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs-a7b": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-001_agent_orchestrator.rs-b37": {
     "__comp": "17896441",
     "content": "754fc321"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-002_zstd_delta.go-cb6": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-002_zstd_delta.go-294": {
     "__comp": "17896441",
     "content": "9b3c056a"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go-837": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-003_manifest_signer.go-b74": {
     "__comp": "17896441",
     "content": "b4397941"
   },
-  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-004_go_tuf_updater.go-4a9": {
+  "/docs/K-XRO-02_SUPER_AGENT/K-XRO-WD_WATCHDOG/K-XRO-WD-004_go_tuf_updater.go-faa": {
     "__comp": "17896441",
     "content": "4cd1da61"
   },

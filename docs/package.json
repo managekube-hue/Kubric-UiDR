@@ -4,6 +4,7 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
+    "apply:docs-aesthetic": "node scripts/apply-docs-aesthetic.js",
     "generate:platform-pages": "node scripts/generate-platform-pages.js",
     "generate:routes": "node scripts/generate-route-inventory.js",
     "swizzle": "docusaurus swizzle",

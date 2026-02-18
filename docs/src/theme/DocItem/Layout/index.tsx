@@ -34,6 +34,7 @@ export default function DocItemLayout({children}: Props): ReactNode {
   const docTOC = useDocTOC();
   const {metadata} = useDoc();
   const mapping = getDocBySlug(metadata.id);
+  const notionHref = mapping ? getNotionUrl(mapping.notionId) : 'https://notion.so/kubric';
 
   return (
     <div className="row">
@@ -41,24 +42,24 @@ export default function DocItemLayout({children}: Props): ReactNode {
         <ContentVisibility metadata={metadata} />
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
-          <article>
+          <article className="docs-aesthetic-article">
             <DocBreadcrumbs />
             <DocVersionBadge />
-            {mapping && (
-              <div className="notion-context-banner">
-                <div className="notion-context-content">
-                  <div>
-                    <strong>Business context available</strong>
-                    <p>Roadmap status, requirements, and architectural decisions.</p>
-                  </div>
-                  <a className="notion-button" href={getNotionUrl(mapping.notionId)} target="_blank" rel="noopener noreferrer">
-                    View in Notion →
-                  </a>
+            <div className="docs-aesthetic-toolbar">
+              <div className="notion-context-content">
+                <div>
+                  <strong>Business context available</strong>
+                  <p>Roadmap status, requirements, and architectural decisions.</p>
                 </div>
+                <a className="notion-button" href={notionHref} target="_blank" rel="noopener noreferrer">
+                  Open in Notion →
+                </a>
               </div>
-            )}
+            </div>
             {docTOC.mobile}
-            <DocItemContent>{children}</DocItemContent>
+            <div className="docs-aesthetic-content">
+              <DocItemContent>{children}</DocItemContent>
+            </div>
             <DocItemFooter />
             {mapping && (
               <div className="github-source-link">

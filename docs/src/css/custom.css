@@ -672,6 +672,57 @@ pre {
   margin-bottom: 1.25rem;
 }
 
+.docs-aesthetic-article {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 16px;
+  padding: 1.15rem 1.15rem 1.35rem;
+  background: linear-gradient(180deg, rgba(124, 134, 255, 0.06), transparent 34%), var(--ifm-background-surface-color, #ffffff);
+}
+
+.docs-aesthetic-toolbar {
+  margin: 0.45rem 0 1rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 10px;
+  background: var(--ifm-color-emphasis-100);
+  padding: 0.8rem 0.95rem;
+}
+
+.docs-aesthetic-content {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.docs-aesthetic-content .theme-doc-markdown {
+  background: transparent;
+}
+
+.docs-aesthetic-content .theme-doc-markdown h1,
+.docs-aesthetic-content .theme-doc-markdown h2,
+.docs-aesthetic-content .theme-doc-markdown h3 {
+  letter-spacing: -0.01em;
+}
+
+.docs-aesthetic-content .theme-doc-markdown table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.docs-aesthetic-content .theme-doc-markdown th {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.docs-aesthetic-content .theme-doc-markdown code {
+  border-radius: 6px;
+}
+
+[data-theme='dark'] .docs-aesthetic-article {
+  background: linear-gradient(180deg, rgba(124, 134, 255, 0.1), transparent 34%), var(--ifm-background-surface-color, #16181d);
+}
+
 .notion-context-content {
   display: flex;
   align-items: center;
