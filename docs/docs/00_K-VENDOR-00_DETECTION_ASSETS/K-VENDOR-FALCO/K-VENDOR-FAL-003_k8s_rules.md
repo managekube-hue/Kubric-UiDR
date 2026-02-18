@@ -1,5 +1,0 @@
----
-title: K-VENDOR-FAL-003_k8s_rules.md
----
-
-Source: `00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/K-VENDOR-FAL-003_k8s_rules.md`

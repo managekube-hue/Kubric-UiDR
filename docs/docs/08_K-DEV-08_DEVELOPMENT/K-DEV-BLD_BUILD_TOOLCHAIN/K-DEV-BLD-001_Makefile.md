@@ -1,5 +1,0 @@
----
-title: K-DEV-BLD-001_Makefile
----
-
-Source: `08_K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-001_Makefile`

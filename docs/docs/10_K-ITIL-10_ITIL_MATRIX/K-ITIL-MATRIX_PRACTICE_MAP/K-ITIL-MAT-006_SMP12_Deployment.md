@@ -1,5 +1,0 @@
----
-title: K-ITIL-MAT-006_SMP12_Deployment.md
----
-
-Source: `10_K-ITIL-10_ITIL_MATRIX/K-ITIL-MATRIX_PRACTICE_MAP/K-ITIL-MAT-006_SMP12_Deployment.md`

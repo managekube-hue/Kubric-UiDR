@@ -1,5 +1,0 @@
----
-title: K-VENDOR-MIT-004_capec_stix2.md
----
-
-Source: `00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-MITRE/K-VENDOR-MIT-004_capec_stix2.md`

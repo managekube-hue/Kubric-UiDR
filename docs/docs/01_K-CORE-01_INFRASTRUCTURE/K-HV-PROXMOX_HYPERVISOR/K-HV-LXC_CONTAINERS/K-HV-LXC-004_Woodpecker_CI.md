@@ -1,5 +1,0 @@
----
-title: K-HV-LXC-004_Woodpecker_CI.md
----
-
-Source: `01_K-CORE-01_INFRASTRUCTURE/K-HV-PROXMOX_HYPERVISOR/K-HV-LXC_CONTAINERS/K-HV-LXC-004_Woodpecker_CI.md`

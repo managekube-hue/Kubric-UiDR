@@ -1,5 +1,0 @@
----
-title: K-DEV-BLD-003_go.mod
----
-
-Source: `08_K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-003_go.mod`

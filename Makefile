@@ -146,16 +146,6 @@ tf-apply:
 tf-destroy:
 	cd deployments/terraform && terraform destroy
 
-# Documentation
-
-docs:
-	@echo "📚 Kubric Documentation"
-	@echo ""
-	@echo "Architecture: docs/architecture/architecture.md"
-	@echo "Requirements: docs/srs/"
-	@echo "API Reference: docs/api/kubric_gateway_v1.yaml"
-	@echo "Deployment: deployments/"
-
 # Utilities
 
 shell-k8s:

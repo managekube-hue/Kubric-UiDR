@@ -1,5 +1,0 @@
----
-title: K-VENDOR-OSC-005_soc2.md
----
-
-Source: `00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSCAL/K-VENDOR-OSC-005_soc2.md`

@@ -1,5 +1,0 @@
----
-title: K-DL-PG-002_RLS_Policies.sql
----
-
-Source: `01_K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-POSTGRES/K-DL-PG-002_RLS_Policies.sql`
