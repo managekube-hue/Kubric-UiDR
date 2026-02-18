@@ -11,8 +11,8 @@
   "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/12_K-DEPLOY-12_TOPOLOGIES/K-DEPLOY-LARGE/K-DEPLOY-LG-003_node_groups.tf.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": "Author",
-  "lastUpdatedAt": 1539502055000,
+  "lastUpdatedBy": "ManageKube-Kubric",
+  "lastUpdatedAt": 1771387661000,
   "frontMatter": {
     "title": "K-DEPLOY-LG-003_node_groups.tf"
   },

@@ -11,8 +11,8 @@
   "editUrl": "https://github.com/kubric/kubric-uidr/tree/main/docs/docs/07_K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-008_cyclonedx_sbom.py.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": "Author",
-  "lastUpdatedAt": 1539502055000,
+  "lastUpdatedBy": "ManageKube-Kubric",
+  "lastUpdatedAt": 1771387661000,
   "frontMatter": {
     "title": "K-GRC-SCS-008_cyclonedx_sbom.py"
   },
@@ -22,7 +22,7 @@
     "permalink": "/docs/K-GRC-07_COMPLIANCE/K-GRC-SCS_SUPPLY_CHAIN/K-GRC-SCS-007_dependency_track.go"
   },
   "next": {
-    "title": "K-DEV-BLD-001_Makefile",
-    "permalink": "/docs/K-DEV-08_DEVELOPMENT/K-DEV-BLD_BUILD_TOOLCHAIN/K-DEV-BLD-001_Makefile"
+    "title": "K-MAP-000_MASTER_INDEX.md",
+    "permalink": "/docs/K-MAP-11_DR_MODULE_MAPPING/K-MAP-000_MASTER_INDEX"
   }
 }

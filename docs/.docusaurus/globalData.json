@@ -8,12 +8,11 @@
           "label": "Next",
           "isLast": true,
           "path": "/docs",
-          "mainDocId": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-000_INDEX",
+          "mainDocId": "K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config",
           "docs": [
             {
               "id": "intro",
-              "path": "/docs/intro",
-              "sidebar": "docs"
+              "path": "/docs/intro"
             },
             {
               "id": "K-API-09_API_REFERENCE/K-API-NATS-001_subject_hierarchy",
@@ -2835,8 +2834,8 @@
           "sidebars": {
             "docs": {
               "link": {
-                "path": "/docs/K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-000_INDEX",
-                "label": "K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-000_INDEX"
+                "path": "/docs/K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config",
+                "label": "K-CORE-01_INFRASTRUCTURE/K-DL-DATA_LAKEHOUSE/K-DL-CLICKHOUSE/K-DL-CH-001_Cluster_Config"
               }
             }
           }
