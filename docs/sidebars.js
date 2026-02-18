@@ -40,6 +40,7 @@ const rootItems = ROOT_ORDER.filter((dirName) => fs.existsSync(path.join(DOCS_RO
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   docs: [
+    'intro',
     {
       type: 'category',
       label: 'K-DOCS',
