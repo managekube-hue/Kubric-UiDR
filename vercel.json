@@ -1,9 +1,0 @@
-{
-  "buildCommand": "cd docs && yarn install --frozen-lockfile && yarn build",
-  "outputDirectory": "docs/build",
-  "installCommand": "cd docs && yarn install --frozen-lockfile",
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "regions": ["iad1"]
-}
