@@ -1,2 +1,0 @@
--- K-KAI-AUD-001 decision
--- SQL component for Kubric Platform

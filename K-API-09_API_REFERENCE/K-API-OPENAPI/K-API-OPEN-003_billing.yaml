@@ -1,7 +1,0 @@
-# K-API-OPEN-003
-# YAML configuration for Kubric Platform
-
-apiVersion: v1
-kind: Config
-metadata:
-  name: kubric

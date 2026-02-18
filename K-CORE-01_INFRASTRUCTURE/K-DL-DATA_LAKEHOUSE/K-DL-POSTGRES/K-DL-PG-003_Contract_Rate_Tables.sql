@@ -1,2 +1,0 @@
--- K-DL-PG-003 Contract Rate
--- SQL component for Kubric Platform

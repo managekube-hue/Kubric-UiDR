@@ -1,2 +1,0 @@
--- K-DL-PG-004 OSCAL
--- SQL component for Kubric Platform

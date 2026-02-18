@@ -1,2 +1,0 @@
--- K-DL-CH-002 OCSF
--- SQL component for Kubric Platform

@@ -1,2 +1,0 @@
--- K-DEV-LOCAL-CFG-002 postgres
--- SQL component for Kubric Platform

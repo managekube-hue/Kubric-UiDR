@@ -1,2 +1,0 @@
--- K-KAI-GD-002 action
--- SQL component for Kubric Platform

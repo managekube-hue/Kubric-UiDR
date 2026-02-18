@@ -1,2 +1,0 @@
--- K-GRC-EV-001 immutable
--- SQL component for Kubric Platform

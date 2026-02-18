@@ -1,2 +1,0 @@
--- K-DL-PG-002 RLS
--- SQL component for Kubric Platform
