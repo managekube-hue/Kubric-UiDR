@@ -136,15 +136,15 @@ const config: Config = {
           items: [
             {
               label: 'Platform',
-              to: '/docs/01_K-CORE-01_INFRASTRUCTURE',
+              to: '/docs/K-CORE-01_INFRASTRUCTURE',
             },
             {
               label: 'Orchestration',
-              to: '/docs/03_K-KAI-03_ORCHESTRATION',
+              to: '/docs/K-KAI-03_ORCHESTRATION',
             },
             {
               label: 'Security Operations',
-              to: '/docs/04_K-SOC-04_SECURITY',
+              to: '/docs/K-SOC-04_SECURITY',
             },
           ],
         },
@@ -153,15 +153,15 @@ const config: Config = {
           items: [
             {
               label: 'Business & Billing',
-              to: '/docs/06_K-PSA-06_BUSINESS',
+              to: '/docs/K-PSA-06_BUSINESS',
             },
             {
               label: 'Compliance & GRC',
-              to: '/docs/07_K-GRC-07_COMPLIANCE',
+              to: '/docs/K-GRC-07_COMPLIANCE',
             },
             {
               label: 'Development',
-              to: '/docs/08_K-DEV-08_DEVELOPMENT',
+              to: '/docs/K-DEV-08_DEVELOPMENT',
             },
           ],
         },
@@ -170,15 +170,15 @@ const config: Config = {
           items: [
             {
               label: 'API Reference',
-              to: '/docs/09_K-API-09_API_REFERENCE',
+              to: '/docs/K-API-09_API_REFERENCE',
             },
             {
               label: 'Super Agent',
-              to: '/docs/02_K-XRO-02_SUPER_AGENT',
+              to: '/docs/K-XRO-02_SUPER_AGENT',
             },
             {
               label: 'ITIL Framework',
-              to: '/docs/10_K-ITIL-10_ITIL_MATRIX',
+              to: '/docs/K-ITIL-10_ITIL_MATRIX',
             },
           ],
         },
