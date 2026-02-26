@@ -1,0 +1,80 @@
+[build-system]
+requires      = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name        = "kubric-kai"
+version     = "0.1.0"
+description = "Kubric KAI — AI orchestration layer (CrewAI + LangChain + vLLM)"
+requires-python = ">=3.11"
+
+dependencies = [
+    # Async API framework
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+
+    # NATS messaging (same bus as Go and Rust services)
+    "nats-py>=2.9.0",
+
+    # Fast JSON (Rust-backed, handles datetime natively)
+    "orjson>=3.10.0",
+
+    # HTTP client for internal API calls
+    "httpx>=0.28.0",
+
+    # Config / env
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.6.0",
+    "python-dotenv>=1.0.0",
+
+    # Logging
+    "structlog>=24.4.0",
+]
+
+[project.optional-dependencies]
+# Install when wiring KAI agents (Layer 2)
+ai = [
+    "crewai>=0.80.0",
+    "langchain>=0.3.7",
+    "langchain-community>=0.3.7",
+    "llama-cpp-python>=0.3.2",
+]
+
+# Install for ML training pipelines (Layer 3)
+ml = [
+    "torch>=2.4.0",
+    "scikit-learn>=1.5.0",
+    "xgboost>=2.1.0",
+    "pandas>=2.2.0",
+    "polars>=1.0.0",
+    "pyarrow>=18.0.0",
+]
+
+# Install for threat intelligence (Layer 3)
+ti = [
+    "pymisp>=2.5.0",
+    "stix2>=3.0.0",
+    "requests>=2.32.0",
+]
+
+# Full install
+all = [
+    "kubric-kai[ai,ml,ti]",
+]
+
+[project.scripts]
+kai = "kai.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kai"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+select = ["E", "W", "F", "I", "S", "B"]
+ignore = ["S101"]  # allow assert in tests
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true

@@ -1,4 +1,5 @@
 # Build artifacts
+sbom.json
 K-XRO-02_SUPER_AGENT/*/target/
 K-XRO-02_SUPER_AGENT/**/Cargo.lock
 K-DEV-08_DEVELOPMENT/**/build/

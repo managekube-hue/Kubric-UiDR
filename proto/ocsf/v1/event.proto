@@ -1,0 +1,264 @@
+syntax = "proto3";
+
+package kubric.ocsf.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "github.com/managekube-hue/Kubric-UiDR/internal/proto/ocsf/v1;ocsfv1";
+
+// ─── DESIGN CONTRACT ─────────────────────────────────────────────────────────
+// 1. tenant_id is FIELD 1 and MANDATORY. Agents set it before NATS publish.
+//    It must never be empty. Go services reject events with empty tenant_id.
+//
+// 2. NATS subject format: kubric.{tenant_id}.{category}.{event_class}.v1
+//    Example: kubric.acme-corp.endpoint.process.v1
+//             kubric.acme-corp.network.conn.v1
+//             kubric.acme-corp.identity.auth.v1
+//
+// 3. blake3_hash is the Blake3 hash of the raw source bytes before
+//    OCSF normalisation. Enables integrity verification downstream.
+//
+// 4. All oneof event types map 1:1 to OCSF class_uid values (see comments).
+// ─────────────────────────────────────────────────────────────────────────────
+
+// OCSFEvent is the canonical wire format for all Kubric telemetry.
+// Produced by Rust agents, consumed by Go services and KAI Python layer.
+message OCSFEvent {
+  // tenant_id — MUST be set. Drives NATS routing and ClickHouse partitioning.
+  string tenant_id = 1;
+
+  string event_id  = 2;
+  google.protobuf.Timestamp timestamp = 3;
+
+  EventClass event_class = 4;
+  int32  severity_id = 5;
+  string severity    = 6;
+
+  // Arbitrary key-value metadata (agent version, hostname, cloud region, etc.)
+  map<string, string> metadata = 7;
+
+  // Blake3 hash of the raw source event (before OCSF normalisation)
+  bytes blake3_hash = 8;
+
+  // Exactly one event payload per message
+  oneof event {
+    ProcessActivity        process    = 10; // class_uid 4007
+    NetworkActivity        network    = 11; // class_uid 4001
+    FileActivity           file       = 12; // class_uid 4008
+    AuthenticationActivity auth       = 13; // class_uid 3002
+    VulnerabilityFinding   vuln       = 14; // class_uid 2002
+    ThreatFinding          threat     = 15; // class_uid 1001
+    ComplianceFinding      compliance = 16; // class_uid 6001
+    InventoryInfo          inventory  = 17; // class_uid 5001
+    PerformanceMetric      perf       = 18; // class_uid 4004
+  }
+}
+
+enum EventClass {
+  EVENT_CLASS_UNSPECIFIED = 0;
+  EVENT_CLASS_THREAT      = 1001;
+  EVENT_CLASS_VULN        = 2002;
+  EVENT_CLASS_AUTH        = 3002;
+  EVENT_CLASS_NETWORK     = 4001;
+  EVENT_CLASS_PERFORMANCE = 4004;
+  EVENT_CLASS_PROCESS     = 4007;
+  EVENT_CLASS_FILE        = 4008;
+  EVENT_CLASS_INVENTORY   = 5001;
+  EVENT_CLASS_COMPLIANCE  = 6001;
+}
+
+// ─── 4007 Process Activity ───────────────────────────────────────────────────
+message ProcessActivity {
+  uint32 pid       = 1;
+  uint32 ppid      = 2;
+  string executable = 3;
+  string cmdline   = 4;
+  string user      = 5;
+  string group     = 6;
+  ProcessAction action    = 7;
+  int64  exit_code        = 8;
+  map<string, string> env = 9;
+}
+
+enum ProcessAction {
+  PROCESS_ACTION_UNSPECIFIED = 0;
+  PROCESS_ACTION_FORK        = 1;
+  PROCESS_ACTION_EXEC        = 2;
+  PROCESS_ACTION_EXIT        = 3;
+  PROCESS_ACTION_KILL        = 4;
+}
+
+// ─── 4001 Network Activity ───────────────────────────────────────────────────
+message NetworkActivity {
+  string src_ip            = 1;
+  uint32 src_port          = 2;
+  string dst_ip            = 3;
+  uint32 dst_port          = 4;
+  Protocol protocol        = 5;
+  uint64 bytes_sent        = 6;
+  uint64 bytes_received    = 7;
+  uint32 packets_sent      = 8;
+  uint32 packets_received  = 9;
+  google.protobuf.Timestamp start_time = 10;
+  google.protobuf.Timestamp end_time   = 11;
+  string l7_protocol       = 12; // from nDPI
+  double beacon_score      = 13; // from RITA
+  string ja3_hash          = 14; // TLS fingerprint
+  string sni               = 15; // Server Name Indication
+}
+
+enum Protocol {
+  PROTOCOL_UNSPECIFIED = 0;
+  PROTOCOL_TCP         = 1;
+  PROTOCOL_UDP         = 2;
+  PROTOCOL_ICMP        = 3;
+  PROTOCOL_HTTP        = 4;
+  PROTOCOL_HTTPS       = 5;
+  PROTOCOL_DNS         = 6;
+  PROTOCOL_DOH         = 7;
+  PROTOCOL_DOT         = 8;
+}
+
+// ─── 4008 File Activity ──────────────────────────────────────────────────────
+message FileActivity {
+  string path         = 1;
+  string filename     = 2;
+  uint64 size         = 3;
+  FileAction action   = 4;
+  string hash_blake3  = 5;
+  string hash_sha256  = 6;
+  string user         = 7;
+  string group        = 8;
+  uint32 mode         = 9;
+  map<string, string> xattr = 10;
+}
+
+enum FileAction {
+  FILE_ACTION_UNSPECIFIED = 0;
+  FILE_ACTION_OPEN        = 1;
+  FILE_ACTION_READ        = 2;
+  FILE_ACTION_WRITE       = 3;
+  FILE_ACTION_DELETE      = 4;
+  FILE_ACTION_RENAME      = 5;
+  FILE_ACTION_CHMOD       = 6;
+}
+
+// ─── 3002 Authentication Activity ───────────────────────────────────────────
+message AuthenticationActivity {
+  string user          = 1;
+  string domain        = 2;
+  AuthAction action    = 3;
+  bool   success       = 4;
+  string src_ip        = 5;
+  string auth_protocol = 6; // Kerberos, NTLM, OIDC, etc.
+  map<string, string> factors = 7; // MFA factors used
+}
+
+enum AuthAction {
+  AUTH_ACTION_UNSPECIFIED     = 0;
+  AUTH_ACTION_LOGIN           = 1;
+  AUTH_ACTION_LOGOUT          = 2;
+  AUTH_ACTION_FAILED          = 3;
+  AUTH_ACTION_PASSWORD_CHANGE = 4;
+  AUTH_ACTION_MFA_ENROLL      = 5;
+}
+
+// ─── 2002 Vulnerability Finding ─────────────────────────────────────────────
+message VulnerabilityFinding {
+  string cve_id        = 1;
+  float  cvss_score    = 2;
+  string severity      = 3;
+  float  epss_score    = 4;  // exploit probability
+  bool   in_kev        = 5;  // CISA Known Exploited Vulnerabilities
+  string package       = 6;
+  string version       = 7;
+  string fixed_version = 8;
+  repeated string references    = 9;
+  map<string, float> risk_scores = 10; // FAIR model outputs
+}
+
+// ─── 1001 Threat Finding ─────────────────────────────────────────────────────
+message ThreatFinding {
+  string indicator                = 1;
+  IndicatorType type              = 2;
+  string threat_actor             = 3;
+  string malware_family           = 4;
+  repeated string mitre_techniques = 5;
+  float  confidence               = 6;
+  string source                   = 7; // MISP, OTX, CISA KEV, etc.
+}
+
+enum IndicatorType {
+  INDICATOR_TYPE_UNSPECIFIED = 0;
+  INDICATOR_TYPE_IP          = 1;
+  INDICATOR_TYPE_DOMAIN      = 2;
+  INDICATOR_TYPE_URL         = 3;
+  INDICATOR_TYPE_HASH        = 4;
+  INDICATOR_TYPE_EMAIL       = 5;
+}
+
+// ─── 6001 Compliance Finding ─────────────────────────────────────────────────
+message ComplianceFinding {
+  string framework   = 1; // NIST-800-53, CIS, PCI-DSS, SOC2, ISO-27001
+  string control_id  = 2;
+  string check_id    = 3;
+  ComplianceStatus status = 4;
+  string evidence    = 5;
+  google.protobuf.Timestamp check_time = 6;
+}
+
+enum ComplianceStatus {
+  COMPLIANCE_STATUS_UNSPECIFIED    = 0;
+  COMPLIANCE_STATUS_PASS           = 1;
+  COMPLIANCE_STATUS_FAIL           = 2;
+  COMPLIANCE_STATUS_ERROR          = 3;
+  COMPLIANCE_STATUS_NOT_APPLICABLE = 4;
+}
+
+// ─── 5001 Inventory Info ─────────────────────────────────────────────────────
+message InventoryInfo {
+  string asset_id      = 1;
+  string hostname      = 2;
+  string os            = 3;
+  string os_version    = 4;
+  string kernel        = 5;
+  string cpu           = 6;
+  uint64 memory_mb     = 7;
+  repeated Disk             disks      = 8;
+  repeated NetworkInterface interfaces = 9;
+  map<string, string>       tags       = 10;
+  google.protobuf.Timestamp last_seen  = 11;
+}
+
+message Disk {
+  string mount       = 1;
+  string device      = 2;
+  string fs_type     = 3;
+  uint64 total_bytes = 4;
+  uint64 used_bytes  = 5;
+}
+
+message NetworkInterface {
+  string name       = 1;
+  string mac        = 2;
+  repeated string ips = 3;
+  uint64 speed_mbps = 4;
+}
+
+// ─── 4004 Performance Metric ─────────────────────────────────────────────────
+message PerformanceMetric {
+  string metric_name           = 1;
+  double value                 = 2;
+  map<string, string> labels   = 3;
+  MetricType type              = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+enum MetricType {
+  METRIC_TYPE_UNSPECIFIED = 0;
+  METRIC_TYPE_GAUGE       = 1;
+  METRIC_TYPE_COUNTER     = 2;
+  METRIC_TYPE_HISTOGRAM   = 3;
+  METRIC_TYPE_SUMMARY     = 4;
+}
