@@ -125,7 +125,7 @@
 | `kai/config.py` | Pydantic Settings: all env vars (KUBRIC_ prefix). DB URLs, NATS, Ollama, Vault, Stripe, Zammad, TI API keys |
 | `kai/cli.py` | Typer CLI entry point |
 | `kai/api/main.py` | FastAPI: /healthz, /v1/triage, /v1/hunt, /v1/webhook/stripe (HMAC-SHA256 validated). Vault secrets loaded at lifespan startup |
-| `kai/core/crew.py` | 5 CrewAI personas: TRIAGE, SENTINEL, KEEPER, COMM, FORESIGHT. make_triage_crew(), make_sentinel_crew() etc. LLM factory uses Ollama local first |
+| `kai/core/crew.py` | 13 CrewAI personas with crew factory functions. make_triage_crew(), make_sentinel_crew(), make_keeper_crew(), make_comm_crew(), make_foresight_crew(), make_house_crew(), make_bill_crew(), make_analyst_crew(), make_hunter_crew(), make_invest_crew(), make_simulate_crew(), make_risk_crew(), make_deploy_crew(). LLM factory uses Ollama local first |
 | `kai/core/llm.py` | LLM selection: Ollama → vLLM → OpenAI → Anthropic fallback chain |
 | `kai/core/nats_client.py` | Async NATS subscriber for KAI event ingestion |
 | `kai/core/subscriber.py` | Event routing: process events → triage, network events → sentinel |
@@ -135,6 +135,15 @@
 | `kai/agents/keeper.py` | KEEPER persona: knowledge base maintenance |
 | `kai/agents/comm.py` | COMM persona: incident communication, Vapi voice alerts |
 | `kai/agents/foresight.py` | FORESIGHT persona: predictive analysis |
+| `kai/agents/house.py` | HOUSE persona: infrastructure health monitoring, resource optimization |
+| `kai/agents/bill.py` | BILL persona: billing analysis, cost optimization, invoice review |
+| `kai/agents/analyst.py` | ANALYST persona: deep-dive security analysis, forensic investigation |
+| `kai/agents/hunter.py` | HUNTER persona: proactive threat hunting, IOC correlation |
+| `kai/agents/invest.py` | INVEST persona: incident investigation, root cause analysis |
+| `kai/agents/simulate.py` | SIMULATE persona: attack simulation, adversary emulation planning |
+| `kai/agents/risk.py` | RISK persona: risk quantification, FAIR framework analysis |
+| `kai/agents/deploy.py` | DEPLOY persona: deployment orchestration, rollout validation |
+| `kai/agents/__init__.py` | All 13 personas imported and exported via __all__ |
 | `kai/tools/security_tools.py` | 6 @tool decorators: get_vdr_summary, get_kic_summary, query_recent_alerts, publish_nats_event, trigger_remediation, forward_to_n8n |
 | `kai/workflows/billing.py` | Temporal workflow: aggregate_usage() from ClickHouse → create_stripe_invoice() → record_invoice(). Metered pricing per event type |
 | `kai/workflows/remediation.py` | Auto-remediation workflow: isolate host, patch CVE, restart service |
@@ -157,19 +166,78 @@
 
 | File | Purpose |
 |------|---------|
-| `agents/coresec/src/main.rs` | Entry: config → agent::run() |
+| `agents/coresec/src/main.rs` | Entry: config → agent::run(). Wires `mod detection; mod hooks; mod ml;` |
 | `agents/coresec/src/agent.rs` | Sysinfo 5-sec poll → DetectionEngine.detect(event) → publishes endpoint.process.v1, detection.sigma.v1, detection.yara.v1 to NATS |
+| `agents/coresec/src/event.rs` | ProcessEvent (OCSF 4007): pid, ppid, executable, cmdline, user, uid. Default + Clone derives for ML + tests |
 | `agents/coresec/src/detection/mod.rs` | `DetectionEngine { sigma, yara }` — `detect(event, data)` returns combined results |
 | `agents/coresec/src/detection/sigma.rs` | Native Sigma evaluator (serde_yaml). Supports: contains, startswith, endswith, re, contains\|all. Loads all YAML from vendor/sigma/rules/ |
 | `agents/coresec/src/detection/yara.rs` | yara-x 0.12 scanner. count tracked manually (num_rules is pub(crate)). Uses r.identifier() |
+
+### CoreSec Kernel Hooks (eBPF + ETW)
+
+| File | Purpose |
+|------|---------|
+| `agents/coresec/src/hooks/mod.rs` | Platform abstraction: HookEvent enum (ProcessExec, FileAccess), FileOp enum, HookProviderKind enum dispatch (avoids dyn trait E0038), create_provider() factory. Falls back to sysinfo polling if no kernel hooks available |
+| `agents/coresec/src/hooks/ebpf.rs` | Linux eBPF provider via `aya` crate. Loads pre-compiled ELF from vendor/ebpf/, attaches sys_enter_execve + sys_enter_openat2 tracepoints. `#[cfg(all(target_os = "linux", feature = "ebpf"))]` gated |
+| `agents/coresec/src/hooks/etw.rs` | Windows ETW provider via Win32 FFI. Microsoft-Windows-Kernel-Process GUID `{22FB2CD6-0E7B-422B-A0C7-2FAD1FD0E716}`. StartTraceW/EnableTraceEx2/ProcessTrace pipeline. `#[cfg(target_os = "windows")]` gated |
+
+### CoreSec ML Anomaly Scoring (candle)
+
+| File | Purpose |
+|------|---------|
+| `agents/coresec/src/ml/mod.rs` | Module re-exports AnomalyScorer + AnomalyResult. 2 unit tests |
+| `agents/coresec/src/ml/anomaly.rs` | Feedforward NN: Input(12) → Linear(12,64) → ReLU → Linear(64,32) → ReLU → Linear(32,1) → Sigmoid. 12 features: cmdline_length, path_depth, is_shell, is_scripting, has_base64, has_pipe, has_redirect, has_network_util, parent_is_unusual, shannon_entropy, arg_count, exe_in_tmp. Loads safetensors model. 8 unit tests |
+
+### CoreSec File Integrity Monitoring (FIM)
+
+| File | Purpose |
+|------|---------|
+| `agents/coresec/src/fim.rs` | FIM engine: OCSF 4010 events. Linux: inotify via `notify` crate. Windows: ReadDirectoryChangesW. Configurable watch paths, recursive directory monitoring, change type classification (Create/Modify/Delete/Rename). blake3 hash before+after for integrity verification |
+
+### CoreSec Governor (Rate Limiter)
+
+| File | Purpose |
+|------|---------|
+| `agents/coresec/src/governor.rs` | Token-bucket rate limiter for outbound NATS event publishing. Prevents agent storm during brute-force/worm scenarios. Configurable burst + sustained rates. Per-subject buckets with automatic expiry |
 
 ### NetGuard Packet Capture (Rust)
 
 | File | Purpose |
 |------|---------|
-| `agents/netguard/src/main.rs` | Entry: config → capture::run() |
+| `agents/netguard/src/main.rs` | Entry: config → capture::run(). Wires `mod dpi; mod ids; mod ipsum_lookup; mod ndpi_ffi; mod rita_client; mod tls;` |
 | `agents/netguard/src/capture.rs` | pcap capture loop (AtomicBool shutdown) → pnet dissect → OCSF NetworkActivity 4001 → NATS. TCP SYN + UDP. Graceful fallback if libpcap missing |
 | `agents/netguard/src/config.rs` | Interface selection, NATS URL |
+
+### NetGuard Deep Packet Inspection (nDPI)
+
+| File | Purpose |
+|------|---------|
+| `agents/netguard/src/ndpi_ffi.rs` | Dynamic loading of libnDPI via `dlopen` (Linux/macOS) / `LoadLibraryA` (Windows). FFI types: FnInit, FnSetProtocolBitmask, FnProcessPacket, FnGetProtoName, FnExit, FnMallocFlow, FnFreeFlow. Tries multiple lib names (libndpi.so.4, libndpi.so, ndpi.dll). Graceful None when nDPI not installed. GPL boundary: runtime dlopen only, zero compile-time link |
+| `agents/netguard/src/dpi.rs` | DpiEngine: wraps nDPI with heuristic fallback. Classifies L7 protocols: TLS (0x16 0x03), HTTP (GET/POST/PUT/DELETE/HEAD), DNS (port 53), SSH ("SSH-"), SMB (0xFF+"SMB"), SMB2 (0xFE+"SMB"), RDP (port 3389), SMTP (220/EHLO/HELO), IMAP (143/993), FTP (port 21), MySQL (3306), PostgreSQL (5432). 10 unit tests |
+
+### NetGuard IDS Engine
+
+| File | Purpose |
+|------|---------|
+| `agents/netguard/src/ids.rs` | Signature-based IDS: Suricata-compatible rule loading (YAML), pattern matching on network payloads, alert generation with severity classification. Integrates with NATS for alert publishing |
+
+### NetGuard TLS Inspector
+
+| File | Purpose |
+|------|---------|
+| `agents/netguard/src/tls.rs` | TLS handshake parser: extracts SNI (Server Name Indication), cipher suites, TLS version, JA3/JA3S fingerprints. Detects weak ciphers, expired certificates, self-signed certs. Feeds TLS metadata to detection pipeline |
+
+### NetGuard RITA Client (GPL-3.0 Boundary)
+
+| File | Purpose |
+|------|---------|
+| `agents/netguard/src/rita_client.rs` | HTTP client for RITA sidecar (GPL-3.0 isolated — HTTP only, zero Go imports from activecm/rita). Methods: get_beacons, get_dns_tunneling, get_long_connections, health_check. Uses reqwest with 10s timeout. 4 unit tests |
+
+### NetGuard IP Reputation (IPsum)
+
+| File | Purpose |
+|------|---------|
+| `agents/netguard/src/ipsum_lookup.rs` | In-memory IP reputation database. Loads IPsum format: `ip\tthreat_level` (tab-separated, # comments). is_malicious = true when threat_score >= 2 (present in 2+ feeds). Methods: load_from_file, add_blocklist, lookup, lookup_batch, get_threats_above. 7 unit tests |
 
 ### RITA GPL Boundary
 
@@ -192,6 +260,36 @@
 | File | Purpose |
 |------|---------|
 | `internal/vdr/epss.go` | EPSSClient queries kubric.epss_scores in ClickHouse. Returns score + percentile per CVE ID |
+
+### PerfTrace Agent (Rust)
+
+| File | Purpose |
+|------|---------|
+| `agents/perftrace/src/main.rs` | Entry: config → agent::run(). Wires `mod agent; mod metrics;` |
+| `agents/perftrace/src/agent.rs` | Full agent loop: 10-sec collection cycle. Gathers CPU, memory, disk, network I/O via sysinfo. Emits OCSF 4004 HostMetric events to NATS (`kubric.{tenant}.perf.host.v1`). OTel spans for each collection cycle. Graceful SIGTERM/Ctrl-C shutdown |
+| `agents/perftrace/src/metrics.rs` | HostMetric struct: cpu_percent, memory_used_bytes, memory_total_bytes, disk_read_bytes, disk_write_bytes, net_rx_bytes, net_tx_bytes, load_avg_1m. OCSF class_uid 4004 compliance |
+
+### Watchdog Agent (Rust)
+
+| File | Purpose |
+|------|---------|
+| `agents/watchdog/src/main.rs` | Entry: config → orchestrator::run(). Wires `mod manifest; mod orchestrator; mod tuf_updater; mod zstd_delta;` |
+| `agents/watchdog/src/config.rs` | Config: tenant_id, nats_url, agent_id, tuf_repo_url, update_interval, binary_dir |
+| `agents/watchdog/src/manifest.rs` | Binary manifest verification: blake3 hash + ed25519 signature. ManifestEntry (name, version, blake3, ed25519_sig). Verifies on-disk binaries against signed manifest. 4 unit tests |
+| `agents/watchdog/src/orchestrator.rs` | Update orchestration loop: periodic TUF check → download → verify manifest → apply delta → restart agents. Rollback on verification failure. NATS status publishing (kubric.{tenant}.watchdog.status.v1). 3 unit tests |
+| `agents/watchdog/src/tuf_updater.rs` | TUF update client: check_for_updates → download_update → apply_update. Supports delta patches (.delta.zst files). Post-install verification via manifest hash. Full update cycle with reqwest HTTP client. 3 unit tests |
+| `agents/watchdog/src/zstd_delta.rs` | Dictionary-based delta compression. Uses zstd::bulk::Compressor/Decompressor with set_dictionary() API (zstd 0.13). blake3 hash verification on both old and new binaries. DeltaPatch struct serialization. 5 unit tests including 1MB roundtrip + wrong-hash rejection |
+
+### Provisioning Agent (Rust)
+
+| File | Purpose |
+|------|---------|
+| `agents/provisioning/Cargo.toml` | Workspace member: core deps + reqwest + OTel. Part of workspace via root Cargo.toml |
+| `agents/provisioning/src/main.rs` | Entry: config → starts NATS registration listener. Wires `mod config; mod fingerprint; mod install_script; mod registration;` |
+| `agents/provisioning/src/config.rs` | Config: nats_url, agent_id, api_base_url, binary_dir, vault_addr |
+| `agents/provisioning/src/registration.rs` | NATS-based agent registration on `kubric.provisioning.register`. Validates binary fingerprint before approving. Provisions NATS token + Vault AppRole credentials. 2 unit tests |
+| `agents/provisioning/src/install_script.rs` | Cross-platform install script generator. Linux: bash + systemd service + blake3 verification. Windows: PowerShell + SC.exe Windows Service + env vars. macOS: bash + launchd plist. Each downloads binary from TUF repo, verifies hash, configures env, installs as system daemon. 4 unit tests |
+| `agents/provisioning/src/fingerprint.rs` | blake3 file/byte hashing, known hash database building, agent hash validation. First-deployment mode: allows registration when no known hashes exist. 5 unit tests |
 
 ---
 
@@ -294,8 +392,8 @@
 |-------|--------|------------|
 | L0 Scaffold | 100% | go.mod, Cargo.toml, docker-compose, all vendor assets, migrations |
 | L1 Go APIs | 100% | K-SVC, VDR, KIC, NOC — CRUD, NATS, RLS, JWT, RBAC, rate-limit |
-| L2 KAI Python | 100% | CrewAI 5 personas, Temporal worker, n8n 4 workflows, Vault injection, Stripe webhook |
-| L3 Detection | 100% | Sigma/YARA wired into agent loop, NetGuard pcap, EPSS enrichment, TI 7-feed scheduler, Nuclei bridge |
+| L2 KAI Python | 100% | CrewAI 13 personas, Temporal worker, n8n 4 workflows, Vault injection, Stripe webhook, PSA Zammad, QBR PDF |
+| L3 Detection | 100% | Sigma/YARA wired into agent loop, eBPF/ETW hooks, candle ML anomaly scorer, NetGuard pcap+DPI+IDS+TLS, EPSS enrichment, TI 7-feed scheduler, Nuclei bridge, RITA beacon analysis, IPsum reputation |
 | L4 K8s/GitOps | 100% | Kustomize base+overlays, Helm values, ArgoCD app-of-apps, cert-manager, ESO, Authentik blueprint, Grafana 6 alerts, backup DR scripts |
 | L5 Portal | 100% | Next.js 14 App Router, Authentik OIDC, KiSS 5-domain scorecard, Stripe billing, NATS WebSocket alerts, agent health, Go billing package, PSA/Zammad auto-tickets, QBR PDF reports |
 
