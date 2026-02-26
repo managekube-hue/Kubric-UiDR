@@ -1,0 +1,40 @@
+[workspace]
+members = [
+    "agents/coresec",
+    "agents/netguard",
+    "agents/perftrace",
+    "agents/watchdog",
+]
+resolver = "2"
+
+# ─── Shared dependency versions ───────────────────────────────────────────────
+# Pin versions here; individual crates inherit with `{ workspace = true }`.
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+futures = "0.3"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Protobuf (wire format between agents and Go services via NATS)
+prost = "0.13"
+prost-types = "0.13"
+
+# Messaging – async-nats is the modern Rust NATS client (JetStream-aware)
+async-nats = "0.37"
+
+# Hashing – Blake3 for event integrity chains
+blake3 = "1.5"
+
+# Logging / tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Config / env
+dotenvy = "0.15"
