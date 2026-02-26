@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //! YARA-X engine wrapper for CoreSec.
 //!
 //! Loads all `*.yar` / `*.yara` files from a directory tree, compiles them
@@ -32,20 +33,21 @@ pub struct YaraMatch {
 /// Compiled YARA rule set.  Construct once and reuse across events.
 pub struct YaraEngine {
     rules: yara_x::Rules,
+    /// Rule count tracked at compile time (yara_x::Rules::num_rules is pub(crate)).
+    count: usize,
 }
 
 impl YaraEngine {
     /// Creates an engine with zero rules (safe fallback for CI / missing dir).
     pub fn empty() -> Self {
         let compiler = Compiler::new();
-        // An empty compiler always produces a valid Rules object.
         let rules = compiler.build();
-        YaraEngine { rules }
+        YaraEngine { rules, count: 0 }
     }
 
     /// Returns the number of compiled rules.
     pub fn rule_count(&self) -> usize {
-        self.rules.num_rules()
+        self.count
     }
 
     /// Recursively walks `dir`, compiling every `*.yar` / `*.yara` file.
@@ -54,9 +56,10 @@ impl YaraEngine {
     /// a single bad rule file does not block startup.
     pub fn load_from_dir(dir: &str) -> Result<Self> {
         let mut compiler = Compiler::new();
-        load_dir(Path::new(dir), &mut compiler);
+        let mut count = 0usize;
+        load_dir(Path::new(dir), &mut compiler, &mut count);
         let rules = compiler.build();
-        Ok(YaraEngine { rules })
+        Ok(YaraEngine { rules, count })
     }
 
     /// Scans `data` against all compiled rules.
@@ -78,7 +81,7 @@ impl YaraEngine {
         results
             .matching_rules()
             .map(|r| YaraMatch {
-                rule:      r.name().to_string(),
+                rule:      r.identifier().to_string(),
                 namespace: r.namespace().to_string(),
             })
             .collect()
@@ -87,7 +90,7 @@ impl YaraEngine {
 
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
-fn load_dir(path: &Path, compiler: &mut Compiler) {
+fn load_dir(path: &Path, compiler: &mut Compiler, count: &mut usize) {
     let entries = match fs::read_dir(path) {
         Ok(e) => e,
         Err(_) => return, // directory missing — not an error in CI
@@ -95,7 +98,7 @@ fn load_dir(path: &Path, compiler: &mut Compiler) {
     for entry in entries.flatten() {
         let p = entry.path();
         if p.is_dir() {
-            load_dir(&p, compiler);
+            load_dir(&p, compiler, count);
         } else {
             let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("");
             if ext == "yar" || ext == "yara" {
@@ -107,6 +110,8 @@ fn load_dir(path: &Path, compiler: &mut Compiler) {
                                 error = %e,
                                 "yara: skipping rule that failed to compile"
                             );
+                        } else {
+                            *count += 1;
                         }
                     }
                     Err(e) => {

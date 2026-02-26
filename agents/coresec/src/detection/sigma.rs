@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 //! Native Sigma rule evaluator for CoreSec.
 //!
 //! Loads all `*.yml` / `*.yaml` files from a directory tree and evaluates

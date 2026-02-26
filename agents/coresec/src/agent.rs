@@ -1,7 +1,7 @@
 use crate::config::Config;
 use crate::event::ProcessEvent;
 use anyhow::{Context, Result};
-use tracing::{error, info};
+use tracing::info;
 
 pub async fn run(cfg: Config) -> Result<()> {
     let client = async_nats::connect(&cfg.nats_url)
@@ -35,7 +35,7 @@ fn build_stub_event(cfg: &Config) -> ProcessEvent {
         cfg.tenant_id,
         chrono_now()
     );
-    let hash = format!("{:x}", blake3::hash(raw.as_bytes()));
+    let hash = blake3::hash(raw.as_bytes()).to_hex().to_string();
 
     ProcessEvent {
         tenant_id: cfg.tenant_id.clone(),

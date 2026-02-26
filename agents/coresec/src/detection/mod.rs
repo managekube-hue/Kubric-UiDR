@@ -4,6 +4,11 @@
 //! in the CoreSec agent.  It loads both rule sets at startup and exposes a
 //! single [`DetectionEngine::detect`] method that returns all matches for a
 //! given [`ProcessEvent`].
+//!
+//! The detection module is fully implemented and tested.  It is intentionally
+//! not yet called from `agent::run` — the eBPF event loop (Phase 3) will wire
+//! it in.  Dead-code warnings for this module are suppressed accordingly.
+#![allow(dead_code)]
 
 pub mod sigma;
 pub mod yara;
