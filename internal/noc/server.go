@@ -9,15 +9,25 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/managekube-hue/Kubric-UiDR/internal/bloodhound"
+	"github.com/managekube-hue/Kubric-UiDR/internal/cortex"
+	"github.com/managekube-hue/Kubric-UiDR/internal/falco"
 	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
+	"github.com/managekube-hue/Kubric-UiDR/internal/osquery"
+	"github.com/managekube-hue/Kubric-UiDR/internal/shuffle"
+	"github.com/managekube-hue/Kubric-UiDR/internal/thehive"
+	"github.com/managekube-hue/Kubric-UiDR/internal/velociraptor"
+	"github.com/managekube-hue/Kubric-UiDR/internal/wazuh"
 )
 
-// Server wires together the Chi router, NOCStore (pgx → Postgres), and Publisher (NATS).
+// Server wires together the Chi router, NOCStore (pgx → Postgres), Publisher (NATS),
+// and optional security-tool integration clients.
 type Server struct {
-	cfg    Config
-	store  *NOCStore
-	pub    *Publisher
-	router *chi.Mux
+	cfg          Config
+	store        *NOCStore
+	pub          *Publisher
+	router       *chi.Mux
+	integrations *integrationHandler
 }
 
 // NewServer initialises all NOC dependencies and returns a ready-to-run Server.
@@ -36,9 +46,69 @@ func NewServer(cfg Config) (*Server, error) {
 		pub = nil
 	}
 
-	s := &Server{cfg: cfg, store: store, pub: pub}
+	ih := initIntegrations(cfg)
+
+	s := &Server{cfg: cfg, store: store, pub: pub, integrations: ih}
 	s.router = s.buildRouter()
 	return s, nil
+}
+
+// initIntegrations creates all optional integration clients.  Each client
+// constructor returns (nil, nil) when its URL is empty, so no error handling
+// is needed for disabled integrations.  Errors from enabled-but-misconfigured
+// integrations are logged as warnings but do not prevent the NOC from starting.
+func initIntegrations(cfg Config) *integrationHandler {
+	ih := &integrationHandler{}
+
+	if c, err := wazuh.New(cfg.WazuhURL, cfg.WazuhUser, cfg.WazuhPassword); err != nil {
+		fmt.Printf("noc: warn — wazuh client init failed: %v\n", err)
+	} else {
+		ih.wazuh = c
+	}
+
+	if c, err := velociraptor.New(cfg.VelociraptorURL, cfg.VelociraptorAPIKey); err != nil {
+		fmt.Printf("noc: warn — velociraptor client init failed: %v\n", err)
+	} else {
+		ih.velociraptor = c
+	}
+
+	if c, err := thehive.New(cfg.TheHiveURL, cfg.TheHiveAPIKey); err != nil {
+		fmt.Printf("noc: warn — thehive client init failed: %v\n", err)
+	} else {
+		ih.thehive = c
+	}
+
+	if c, err := cortex.New(cfg.CortexURL, cfg.CortexAPIKey); err != nil {
+		fmt.Printf("noc: warn — cortex client init failed: %v\n", err)
+	} else {
+		ih.cortex = c
+	}
+
+	if c, err := falco.New(cfg.FalcoURL); err != nil {
+		fmt.Printf("noc: warn — falco client init failed: %v\n", err)
+	} else {
+		ih.falco = c
+	}
+
+	if c, err := osquery.New(cfg.OsqueryURL, cfg.OsqueryAPIKey); err != nil {
+		fmt.Printf("noc: warn — osquery client init failed: %v\n", err)
+	} else {
+		ih.osquery = c
+	}
+
+	if c, err := shuffle.New(cfg.ShuffleURL, cfg.ShuffleAPIKey); err != nil {
+		fmt.Printf("noc: warn — shuffle client init failed: %v\n", err)
+	} else {
+		ih.shuffle = c
+	}
+
+	if c, err := bloodhound.New(cfg.BloodHoundURL, cfg.BloodHoundTokenID, cfg.BloodHoundTokenKey); err != nil {
+		fmt.Printf("noc: warn — bloodhound client init failed: %v\n", err)
+	} else {
+		ih.bloodhound = c
+	}
+
+	return ih
 }
 
 // Run starts the HTTP server and blocks until ctx is cancelled.
@@ -65,10 +135,26 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 		s.store.Close()
 		s.pub.Close()
+		s.closeIntegrations()
 		return nil
 	case err := <-errCh:
 		return err
 	}
+}
+
+// closeIntegrations releases resources held by all integration clients.
+func (s *Server) closeIntegrations() {
+	if s.integrations == nil {
+		return
+	}
+	s.integrations.wazuh.Close()
+	s.integrations.velociraptor.Close()
+	s.integrations.thehive.Close()
+	s.integrations.cortex.Close()
+	s.integrations.falco.Close()
+	s.integrations.osquery.Close()
+	s.integrations.shuffle.Close()
+	s.integrations.bloodhound.Close()
 }
 
 func (s *Server) buildRouter() *chi.Mux {
@@ -124,6 +210,12 @@ func (s *Server) buildRouter() *chi.Mux {
 			r.Get("/", ah.list)
 			r.Get("/{agentID}", ah.get)
 		})
+	})
+
+	// Integration routes: admin and analyst can read and write
+	r.Group(func(r chi.Router) {
+		r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
+		s.integrations.RegisterRoutes(r)
 	})
 
 	return r
