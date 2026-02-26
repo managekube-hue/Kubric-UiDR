@@ -2,6 +2,10 @@
   "permissions": {
     "additionalDirectories": [
       "C:\\Users\\idriv\\.claude\\projects\\c--Users-idriv-Documents-GitHub-Kubric-UiDR\\memory"
+    ],
+    "allow": [
+      "Bash(export PATH=\"$PATH:/c/Users/idriv/.cargo/bin\")",
+      "Bash(cargo test -p coresec)"
     ]
   }
 }
