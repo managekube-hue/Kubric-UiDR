@@ -470,6 +470,10 @@ class MISPFeed(_BaseFeed):
     name = "misp"
     _COLS = ["ioc_type", "ioc_value", "source", "confidence", "tenant_id", "fetched_at", "tags"]
 
+    # Max indicators to fetch per run (safety cap)
+    _MAX_ROWS = 100_000
+    _PAGE_SIZE = 5_000
+
     def pull(self) -> int:
         if not self._cfg.misp_url or not self._cfg.misp_api_key:
             logger.info("MISP: no URL/key configured — skipping")
@@ -481,32 +485,66 @@ class MISPFeed(_BaseFeed):
         try:
             from pymisp import PyMISP  # type: ignore[import]
             misp = PyMISP(self._cfg.misp_url, self._cfg.misp_api_key, ssl=False)
-            result = misp.search(controller="attributes", limit=5000, page=1, to_ids=1)
-            attributes = result.get("Attribute", []) if isinstance(result, dict) else []
-            for attr in attributes:
-                ioc_type = attr.get("type", "")
-                ioc_value = str(attr.get("value", ""))[:512]
-                tags = ",".join(
-                    t.get("name", "") for t in attr.get("Tag", [])
-                )[:500]
-                rows.append([ioc_type, ioc_value, "misp", 70, self._cfg.tenant_id, now, tags])
+            page = 1
+            while len(rows) < self._MAX_ROWS:
+                result = misp.search(
+                    controller="attributes",
+                    limit=self._PAGE_SIZE,
+                    page=page,
+                    to_ids=1,
+                )
+                attributes = result.get("Attribute", []) if isinstance(result, dict) else []
+                if not attributes:
+                    break
+                for attr in attributes:
+                    ioc_type  = attr.get("type", "")
+                    ioc_value = str(attr.get("value", ""))[:512]
+                    tags = ",".join(
+                        t.get("name", "") for t in attr.get("Tag", [])
+                    )[:500]
+                    rows.append([ioc_type, ioc_value, "misp", 70,
+                                 self._cfg.tenant_id, now, tags])
+                logger.debug("MISP page %d: %d attributes", page, len(attributes))
+                if len(attributes) < self._PAGE_SIZE:
+                    break  # last page
+                page += 1
+
         except ImportError:
-            # Fallback: raw REST
+            # Fallback: raw MISP REST API (POST to /attributes/restSearch)
             headers = {
                 "Authorization": self._cfg.misp_api_key,
-                "Accept": "application/json",
-                "Content-Type": "application/json",
+                "Accept":        "application/json",
+                "Content-Type":  "application/json",
             }
             url = f"{self._cfg.misp_url.rstrip('/')}/attributes/restSearch"
-            try:
-                resp = self._http_get(url, headers=headers, timeout=30.0)
-                data = resp.json()
-                for attr in data.get("response", {}).get("Attribute", []):
-                    ioc_type = attr.get("type", "")
-                    ioc_value = str(attr.get("value", ""))[:512]
-                    rows.append([ioc_type, ioc_value, "misp", 70, self._cfg.tenant_id, now, ""])
-            except Exception as exc:  # noqa: BLE001
-                logger.error("MISP REST fallback failed: %s", exc)
+            page = 1
+            while len(rows) < self._MAX_ROWS:
+                body = {
+                    "returnFormat": "json",
+                    "limit":  self._PAGE_SIZE,
+                    "page":   page,
+                    "to_ids": 1,
+                }
+                try:
+                    with httpx.Client(timeout=30.0, follow_redirects=True) as client:
+                        resp = client.post(url, headers=headers, json=body)
+                        resp.raise_for_status()
+                        data = resp.json()
+                    attributes = data.get("response", {}).get("Attribute", [])
+                    if not attributes:
+                        break
+                    for attr in attributes:
+                        ioc_type  = attr.get("type", "")
+                        ioc_value = str(attr.get("value", ""))[:512]
+                        rows.append([ioc_type, ioc_value, "misp", 70,
+                                     self._cfg.tenant_id, now, ""])
+                    if len(attributes) < self._PAGE_SIZE:
+                        break
+                    page += 1
+                except Exception as exc:  # noqa: BLE001
+                    logger.error("MISP REST fallback page %d failed: %s", page, exc)
+                    break
+
         except Exception as exc:  # noqa: BLE001
             logger.error("MISP PyMISP pull failed: %s", exc)
 

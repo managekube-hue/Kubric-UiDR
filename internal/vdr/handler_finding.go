@@ -24,10 +24,31 @@ var validScanners = map[string]bool{
 type findingHandler struct {
 	store *FindingStore
 	pub   *Publisher
+	epss  *EPSSClient // optional; nil when ClickHouse is not configured
 }
 
-func newFindingHandler(store *FindingStore, pub *Publisher) *findingHandler {
-	return &findingHandler{store: store, pub: pub}
+// FindingResponse wraps Finding with optional EPSS enrichment fields.
+type FindingResponse struct {
+	Finding
+	EPSSScore      *float64 `json:"epss_score,omitempty"`
+	EPSSPercentile *float64 `json:"epss_percentile,omitempty"`
+}
+
+func newFindingHandler(store *FindingStore, pub *Publisher, epss *EPSSClient) *findingHandler {
+	return &findingHandler{store: store, pub: pub, epss: epss}
+}
+
+// enrichFinding attaches EPSS data to a finding when a CVE ID is present.
+func (h *findingHandler) enrichFinding(r *http.Request, f Finding) FindingResponse {
+	resp := FindingResponse{Finding: f}
+	if h.epss == nil || f.CVEID == "" {
+		return resp
+	}
+	if score, err := h.epss.Lookup(r.Context(), f.CVEID); err == nil && score != nil {
+		resp.EPSSScore      = &score.Score
+		resp.EPSSPercentile = &score.Percentile
+	}
+	return resp
 }
 
 // POST /findings
@@ -122,10 +143,11 @@ func (h *findingHandler) list(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if findings == nil {
-		findings = []Finding{}
+	responses := make([]FindingResponse, 0, len(findings))
+	for _, f := range findings {
+		responses = append(responses, h.enrichFinding(r, f))
 	}
-	writeJSON(w, http.StatusOK, findings)
+	writeJSON(w, http.StatusOK, responses)
 }
 
 // GET /findings/{findingID}
@@ -140,7 +162,7 @@ func (h *findingHandler) get(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeJSON(w, http.StatusOK, f)
+	writeJSON(w, http.StatusOK, h.enrichFinding(r, f))
 }
 
 // PATCH /findings/{findingID}

@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use tracing::info;
 
+mod capture;
 mod config;
 
 #[tokio::main]
@@ -16,12 +17,7 @@ async fn main() -> Result<()> {
         .init();
 
     let cfg = config::Config::from_env().context("load config")?;
-    info!(tenant_id = %cfg.tenant_id, "NetGuard starting");
+    info!(tenant_id = %cfg.tenant_id, interface = %cfg.interface, "NetGuard starting");
 
-    // Phase 1 stub — parks until signal.
-    // Phase 3 will wire: libpcap/AF_PACKET → OCSF NetworkActivity → NATS
-    info!("NetGuard stub running — awaiting Phase 3 pcap/eBPF wiring");
-    tokio::signal::ctrl_c().await.ok();
-    info!("NetGuard shutting down");
-    Ok(())
+    capture::run(cfg).await
 }

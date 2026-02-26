@@ -89,6 +89,8 @@ func (s *Server) buildRouter() *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(25 * time.Second))
+	r.Use(kubricmw.RateLimit)
+	r.Use(kubricmw.JWTAuth())
 	r.Use(kubricmw.TenantContext)
 
 	// Health probes — no auth required, used by K8s liveness/readiness probes

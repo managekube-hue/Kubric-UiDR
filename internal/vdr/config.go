@@ -16,14 +16,17 @@ type Config struct {
 	DatabaseURL string
 	// NATSUrl — KUBRIC_NATS_URL (default nats://127.0.0.1:4222)
 	NATSUrl string
+	// ClickHouseURL — KUBRIC_CLICKHOUSE_URL (optional; enables EPSS enrichment)
+	ClickHouseURL string
 }
 
 // LoadConfig reads VDR configuration from environment variables.
 func LoadConfig() Config {
 	return Config{
-		ListenAddr:  getenv("VDR_LISTEN_ADDR", ":8081"),
-		DatabaseURL: getenv("KUBRIC_DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/kubric"),
-		NATSUrl:     getenv("KUBRIC_NATS_URL", "nats://127.0.0.1:4222"),
+		ListenAddr:    getenv("VDR_LISTEN_ADDR", ":8081"),
+		DatabaseURL:   getenv("KUBRIC_DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/kubric"),
+		NATSUrl:       getenv("KUBRIC_NATS_URL", "nats://127.0.0.1:4222"),
+		ClickHouseURL: getenv("KUBRIC_CLICKHOUSE_URL", ""),
 	}
 }
 

@@ -10,8 +10,10 @@ Endpoints:
   POST /v1/remediate               KAI-KEEPER: submit remediation plan
   POST /v1/billing/run             KAI-CLERK: trigger billing aggregation
   POST /v1/n8n/callback            n8n bridge: forward incident payload to n8n webhook
+  POST /v1/webhook/stripe          Stripe webhook: subscription + invoice events
 
 Background tasks started at lifespan:
+  - Vault secret injection (VAULT_ADDR must be set; silently skipped otherwise)
   - NATS subscriber (routes kubric.* events to agents)
   - KAI-FORESIGHT periodic loop
 """
@@ -19,6 +21,8 @@ Background tasks started at lifespan:
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import hmac
 import os
 import time
 from contextlib import asynccontextmanager
@@ -27,7 +31,7 @@ from typing import Any
 import httpx
 import orjson
 import structlog
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
@@ -46,6 +50,14 @@ _background_tasks: list[asyncio.Task] = []  # type: ignore[type-arg]
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # type: ignore[type-ignore]
     # ── startup ──
+    # Vault secret injection — must happen before NATS/LLM init so downstream
+    # components pick up the injected env vars.
+    try:
+        from kai.core.vault import inject_vault_secrets  # noqa: PLC0415
+        inject_vault_secrets()
+    except Exception as exc:
+        log.warning("lifespan.vault_inject_failed", error=str(exc))
+
     await nats_client.connect()
     _subscriptions.extend(await start_subscriber())
 
@@ -311,6 +323,136 @@ async def billing_run(req: BillingRunRequest) -> dict[str, str]:
         raise HTTPException(status_code=500, detail=str(exc))
 
     return {"status": "submitted", "tenant_id": req.tenant_id, "period": req.billing_period}
+
+
+# ─── Stripe webhook ──────────────────────────────────────────────────────────
+
+# Stripe events handled by this endpoint.
+_STRIPE_HANDLED_EVENTS = {
+    "customer.subscription.created",
+    "customer.subscription.updated",
+    "customer.subscription.deleted",
+    "invoice.payment_succeeded",
+    "invoice.payment_failed",
+}
+
+# Tolerance for Stripe timestamp replay-attack protection (5 minutes).
+_STRIPE_TOLERANCE_SECS = 300
+
+
+def _verify_stripe_signature(payload: bytes, sig_header: str, secret: str) -> dict[str, Any]:
+    """
+    Validate a Stripe webhook signature and return the parsed event dict.
+
+    Uses Stripe's v1 scheme: HMAC-SHA256 over ``{timestamp}.{payload}``.
+    Raises HTTPException 400 if the signature is invalid or stale.
+    """
+    if not secret:
+        raise HTTPException(status_code=400, detail="Stripe webhook secret not configured")
+
+    # Parse "t=<ts>,v1=<sig1>,v1=<sig2>..."
+    parts: dict[str, list[str]] = {}
+    for part in sig_header.split(","):
+        k, _, v = part.partition("=")
+        parts.setdefault(k.strip(), []).append(v.strip())
+
+    timestamps = parts.get("t", [])
+    v1_sigs    = parts.get("v1", [])
+
+    if not timestamps or not v1_sigs:
+        raise HTTPException(status_code=400, detail="Invalid Stripe-Signature header")
+
+    try:
+        ts = int(timestamps[0])
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid Stripe-Signature timestamp")
+
+    # Replay-attack protection
+    now = int(time.time())
+    if abs(now - ts) > _STRIPE_TOLERANCE_SECS:
+        raise HTTPException(status_code=400, detail="Stripe webhook timestamp out of tolerance")
+
+    signed_payload = f"{ts}.".encode() + payload
+    expected = hmac.new(
+        secret.encode("utf-8"), signed_payload, hashlib.sha256
+    ).hexdigest()
+
+    if not any(hmac.compare_digest(expected, sig) for sig in v1_sigs):
+        raise HTTPException(status_code=400, detail="Stripe signature mismatch")
+
+    return orjson.loads(payload)
+
+
+@app.post("/v1/webhook/stripe")
+async def stripe_webhook(request: Request) -> dict[str, Any]:
+    """
+    Stripe webhook receiver.
+
+    Validates HMAC-SHA256 Stripe-Signature, routes the event, and publishes
+    a NATS lifecycle event so KAI-CLERK and downstream services can react.
+
+    Expected env var: KUBRIC_STRIPE_WEBHOOK_SECRET
+    """
+    payload    = await request.body()
+    sig_header = request.headers.get("stripe-signature", "")
+    secret     = os.getenv("KUBRIC_STRIPE_WEBHOOK_SECRET", "")
+
+    event = _verify_stripe_signature(payload, sig_header, secret)
+
+    event_type  = event.get("type", "")
+    event_id    = event.get("id", "")
+    data_object = event.get("data", {}).get("object", {})
+
+    if event_type not in _STRIPE_HANDLED_EVENTS:
+        log.debug("stripe.ignored", event_type=event_type)
+        return {"received": True, "handled": False, "type": event_type}
+
+    log.info("stripe.event", event_type=event_type, event_id=event_id)
+
+    # Derive tenant_id from Stripe metadata — fallback to customer_id
+    tenant_id   = (
+        data_object.get("metadata", {}).get("kubric_tenant_id")
+        or data_object.get("customer", "unknown")
+    )
+    customer_id = data_object.get("customer", data_object.get("id", ""))
+
+    # Publish lifecycle event to NATS
+    nats_subject = f"kubric.{tenant_id}.billing.stripe.v1"
+    nats_payload = orjson.dumps({
+        "event_type":  event_type,
+        "event_id":    event_id,
+        "tenant_id":   tenant_id,
+        "customer_id": customer_id,
+        "status":      data_object.get("status", ""),
+        "ts":          int(time.time() * 1000),
+    })
+    try:
+        await nats_client.publish(nats_subject, nats_payload)
+    except Exception as exc:
+        log.warning("stripe.nats_publish_failed", error=str(exc))
+
+    # For payment failures, also trigger a KAI-COMM notification
+    if event_type == "invoice.payment_failed":
+        try:
+            from kai.agents.comm import CommAgent  # noqa: PLC0415
+            await CommAgent().handle(
+                subject=nats_subject,
+                event={
+                    "type": "billing.payment_failed",
+                    "tenant_id": tenant_id,
+                    "customer_id": customer_id,
+                    "amount_due": data_object.get("amount_due", 0),
+                },
+            )
+        except Exception as exc:
+            log.warning("stripe.comm_notify_failed", error=str(exc))
+
+    return {
+        "received": True,
+        "handled":  True,
+        "type":     event_type,
+        "tenant_id": tenant_id,
+    }
 
 
 # ─── n8n bridge ───────────────────────────────────────────────────────────────

@@ -16,6 +16,7 @@ type Server struct {
 	cfg    Config
 	store  *FindingStore
 	pub    *Publisher
+	epss   *EPSSClient
 	router *chi.Mux
 }
 
@@ -35,7 +36,13 @@ func NewServer(cfg Config) (*Server, error) {
 		pub = nil
 	}
 
-	s := &Server{cfg: cfg, store: store, pub: pub}
+	epss, err := NewEPSSClient(cfg.ClickHouseURL)
+	if err != nil {
+		fmt.Printf("vdr: warn — EPSS ClickHouse unavailable (%v); EPSS enrichment disabled\n", err)
+		epss = nil
+	}
+
+	s := &Server{cfg: cfg, store: store, pub: pub, epss: epss}
 	s.router = s.buildRouter()
 	return s, nil
 }
@@ -64,6 +71,7 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 		s.store.Close()
 		s.pub.Close()
+		s.epss.Close()
 		return nil
 	case err := <-errCh:
 		return err
@@ -77,6 +85,8 @@ func (s *Server) buildRouter() *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(25 * time.Second))
+	r.Use(kubricmw.RateLimit)
+	r.Use(kubricmw.JWTAuth())
 	r.Use(kubricmw.TenantContext)
 
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
@@ -94,7 +104,7 @@ func (s *Server) buildRouter() *chi.Mux {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
 
-	fh := newFindingHandler(s.store, s.pub)
+	fh := newFindingHandler(s.store, s.pub, s.epss)
 	r.Route("/findings", func(r chi.Router) {
 		r.Get("/", fh.list)
 		r.Post("/", fh.create)
