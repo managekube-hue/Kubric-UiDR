@@ -1,0 +1,51 @@
+# Dockerfile.web — Next.js 14 standalone build for Kubric Portal
+# Usage:
+#   docker build -t kubric/web -f Dockerfile.web .
+
+# ── Stage 1: dependencies ────────────────────────────────────────────────────
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm ci --omit=dev 2>/dev/null || npm install --omit=dev
+
+# ── Stage 2: builder ─────────────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY frontend/ .
+
+# Build arguments for compile-time env injection
+ARG NEXT_PUBLIC_API_BASE=http://k-svc:8080
+ARG NEXT_PUBLIC_NATS_WS_URL=ws://nats:9222
+
+ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
+ENV NEXT_PUBLIC_NATS_WS_URL=$NEXT_PUBLIC_NATS_WS_URL
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN npm run build
+
+# ── Stage 3: runtime ─────────────────────────────────────────────────────────
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 kubric && \
+    adduser --system --uid 1001 kubric
+
+# Copy standalone output
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=kubric:kubric /app/.next/standalone ./
+COPY --from=builder --chown=kubric:kubric /app/.next/static ./.next/static
+
+USER kubric
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

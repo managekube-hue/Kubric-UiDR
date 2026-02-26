@@ -178,9 +178,15 @@ build-go:
 	go build ./cmd/nuclei-bridge/...
 
 build-docker:
-	docker build -t kubric/k-svc:latest -f Dockerfile.api .
-	docker build -t kubric/kai:latest -f Dockerfile.kai .
+	@echo "Building Docker images..."
+	docker build -t kubric/k-svc:latest --target k-svc -f Dockerfile.api .
+	docker build -t kubric/vdr:latest --target vdr -f Dockerfile.api .
+	docker build -t kubric/kic:latest --target kic -f Dockerfile.api .
+	docker build -t kubric/noc:latest --target noc -f Dockerfile.api .
+	docker build -t kubric/kai:latest -f kai/Dockerfile kai/
 	docker build -t kubric/web:latest -f Dockerfile.web .
+	docker build -t kubric/coresec:latest --target coresec -f Dockerfile.agents .
+	@echo "All Docker images built"
 
 # Deployment
 

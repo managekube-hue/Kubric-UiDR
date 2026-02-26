@@ -53,6 +53,14 @@ patches:
       apiVersion: apps/v1
       kind: Deployment
       metadata:
+        name: web
+        namespace: kubric
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
         name: n8n
         namespace: kubric
       spec:
@@ -68,6 +76,8 @@ images:
   - name: kubric/noc
     newTag: dev
   - name: kubric/kai
+    newTag: dev
+  - name: kubric/web
     newTag: dev
   - name: n8nio/n8n
     newTag: latest

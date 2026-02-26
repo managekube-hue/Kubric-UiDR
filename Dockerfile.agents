@@ -1,0 +1,103 @@
+# Dockerfile.agents — Multi-stage Rust build for Kubric security agents
+# Produces separate binaries: coresec, netguard, perftrace, watchdog, provisioning
+# Usage:
+#   docker build -t kubric/coresec    --target coresec    -f Dockerfile.agents .
+#   docker build -t kubric/netguard   --target netguard   -f Dockerfile.agents .
+#   docker build -t kubric/perftrace  --target perftrace  -f Dockerfile.agents .
+#   docker build -t kubric/watchdog   --target watchdog   -f Dockerfile.agents .
+#   docker build -t kubric/provisioning --target provisioning -f Dockerfile.agents .
+
+# ── Stage 1: builder ─────────────────────────────────────────────────────────
+FROM rust:1.82-bookworm AS builder
+WORKDIR /src
+
+# System deps for native libraries (pcap, nDPI, eBPF)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpcap-dev \
+    pkg-config \
+    cmake \
+    clang \
+    llvm \
+    libssl-dev \
+    protobuf-compiler \
+    && rm -rf /var/lib/apt/lists/*
+
+# Cache dependency builds — copy only Cargo manifests first
+COPY Cargo.toml Cargo.lock ./
+COPY agents/coresec/Cargo.toml agents/coresec/Cargo.toml
+COPY agents/netguard/Cargo.toml agents/netguard/Cargo.toml
+COPY agents/perftrace/Cargo.toml agents/perftrace/Cargo.toml
+COPY agents/watchdog/Cargo.toml agents/watchdog/Cargo.toml
+COPY agents/provisioning/Cargo.toml agents/provisioning/Cargo.toml
+
+# Create dummy main.rs for each agent so cargo can resolve the workspace
+RUN mkdir -p agents/coresec/src agents/netguard/src agents/perftrace/src \
+             agents/watchdog/src agents/provisioning/src && \
+    echo "fn main() {}" > agents/coresec/src/main.rs && \
+    echo "fn main() {}" > agents/netguard/src/main.rs && \
+    echo "fn main() {}" > agents/perftrace/src/main.rs && \
+    echo "fn main() {}" > agents/watchdog/src/main.rs && \
+    echo "fn main() {}" > agents/provisioning/src/main.rs
+
+# Pre-build dependencies (cached layer)
+RUN cargo build --workspace --release 2>/dev/null || true
+
+# Copy actual source and vendor rules
+COPY agents/ agents/
+COPY vendor/sigma/ vendor/sigma/
+COPY vendor/yara-rules/ vendor/yara-rules/
+
+# Build all agents
+RUN cargo build --workspace --release
+
+# ── Stage 2: runtime images ──────────────────────────────────────────────────
+
+# --- CoreSec (EDR agent) ---
+FROM debian:bookworm-slim AS coresec
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -u 1000 kubric
+COPY --from=builder /src/target/release/coresec /usr/local/bin/coresec
+COPY --from=builder /src/vendor/sigma/rules/ /opt/kubric/vendor/sigma/rules/
+COPY --from=builder /src/vendor/yara-rules/ /opt/kubric/vendor/yara-rules/
+USER kubric
+ENTRYPOINT ["coresec"]
+
+# --- NetGuard (NDR agent) ---
+FROM debian:bookworm-slim AS netguard
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libpcap0.8 && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -u 1000 kubric
+COPY --from=builder /src/target/release/netguard /usr/local/bin/netguard
+USER kubric
+ENTRYPOINT ["netguard"]
+
+# --- PerfTrace (APM agent) ---
+FROM debian:bookworm-slim AS perftrace
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -u 1000 kubric
+COPY --from=builder /src/target/release/perftrace /usr/local/bin/perftrace
+USER kubric
+ENTRYPOINT ["perftrace"]
+
+# --- Watchdog (health + OTA updates) ---
+FROM debian:bookworm-slim AS watchdog
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -u 1000 kubric
+COPY --from=builder /src/target/release/watchdog /usr/local/bin/watchdog
+USER kubric
+ENTRYPOINT ["watchdog"]
+
+# --- Provisioning (agent registration) ---
+FROM debian:bookworm-slim AS provisioning
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/* && \
+    useradd -m -u 1000 kubric
+COPY --from=builder /src/target/release/provisioning /usr/local/bin/provisioning
+USER kubric
+ENTRYPOINT ["provisioning"]
+
+# Default target builds coresec
+FROM coresec

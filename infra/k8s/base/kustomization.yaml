@@ -11,6 +11,7 @@ resources:
   - kic.yaml
   - noc.yaml
   - kai-core.yaml
+  - web.yaml
   - n8n.yaml
   - grafana-provisioning.yaml
 

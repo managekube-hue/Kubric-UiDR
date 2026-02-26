@@ -1,4 +1,4 @@
-name: Build and Push Agents
+name: Build and Push Images
 
 on:
   push:
@@ -7,79 +7,217 @@ on:
       - develop
     paths:
       - 'agents/**'
+      - 'cmd/**'
+      - 'internal/**'
+      - 'services/**'
+      - 'frontend/**'
+      - 'kai/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'Dockerfile.*'
       - '.github/workflows/build-agents.yml'
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
 
 jobs:
-  build-coresec:
+  # ── Go API services ──────────────────────────────────────────────
+  build-go-services:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [x86_64, aarch64]
+        service: [k-svc, vdr, kic, noc]
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.arch }}-unknown-linux-gnu
-      
-      - name: Build CoreSec agent
-        run: cargo build --release --target ${{ matrix.arch }}-unknown-linux-gnu
-        working-directory: agents/coresec
-      
-      - name: Run tests
-        run: cargo test --release
-        working-directory: agents/coresec
-      
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: coresec-${{ matrix.arch }}
-          path: agents/coresec/target/${{ matrix.arch }}-unknown-linux-gnu/release/coresec
 
-  build-netguard:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-      
-      - name: Install dependencies
-        run: sudo apt-get install -y libpcap-dev
-      
-      - name: Build NetGuard agent
-        run: cargo build --release
-        working-directory: agents/netguard
-      
-      - name: Run tests
-        run: cargo test --release
-        working-directory: agents/netguard
-
-  push-images:
-    needs: [build-coresec, build-netguard]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-      
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Registry
-        uses: docker/login-action@v2
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.DOCKER_REGISTRY }}
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      
-      - name: Build and push agent images
-        uses: docker/build-push-action@v4
+
+      - name: Build and push ${{ matrix.service }}
+        uses: docker/build-push-action@v5
         with:
-          context: agents/
-          push: true
+          context: .
+          file: Dockerfile.api
+          target: ${{ matrix.service }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
-            ${{ secrets.DOCKER_REGISTRY }}/kubric-agents:latest
-            ${{ secrets.DOCKER_REGISTRY }}/kubric-agents:${{ github.sha }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_REGISTRY }}/kubric-agents:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_REGISTRY }}/kubric-agents:buildcache,mode=max
+            ${{ env.REGISTRY }}/kubric/${{ matrix.service }}:latest
+            ${{ env.REGISTRY }}/kubric/${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── Go bridge services ───────────────────────────────────────────
+  build-go-bridges:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - service: nats-clickhouse-bridge
+            target: nats-clickhouse-bridge
+          - service: nuclei-bridge
+            target: nuclei-bridge
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Registry
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push ${{ matrix.service }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.api
+          target: ${{ matrix.target }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: |
+            ${{ env.REGISTRY }}/kubric/${{ matrix.service }}:latest
+            ${{ env.REGISTRY }}/kubric/${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── Rust agents ──────────────────────────────────────────────────
+  build-rust-agents:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        agent: [coresec, netguard, perftrace, watchdog, provisioning]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Registry
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push ${{ matrix.agent }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.agents
+          target: ${{ matrix.agent }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: |
+            ${{ env.REGISTRY }}/kubric/${{ matrix.agent }}:latest
+            ${{ env.REGISTRY }}/kubric/${{ matrix.agent }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── KAI Python AI layer ─────────────────────────────────────────
+  build-kai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Registry
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push KAI
+        uses: docker/build-push-action@v5
+        with:
+          context: kai/
+          file: kai/Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: |
+            ${{ env.REGISTRY }}/kubric/kai:latest
+            ${{ env.REGISTRY }}/kubric/kai:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── Frontend (Next.js) ──────────────────────────────────────────
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Registry
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Web Portal
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.web
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: |
+            ${{ env.REGISTRY }}/kubric/web:latest
+            ${{ env.REGISTRY }}/kubric/web:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_API_BASE=https://api.kubric.security
+            NEXT_PUBLIC_NATS_WS_URL=wss://ws.kubric.security
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ── Tests (run on all PRs) ──────────────────────────────────────
+  test-go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Run Go tests
+        run: go test ./internal/... ./cmd/... -count=1 -race
+
+  test-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install dependencies
+        run: sudo apt-get install -y libpcap-dev
+      - name: Run Rust tests
+        run: cargo test --workspace
+
+  check-gpl-boundary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify GPL boundary
+        run: |
+          if grep -r '"github.com/activecm/rita' services/ 2>/dev/null; then
+            echo "GPL VIOLATION DETECTED — remove activecm/rita imports from services/"
+            exit 1
+          fi
+          echo "GPL boundary clean"

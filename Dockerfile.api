@@ -1,0 +1,70 @@
+# Dockerfile.api — Multi-stage Go build for all Kubric API services
+# Produces separate binaries: ksvc, vdr, kic, noc, nats-clickhouse-bridge, nuclei-bridge
+# Usage:
+#   docker build -t kubric/k-svc --target k-svc -f Dockerfile.api .
+#   docker build -t kubric/vdr   --target vdr   -f Dockerfile.api .
+#   docker build -t kubric/kic   --target kic   -f Dockerfile.api .
+#   docker build -t kubric/noc   --target noc   -f Dockerfile.api .
+
+# ── Stage 1: builder ─────────────────────────────────────────────────────────
+FROM golang:1.22-bookworm AS builder
+WORKDIR /src
+
+# Cache module downloads
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source
+COPY cmd/ cmd/
+COPY internal/ internal/
+COPY services/ services/
+
+# Build all binaries — static, no CGO for alpine compatibility
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/ksvc ./cmd/ksvc/...
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/vdr ./cmd/vdr/...
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/kic ./cmd/kic/...
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/noc ./cmd/noc/...
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/nats-clickhouse-bridge ./cmd/nats-clickhouse-bridge/...
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/nuclei-bridge ./cmd/nuclei-bridge/...
+
+# ── Stage 2: runtime images ──────────────────────────────────────────────────
+# Each target produces a minimal image with just the binary + certs + non-root user.
+
+# --- K-SVC (Tenant API gateway) ---
+FROM gcr.io/distroless/static-debian12:nonroot AS k-svc
+COPY --from=builder /out/ksvc /app/ksvc
+COPY db/migrations/ /migrations/
+EXPOSE 8080 9090
+ENTRYPOINT ["/app/ksvc"]
+
+# --- VDR (Vulnerability Detection & Response) ---
+FROM gcr.io/distroless/static-debian12:nonroot AS vdr
+COPY --from=builder /out/vdr /app/vdr
+EXPOSE 8081 9090
+ENTRYPOINT ["/app/vdr"]
+
+# --- KIC (Kubernetes Infrastructure Compliance) ---
+FROM gcr.io/distroless/static-debian12:nonroot AS kic
+COPY --from=builder /out/kic /app/kic
+EXPOSE 8082 9090
+ENTRYPOINT ["/app/kic"]
+
+# --- NOC (Network Operations Center) ---
+FROM gcr.io/distroless/static-debian12:nonroot AS noc
+COPY --from=builder /out/noc /app/noc
+EXPOSE 8083 9090
+ENTRYPOINT ["/app/noc"]
+
+# --- NATS-ClickHouse Bridge ---
+FROM gcr.io/distroless/static-debian12:nonroot AS nats-clickhouse-bridge
+COPY --from=builder /out/nats-clickhouse-bridge /app/nats-clickhouse-bridge
+ENTRYPOINT ["/app/nats-clickhouse-bridge"]
+
+# --- Nuclei Bridge ---
+FROM gcr.io/distroless/static-debian12:nonroot AS nuclei-bridge
+COPY --from=builder /out/nuclei-bridge /app/nuclei-bridge
+COPY vendor/nuclei-templates/ /templates/
+ENTRYPOINT ["/app/nuclei-bridge"]
+
+# Default target builds k-svc
+FROM k-svc
