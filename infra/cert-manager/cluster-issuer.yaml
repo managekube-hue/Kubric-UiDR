@@ -1,0 +1,36 @@
+# infra/cert-manager/cluster-issuer.yaml
+# Let's Encrypt production + staging issuers.
+# cert-manager must be installed first:
+#   helm install cert-manager jetstack/cert-manager --namespace cert-manager \
+#     --create-namespace --set installCRDs=true
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: ops@kubric.security
+    privateKeySecretRef:
+      name: letsencrypt-staging-key
+    solvers:
+      - http01:
+          ingress:
+            class: caddy
+
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: ops@kubric.security
+    privateKeySecretRef:
+      name: letsencrypt-prod-key
+    solvers:
+      - http01:
+          ingress:
+            class: caddy

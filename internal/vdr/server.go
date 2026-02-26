@@ -106,10 +106,18 @@ func (s *Server) buildRouter() *chi.Mux {
 
 	fh := newFindingHandler(s.store, s.pub, s.epss)
 	r.Route("/findings", func(r chi.Router) {
-		r.Get("/", fh.list)
-		r.Post("/", fh.create)
-		r.Get("/{findingID}", fh.get)
-		r.Patch("/{findingID}", fh.updateStatus)
+		// Read: admin, analyst, readonly
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+			r.Get("/", fh.list)
+			r.Get("/{findingID}", fh.get)
+		})
+		// Write: admin, analyst (scanners submit findings)
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst"))
+			r.Post("/", fh.create)
+			r.Patch("/{findingID}", fh.updateStatus)
+		})
 	})
 
 	return r

@@ -1,0 +1,179 @@
+# infra/argocd/kubric-app-of-apps.yaml
+# ArgoCD Application that manages all Kubric sub-applications.
+# When ArgoCD syncs this, it creates an Application for each service
+# from infra/k8s/overlays/{dev,prod}.
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kubric
+  namespace: argocd
+spec:
+  description: Kubric security platform
+  sourceRepos:
+    - "https://github.com/managekube-hue/Kubric-UiDR.git"
+  destinations:
+    - namespace: kubric
+      server: https://kubernetes.default.svc
+    - namespace: argocd
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+
+---
+# App-of-apps: syncs infra/k8s/overlays/prod/ to the kubric namespace
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-platform
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: kubric
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kubric
+  source:
+    repoURL: https://github.com/managekube-hue/Kubric-UiDR.git
+    targetRevision: main
+    path: infra/k8s/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+---
+# Helm-managed infrastructure: NATS
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-nats
+  namespace: argocd
+spec:
+  project: kubric
+  source:
+    repoURL: https://nats-io.github.io/k8s/helm/charts/
+    chart: nats
+    targetRevision: "1.*"
+    helm:
+      valueFiles:
+        - $values/infra/helm/values/nats-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Helm-managed infrastructure: ClickHouse
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-clickhouse
+  namespace: argocd
+spec:
+  project: kubric
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: clickhouse
+    targetRevision: "6.*"
+    helm:
+      valueFiles:
+        - $values/infra/helm/values/clickhouse-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Helm-managed infrastructure: Vault
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-vault
+  namespace: argocd
+spec:
+  project: kubric
+  source:
+    repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: "0.*"
+    helm:
+      valueFiles:
+        - $values/infra/helm/values/vault-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Helm-managed infrastructure: Temporal
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-temporal
+  namespace: argocd
+spec:
+  project: kubric
+  source:
+    repoURL: https://go.temporal.io/helm-charts
+    chart: temporal
+    targetRevision: "0.*"
+    helm:
+      valueFiles:
+        - $values/infra/helm/values/temporal-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Helm-managed infrastructure: Grafana
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-grafana
+  namespace: argocd
+spec:
+  project: kubric
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: grafana
+    targetRevision: "8.*"
+    helm:
+      valueFiles:
+        - $values/infra/helm/values/grafana-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

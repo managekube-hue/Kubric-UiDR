@@ -1,0 +1,22 @@
+# infra/cert-manager/certificate.yaml
+# TLS certificate for the Kubric platform domain.
+# Uses the letsencrypt-prod ClusterIssuer.
+# Replace DNS names with your actual domain before deploying.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubric-tls
+  namespace: kubric
+spec:
+  secretName: kubric-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - "app.kubric.security"
+    - "api.kubric.security"
+    - "grafana.kubric.security"
+    - "n8n.kubric.security"
+  duration: 2160h    # 90 days
+  renewBefore: 720h  # renew 30 days before expiry

@@ -110,14 +110,22 @@ func (s *Server) buildRouter() *chi.Mux {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
 
-	// Tenant CRUD
+	// Tenant CRUD — RBAC enforced per method group
 	th := newTenantHandler(s.store, s.pub)
 	r.Route("/tenants", func(r chi.Router) {
-		r.Get("/", th.list)
-		r.Post("/", th.create)
-		r.Get("/{tenantID}", th.get)
-		r.Patch("/{tenantID}", th.update)
-		r.Delete("/{tenantID}", th.delete)
+		// Read: admin, analyst, readonly
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+			r.Get("/", th.list)
+			r.Get("/{tenantID}", th.get)
+		})
+		// Write: admin only
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireRole("kubric:admin"))
+			r.Post("/", th.create)
+			r.Patch("/{tenantID}", th.update)
+			r.Delete("/{tenantID}", th.delete)
+		})
 	})
 
 	return r

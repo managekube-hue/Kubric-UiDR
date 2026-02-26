@@ -98,10 +98,18 @@ func (s *Server) buildRouter() *chi.Mux {
 
 	ah := newAssessmentHandler(s.store, s.pub)
 	r.Route("/assessments", func(r chi.Router) {
-		r.Get("/", ah.list)
-		r.Post("/", ah.create)
-		r.Get("/{assessmentID}", ah.get)
-		r.Patch("/{assessmentID}", ah.updateStatus)
+		// Read: admin, analyst, readonly
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+			r.Get("/", ah.list)
+			r.Get("/{assessmentID}", ah.get)
+		})
+		// Write: admin, analyst
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst"))
+			r.Post("/", ah.create)
+			r.Patch("/{assessmentID}", ah.updateStatus)
+		})
 	})
 
 	return r

@@ -99,18 +99,31 @@ func (s *Server) buildRouter() *chi.Mux {
 
 	ch := newClusterHandler(s.store, s.pub)
 	r.Route("/clusters", func(r chi.Router) {
-		r.Get("/", ch.list)
-		r.Post("/", ch.create)
-		r.Get("/{clusterID}", ch.get)
-		r.Patch("/{clusterID}", ch.update)
-		r.Delete("/{clusterID}", ch.delete)
+		// Read: admin, analyst, readonly
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+			r.Get("/", ch.list)
+			r.Get("/{clusterID}", ch.get)
+		})
+		// Write: admin only (cluster lifecycle)
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireRole("kubric:admin"))
+			r.Post("/", ch.create)
+			r.Patch("/{clusterID}", ch.update)
+			r.Delete("/{clusterID}", ch.delete)
+		})
 	})
 
 	ah := newAgentHandler(s.store, s.pub)
 	r.Route("/agents", func(r chi.Router) {
-		r.Post("/heartbeat", ah.heartbeat)
-		r.Get("/", ah.list)
-		r.Get("/{agentID}", ah.get)
+		// Heartbeat: agent role (CoreSec/NetGuard agents call this)
+		r.With(kubricmw.RequireRole("kubric:agent")).Post("/heartbeat", ah.heartbeat)
+		// Read: admin, analyst, readonly
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+			r.Get("/", ah.list)
+			r.Get("/{agentID}", ah.get)
+		})
 	})
 
 	return r

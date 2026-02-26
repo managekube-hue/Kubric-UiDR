@@ -1,0 +1,66 @@
+# infra/authentik/helm-release.yaml
+# ArgoCD Application for Authentik SSO via Helm chart.
+# Authentik serves as the OIDC provider for all Kubric services + portal.
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-authentik
+  namespace: argocd
+spec:
+  project: kubric
+  source:
+    repoURL: https://charts.goauthentik.io
+    chart: authentik
+    targetRevision: "2024.*"
+    helm:
+      values: |
+        authentik:
+          secret_key: "vault-injected-at-deploy"
+          postgresql:
+            host: postgres.kubric.svc.cluster.local
+            port: 5432
+            name: authentik
+            user: authentik
+          redis:
+            host: redis.kubric.svc.cluster.local
+        server:
+          replicas: 2
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+        worker:
+          replicas: 1
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt-prod
+          hosts:
+            - host: auth.kubric.security
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: authentik-tls
+              hosts:
+                - auth.kubric.security
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: authentik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
