@@ -1,0 +1,142 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# ---------------------------------------------------------------------------
+# Kubric Platform — Production Kustomize Overlay
+# Inherits bases from the platform-shared base manifests and security-tools
+# layer, then applies production-grade patches and configs on top.
+# ---------------------------------------------------------------------------
+
+bases:
+  - ../../../infra/k8s/base
+  - ../../../infra/k8s/security-tools
+
+namespace: kubric
+
+# ---------------------------------------------------------------------------
+# Patches
+# ---------------------------------------------------------------------------
+
+patches:
+  # Scale all workloads to production replica counts
+  - path: replica-count.yaml
+
+  # Enforce CPU/memory requests and limits per container
+  - path: resource-limits.yaml
+
+  # Switch ingress class to nginx (ALB provisioned by Terraform)
+  - path: ingress-class.yaml
+
+  # Add pod anti-affinity rules for HA across AZs
+  - path: pod-affinity.yaml
+
+  # Set PodDisruptionBudgets for critical services
+  - path: pdb.yaml
+
+# ---------------------------------------------------------------------------
+# ConfigMap generation
+# ---------------------------------------------------------------------------
+
+configMapGenerator:
+  - name: kubric-env
+    literals:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=info
+      - LOG_FORMAT=json
+      - NATS_URL=nats://nats.kubric:4222
+      - NATS_JETSTREAM=true
+      - VAULT_ADDR=http://vault.kubric:8200
+      - VAULT_NAMESPACE=kubric
+      - METRICS_PORT=9090
+      - TRACING_ENABLED=true
+      - JAEGER_ENDPOINT=http://jaeger-collector.observability:14268/api/traces
+      - KAFKA_BROKERS=kafka.kubric:9092
+      - CORRELATION_ENGINE_URL=http://correlation-engine.kubric:8080
+
+  - name: kubric-agent-config
+    literals:
+      - CORESEC_SCAN_INTERVAL=60s
+      - NETGUARD_PCAP_BUFFER_MB=64
+      - PERFTRACE_SAMPLE_RATE=100
+      - WATCHDOG_HEARTBEAT_INTERVAL=30s
+
+# ---------------------------------------------------------------------------
+# Secret generation
+# ---------------------------------------------------------------------------
+
+secretGenerator:
+  - name: kubric-vault-token
+    envs:
+      - .env.vault
+    options:
+      disableNameSuffixHash: true
+
+  - name: kubric-db-secret
+    envs:
+      - .env.db
+    options:
+      disableNameSuffixHash: true
+
+  - name: kubric-redis-secret
+    envs:
+      - .env.redis
+    options:
+      disableNameSuffixHash: true
+
+  - name: kubric-s3-credentials
+    envs:
+      - .env.s3
+    options:
+      disableNameSuffixHash: true
+
+# ---------------------------------------------------------------------------
+# Image tag overrides — bump these on each release
+# ---------------------------------------------------------------------------
+
+images:
+  - name: kubric/k-svc
+    newTag: "1.0.0"
+  - name: kubric/noc
+    newTag: "1.0.0"
+  - name: kubric/kai
+    newTag: "1.0.0"
+  - name: kubric/correlation-engine
+    newTag: "1.0.0"
+  - name: kubric/coresec-agent
+    newTag: "1.0.0"
+  - name: kubric/netguard-agent
+    newTag: "1.0.0"
+  - name: kubric/perftrace-agent
+    newTag: "1.0.0"
+  - name: kubric/watchdog-agent
+    newTag: "1.0.0"
+
+# ---------------------------------------------------------------------------
+# Common labels applied to all resources in this overlay
+# ---------------------------------------------------------------------------
+
+commonLabels:
+  app.kubernetes.io/version: "1.0.0"
+  app.kubernetes.io/part-of: kubric-platform
+  environment: production
+  managed-by: kustomize
+
+# ---------------------------------------------------------------------------
+# Common annotations (ArgoCD, cost tracking, etc.)
+# ---------------------------------------------------------------------------
+
+commonAnnotations:
+  kubric.io/managed-by: argocd
+  kubric.io/cost-center: kubric-platform
+  kubric.io/team: platform-engineering
+
+# ---------------------------------------------------------------------------
+# Resources — additional production-only manifests
+# ---------------------------------------------------------------------------
+
+resources:
+  - namespace.yaml
+  - network-policy.yaml
+  - service-monitor.yaml
+  - hpa.yaml
+  - vpa.yaml

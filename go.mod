@@ -21,6 +21,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault/api v1.22.0
 	github.com/hashicorp/vault/api/auth/kubernetes v0.10.0
+	github.com/klauspost/compress v1.18.2
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/neo4j/neo4j-go-driver/v5 v5.28.4
@@ -128,7 +129,6 @@ require (
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.4.7 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.11 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

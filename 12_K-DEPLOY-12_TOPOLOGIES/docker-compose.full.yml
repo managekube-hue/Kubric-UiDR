@@ -1,0 +1,239 @@
+version: "3.9"
+# Kubric Platform — Full Stack
+# Usage: docker-compose -f docker-compose.full.yml up -d
+# Prerequisites: Docker 24+, 16GB RAM, 50GB disk
+#
+# Service URLs (after startup):
+#   k-svc         http://localhost:8080
+#   noc           http://localhost:8083
+#   vault         http://localhost:8200  (token: root)
+#   grafana       http://localhost:3000  (admin/admin)
+#   thehive       http://localhost:9000
+#   wazuh-manager https://localhost:55000
+#   velociraptor  http://localhost:8001
+#   nats          nats://localhost:4222
+#   postgres      postgresql://kubric:changeme@localhost:5432/kubric
+#   minio         http://localhost:9000 / http://localhost:9001 (console)
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "50m"
+    max-file: "5"
+
+x-restart: &always
+  restart: unless-stopped
+
+x-healthcheck-defaults: &hc-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 5
+  start_period: 45s
+
+services:
+  # ── Core Infrastructure ──────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    <<: *always
+    logging: *default-logging
+    environment:
+      POSTGRES_DB: kubric
+      POSTGRES_USER: kubric
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kubric -d kubric"]
+      <<: *hc-defaults
+
+  redis:
+    image: redis:7-alpine
+    <<: *always
+    logging: *default-logging
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-changeme}", "--save", "60", "1000"]
+    volumes: [redis-data:/data]
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-changeme}", "ping"]
+      <<: *hc-defaults
+
+  nats:
+    image: nats:2.10-alpine
+    <<: *always
+    logging: *default-logging
+    command: ["-js", "-m", "8222", "--store_dir", "/nats-data"]
+    volumes: [nats-data:/nats-data]
+    ports: ["4222:4222", "8222:8222"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8222/healthz"]
+      <<: *hc-defaults
+
+  vault:
+    image: hashicorp/vault:1.17
+    <<: *always
+    logging: *default-logging
+    cap_add: [IPC_LOCK]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+      VAULT_LOG_LEVEL: warn
+    ports: ["8200:8200"]
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      <<: *hc-defaults
+
+  minio:
+    image: minio/minio:RELEASE.2024-04-18T19-09-19Z
+    <<: *always
+    logging: *default-logging
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER:-kubric}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD:-changeme12345}
+    volumes: [minio-data:/data]
+    ports: ["9000:9000", "9001:9001"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      <<: *hc-defaults
+
+  # ── Kubric Services ───────────────────────────────────────────────────────────
+  k-svc:
+    image: kubric/k-svc:${VERSION:-latest}
+    build:
+      context: .
+      dockerfile: services/k-svc/Dockerfile
+    <<: *always
+    logging: *default-logging
+    environment:
+      DATABASE_URL: postgresql://kubric:${POSTGRES_PASSWORD:-changeme}@postgres:5432/kubric
+      NATS_URL: nats://nats:4222
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: root
+      LISTEN_ADDR: ":8080"
+      JWT_SECRET: ${JWT_SECRET:-changeme-dev-secret-32chars}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+    ports: ["8080:8080"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      nats: { condition: service_healthy }
+      vault: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/healthz"]
+      <<: *hc-defaults
+
+  noc:
+    image: kubric/noc:${VERSION:-latest}
+    build:
+      context: .
+      dockerfile: cmd/noc/Dockerfile
+    <<: *always
+    logging: *default-logging
+    environment:
+      KUBRIC_DATABASE_URL: postgresql://kubric:${POSTGRES_PASSWORD:-changeme}@postgres:5432/kubric
+      KUBRIC_NATS_URL: nats://nats:4222
+      NOC_LISTEN_ADDR: ":8083"
+      JWT_SECRET: ${JWT_SECRET:-changeme-dev-secret-32chars}
+      THEHIVE_URL: http://thehive:9000
+      THEHIVE_API_KEY: ${THEHIVE_API_KEY:-}
+      WAZUH_URL: https://wazuh-manager:55000
+      WAZUH_USER: admin
+      WAZUH_PASSWORD: ${WAZUH_PASSWORD:-changeme}
+      SHUFFLE_URL: http://shuffle-backend:5001
+      SHUFFLE_API_KEY: ${SHUFFLE_API_KEY:-}
+      VELOCIRAPTOR_URL: http://velociraptor:8001
+    ports: ["8083:8083"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      nats: { condition: service_healthy }
+
+  correlation:
+    image: kubric/correlation:${VERSION:-latest}
+    build:
+      context: .
+      dockerfile: cmd/correlation/Dockerfile
+    <<: *always
+    logging: *default-logging
+    environment:
+      NATS_URL: nats://nats:4222
+      THEHIVE_URL: http://thehive:9000
+      THEHIVE_API_KEY: ${THEHIVE_API_KEY:-}
+      SHUFFLE_URL: http://shuffle-backend:5001
+      SHUFFLE_API_KEY: ${SHUFFLE_API_KEY:-}
+      PORT: "9099"
+    depends_on:
+      nats: { condition: service_healthy }
+
+  # ── Security Tools ────────────────────────────────────────────────────────────
+  thehive:
+    image: strangebee/thehive:5.4.6
+    <<: *always
+    logging: *default-logging
+    environment:
+      JVM_OPTS: "-Xms1g -Xmx2g"
+    volumes:
+      - thehive-data:/opt/thehive/data
+      - ./config/thehive/application.conf:/etc/thehive/application.conf:ro
+    ports: ["9000:9000"]
+
+  cortex:
+    image: thehiveproject/cortex:3.1.8
+    <<: *always
+    logging: *default-logging
+    environment:
+      JVM_OPTS: "-Xms512m -Xmx1g"
+    volumes: [cortex-data:/opt/cortex/data]
+    ports: ["9001:9001"]
+
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.9.2
+    <<: *always
+    logging: *default-logging
+    environment:
+      WAZUH_MANAGER_API_PORT: "55000"
+      INDEXER_URL: http://wazuh-indexer:9200
+    volumes:
+      - wazuh-ossec-data:/var/ossec/data
+      - wazuh-logs:/var/ossec/logs
+    ports: ["1514:1514/udp", "1515:1515", "55000:55000"]
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    <<: *always
+    logging: *default-logging
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-piechart-panel
+      GF_SERVER_HTTP_PORT: "3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./12_K-DEPLOY-12_TOPOLOGIES/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports: ["3000:3000"]
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    <<: *always
+    logging: *default-logging
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports: ["9090:9090"]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+
+volumes:
+  postgres-data: {}
+  redis-data: {}
+  nats-data: {}
+  minio-data: {}
+  thehive-data: {}
+  cortex-data: {}
+  wazuh-ossec-data: {}
+  wazuh-logs: {}
+  grafana-data: {}
+  prometheus-data: {}

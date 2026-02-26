@@ -12,10 +12,12 @@ import {
   CreditCard,
   LogOut,
   Shield,
+  ShieldAlert,
 } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/detection", label: "Detection", icon: ShieldAlert },
   { href: "/vulns", label: "Vulnerabilities", icon: Bug },
   { href: "/compliance", label: "Compliance", icon: ShieldCheck },
   { href: "/kiss", label: "KiSS Score", icon: Gauge },

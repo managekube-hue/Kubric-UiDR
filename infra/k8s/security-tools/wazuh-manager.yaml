@@ -1,0 +1,264 @@
+# ============================================================
+# Wazuh Manager 4.9.2 — kubric-security namespace
+# Exposes:
+#   - 1514 (agent enrollment / syslog)
+#   - 55000 (REST API)
+# ============================================================
+
+---
+# Secret: wazuh-credentials
+# Values are base64 of "admin" and "changeme-placeholder".
+# IMPORTANT: rotate before any production deployment.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wazuh-credentials
+  namespace: kubric-security
+  labels:
+    app.kubernetes.io/name: wazuh-manager
+    app.kubernetes.io/component: security
+type: Opaque
+data:
+  # echo -n "admin" | base64
+  api-user: YWRtaW4=
+  # echo -n "changeme-placeholder" | base64
+  api-password: Y2hhbmdlbWUtcGxhY2Vob2xkZXI=
+
+---
+# ConfigMap: wazuh-ossec-conf
+# Minimal ossec.conf — override with a real config via GitOps.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wazuh-ossec-conf
+  namespace: kubric-security
+  labels:
+    app.kubernetes.io/name: wazuh-manager
+    app.kubernetes.io/component: security
+data:
+  ossec.conf: |
+    <ossec_config>
+      <global>
+        <jsonout_output>yes</jsonout_output>
+        <alerts_log>yes</alerts_log>
+        <logall_json>no</logall_json>
+        <email_notification>no</email_notification>
+      </global>
+
+      <alerts>
+        <log_alert_level>3</log_alert_level>
+        <email_alert_level>12</email_alert_level>
+      </alerts>
+
+      <remote>
+        <connection>secure</connection>
+        <port>1514</port>
+        <protocol>tcp</protocol>
+      </remote>
+
+      <ruleset>
+        <decoder_dir>ruleset/decoders</decoder_dir>
+        <rule_dir>ruleset/rules</rule_dir>
+        <rule_exclude>0215-policy_rules.xml</rule_exclude>
+        <list>etc/lists/audit-keys</list>
+        <list>etc/lists/amazon/aws-eventnames</list>
+        <list>etc/lists/security-eventchannel</list>
+      </ruleset>
+
+      <auth>
+        <use_source_ip>no</use_source_ip>
+        <purge>yes</purge>
+        <use_password>no</use_password>
+        <ciphers>HIGH:!ADH:!EXP:!MD5:!RC4:!3DES:!CAMELLIA:@STRENGTH</ciphers>
+        <ssl_verify_host>no</ssl_verify_host>
+        <ssl_manager_cert>etc/sslmanager.cert</ssl_manager_cert>
+        <ssl_manager_key>etc/sslmanager.key</ssl_manager_key>
+      </auth>
+
+      <cluster>
+        <name>wazuh</name>
+        <node_name>master-node</node_name>
+        <node_type>master</node_type>
+        <key>kubric-wazuh-cluster-key-change-me</key>
+        <port>1516</port>
+        <bind_addr>0.0.0.0</bind_addr>
+        <nodes>
+          <node>wazuh-manager</node>
+        </nodes>
+        <hidden>no</hidden>
+        <disabled>yes</disabled>
+      </cluster>
+    </ossec_config>
+
+---
+# PersistentVolumeClaim: wazuh-data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wazuh-data
+  namespace: kubric-security
+  labels:
+    app.kubernetes.io/name: wazuh-manager
+    app.kubernetes.io/component: security
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  # storageClassName: "" # set explicitly if your cluster has multiple storage classes
+
+---
+# Deployment: wazuh-manager
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wazuh-manager
+  namespace: kubric-security
+  labels:
+    app.kubernetes.io/name: wazuh-manager
+    app.kubernetes.io/version: "4.9.2"
+    app.kubernetes.io/component: security
+spec:
+  replicas: 1
+  # Recreate avoids split-brain on the single-node PVC
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: wazuh-manager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: wazuh-manager
+        app.kubernetes.io/version: "4.9.2"
+        app.kubernetes.io/component: security
+      annotations:
+        # Force pod restart when the ossec configmap changes
+        checksum/config: "change-via-kustomize-or-helm-hash"
+    spec:
+      securityContext:
+        runAsNonRoot: false   # Wazuh requires root for kernel-level operations
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: wazuh-manager
+          image: wazuh/wazuh-manager:4.9.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: agents
+              containerPort: 1514
+              protocol: TCP
+            - name: api
+              containerPort: 55000
+              protocol: TCP
+            - name: cluster
+              containerPort: 1516
+              protocol: TCP
+          env:
+            - name: WAZUH_MANAGER_API_PORT
+              value: "55000"
+            - name: WAZUH_MANAGER_API_USER
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-credentials
+                  key: api-user
+            - name: WAZUH_MANAGER_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-credentials
+                  key: api-password
+            # Disable built-in indexer integration; use external OpenSearch/SIEM
+            - name: WAZUH_INDEXER_URL
+              value: ""
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          volumeMounts:
+            - name: wazuh-data
+              mountPath: /var/ossec/data
+            - name: wazuh-ossec-conf
+              mountPath: /wazuh-config-mount/etc/ossec.conf
+              subPath: ossec.conf
+              readOnly: true
+          # Liveness: hit the API /security/user/authenticate with basic auth.
+          # curl is available in the wazuh-manager image.
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  curl -sk -o /dev/null -w "%{http_code}" \
+                    -u "${WAZUH_MANAGER_API_USER}:${WAZUH_MANAGER_API_PASSWORD}" \
+                    "https://localhost:${WAZUH_MANAGER_API_PORT}/security/user/authenticate" \
+                    | grep -qE "^(200|401)$"
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+            successThreshold: 1
+          # Readiness: same endpoint; 200 means fully ready.
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  curl -sk -o /dev/null -w "%{http_code}" \
+                    -u "${WAZUH_MANAGER_API_USER}:${WAZUH_MANAGER_API_PASSWORD}" \
+                    "https://localhost:${WAZUH_MANAGER_API_PORT}/security/user/authenticate" \
+                    | grep -q "^200$"
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          startupProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  curl -sk -o /dev/null -w "%{http_code}" \
+                    -u "${WAZUH_MANAGER_API_USER}:${WAZUH_MANAGER_API_PASSWORD}" \
+                    "https://localhost:${WAZUH_MANAGER_API_PORT}/security/user/authenticate" \
+                    | grep -qE "^(200|401)$"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30   # allow up to 5 min for first start
+      volumes:
+        - name: wazuh-data
+          persistentVolumeClaim:
+            claimName: wazuh-data
+        - name: wazuh-ossec-conf
+          configMap:
+            name: wazuh-ossec-conf
+
+---
+# Service: wazuh-manager
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-manager
+  namespace: kubric-security
+  labels:
+    app.kubernetes.io/name: wazuh-manager
+    app.kubernetes.io/component: security
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: wazuh-manager
+  ports:
+    - name: agents
+      port: 1514
+      targetPort: agents
+      protocol: TCP
+    - name: api
+      port: 55000
+      targetPort: api
+      protocol: TCP

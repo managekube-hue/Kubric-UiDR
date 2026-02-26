@@ -1,0 +1,969 @@
+openapi: "3.1.0"
+
+info:
+  title: "Kubric NOC API"
+  version: "1.0.0"
+  description: |
+    Network Operations Center API for the Kubric Unified Detection & Response platform.
+
+    ## Authentication
+    All endpoints require a Bearer JWT issued by the Kubric Identity service.
+    The JWT must contain the `tenant_id` claim and the appropriate RBAC role
+    (`noc:read`, `noc:write`, or `noc:admin`).
+
+    ## Tenant isolation
+    Every request is scoped to the tenant encoded in the JWT. Cross-tenant
+    access is only possible with the `admin` super-role.
+  contact:
+    name: "Kubric Engineering"
+    url: "https://kubric.io"
+  license:
+    name: "Proprietary"
+
+servers:
+  - url: "https://api.kubric.io/noc"
+    description: "Production"
+  - url: "http://localhost:8083"
+    description: "Development"
+
+tags:
+  - name: health
+    description: Liveness and readiness probes
+  - name: agents
+    description: Kubric agent lifecycle management
+  - name: detection
+    description: Incident detection, correlation, and timeline
+  - name: integrations
+    description: Third-party integration health and data access
+
+security:
+  - BearerAuth: []
+
+paths:
+
+  # ─── Health ────────────────────────────────────────────────────────────────
+
+  /health:
+    get:
+      operationId: getHealth
+      tags: [health]
+      summary: NOC API health check
+      description: Liveness probe. Returns 200 when the service is up and dependencies are reachable.
+      security: []
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: ok
+                version: "1.0.0"
+                timestamp: "2025-11-01T12:00:00Z"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─── Agents ────────────────────────────────────────────────────────────────
+
+  /agents:
+    get:
+      operationId: listAgents
+      tags: [agents]
+      summary: List all agents for the authenticated tenant
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, error, updating]
+          description: Filter agents by status
+        - name: os_family
+          in: query
+          schema:
+            type: string
+            enum: [linux, windows, darwin]
+          description: Filter by OS family
+      responses:
+        "200":
+          description: Paginated list of agents
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Agent"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+    post:
+      operationId: enrollAgent
+      tags: [agents]
+      summary: Enroll a new agent
+      description: Provisions a new agent and returns the enrollment token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentEnrollRequest"
+      responses:
+        "201":
+          description: Agent enrolled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Agent with this hostname already enrolled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /agents/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IDParam"
+    get:
+      operationId: getAgent
+      tags: [agents]
+      summary: Get agent details
+      responses:
+        "200":
+          description: Agent record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateAgent
+      tags: [agents]
+      summary: Update agent metadata or trigger action
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentUpdateRequest"
+      responses:
+        "200":
+          description: Agent updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      operationId: decommissionAgent
+      tags: [agents]
+      summary: Decommission and remove an agent
+      responses:
+        "204":
+          description: Agent decommissioned
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ─── Detection — Incidents ─────────────────────────────────────────────────
+
+  /detection/incidents:
+    get:
+      operationId: listIncidents
+      tags: [detection]
+      summary: List detection incidents
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [critical, high, medium, low, info]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, investigating, contained, resolved, closed, false_positive]
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Return incidents created at or after this timestamp (RFC 3339)
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Return incidents created before this timestamp (RFC 3339)
+      responses:
+        "200":
+          description: Paginated incident list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Incident"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /detection/incidents/{id}:
+    parameters:
+      - $ref: "#/components/parameters/IDParam"
+    get:
+      operationId: getIncident
+      tags: [detection]
+      summary: Get full incident details
+      responses:
+        "200":
+          description: Incident with full detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateIncident
+      tags: [detection]
+      summary: Update incident status, assignee, or notes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentUpdateRequest"
+      responses:
+        "200":
+          description: Updated incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /detection/incidents/{id}/dispatch:
+    parameters:
+      - $ref: "#/components/parameters/IDParam"
+    post:
+      operationId: dispatchIncident
+      tags: [detection]
+      summary: Dispatch incident to an integration (TheHive, PagerDuty, etc.)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target]
+              properties:
+                target:
+                  type: string
+                  enum: [thehive, pagerduty, jira, slack, email]
+                  description: Integration target
+                priority:
+                  type: string
+                  enum: [P1, P2, P3, P4]
+                  default: P2
+                message:
+                  type: string
+                  description: Optional supplementary note
+      responses:
+        "202":
+          description: Dispatch accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dispatch_id:
+                    type: string
+                    format: uuid
+                  target:
+                    type: string
+                  external_ref:
+                    type: string
+                    description: Reference ID in the target system
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /detection/timeline:
+    get:
+      operationId: getTimeline
+      tags: [detection]
+      summary: Retrieve the detection event timeline
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: agent_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: incident_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: Ordered timeline events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TimelineEvent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /detection/health:
+    get:
+      operationId: getDetectionHealth
+      tags: [detection]
+      summary: Detection subsystem health (correlation engine, SIGMA rules, etc.)
+      security: []
+      responses:
+        "200":
+          description: Detection engine status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionHealth"
+
+  # ─── Integrations ──────────────────────────────────────────────────────────
+
+  /integrations/health:
+    get:
+      operationId: getIntegrationsHealth
+      tags: [integrations]
+      summary: Aggregated status of all configured integrations
+      security: []
+      responses:
+        "200":
+          description: Integration health map
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: "#/components/schemas/IntegrationHealth"
+
+  /integrations/wazuh/alerts:
+    get:
+      operationId: listWazuhAlerts
+      tags: [integrations]
+      summary: Retrieve Wazuh alerts for the tenant
+      parameters:
+        - $ref: "#/components/parameters/LimitParam"
+        - name: level_min
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 15
+          description: Minimum Wazuh alert severity level (0–15)
+        - name: agent_id
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of Wazuh alerts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  alerts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/WazuhAlert"
+        "502":
+          description: Upstream Wazuh API error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /integrations/thehive/cases:
+    get:
+      operationId: listTheHiveCases
+      tags: [integrations]
+      summary: List TheHive cases linked to this tenant
+      parameters:
+        - $ref: "#/components/parameters/LimitParam"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Open, Resolved, Deleted, Duplicated]
+      responses:
+        "200":
+          description: TheHive cases
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cases:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TheHiveCase"
+        "502":
+          description: TheHive API unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createTheHiveCase
+      tags: [integrations]
+      summary: Create a new TheHive case from a Kubric incident
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [incident_id, title, severity]
+              properties:
+                incident_id:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                severity:
+                  type: integer
+                  minimum: 1
+                  maximum: 4
+                tags:
+                  type: array
+                  items:
+                    type: string
+                tlp:
+                  type: integer
+                  minimum: 0
+                  maximum: 3
+                  default: 2
+      responses:
+        "201":
+          description: Case created in TheHive
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TheHiveCase"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /integrations/velociraptor/hunts:
+    get:
+      operationId: listVelociraptorHunts
+      tags: [integrations]
+      summary: List active Velociraptor hunts for the tenant
+      parameters:
+        - $ref: "#/components/parameters/LimitParam"
+        - name: state
+          in: query
+          schema:
+            type: string
+            enum: [RUNNING, PAUSED, STOPPED, COMPLETED]
+      responses:
+        "200":
+          description: Hunt list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hunts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        hunt_id:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        state:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        total_clients:
+                          type: integer
+        "502":
+          $ref: "#/components/responses/UpstreamError"
+    post:
+      operationId: createVelociraptorHunt
+      tags: [integrations]
+      summary: Dispatch a new Velociraptor hunt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, artifact]
+              properties:
+                name:
+                  type: string
+                artifact:
+                  type: string
+                  description: Velociraptor artifact name (e.g. Windows.System.Pslist)
+                condition:
+                  type: string
+                  description: VQL condition to scope the hunt
+                expires:
+                  type: string
+                  format: date-time
+      responses:
+        "202":
+          description: Hunt dispatched
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hunt_id:
+                    type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+# ─── Components ──────────────────────────────────────────────────────────────
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IDParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Resource UUID
+
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 50
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid JWT
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: Invalid request payload
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UpstreamError:
+      description: Upstream integration API error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+
+    HealthResponse:
+      type: object
+      required: [status, version, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [ok, degraded, unhealthy]
+        version:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+        message:
+          type: string
+          description: Human-readable description
+        details:
+          type: object
+          additionalProperties: true
+
+    PaginationMeta:
+      type: object
+      required: [page, limit, total]
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    Agent:
+      type: object
+      required: [id, tenant_id, hostname, status, os_family, agent_version, enrolled_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        hostname:
+          type: string
+          example: prod-web-01
+        ip_address:
+          type: string
+          format: ipv4
+        os_family:
+          type: string
+          enum: [linux, windows, darwin]
+        os_version:
+          type: string
+        agent_version:
+          type: string
+          example: "2.1.0"
+        status:
+          type: string
+          enum: [active, inactive, error, updating]
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+          description: Arbitrary key/value labels (e.g. env=prod, role=web)
+        last_heartbeat:
+          type: string
+          format: date-time
+        enrolled_at:
+          type: string
+          format: date-time
+
+    AgentEnrollRequest:
+      type: object
+      required: [hostname, os_family, agent_version]
+      properties:
+        hostname:
+          type: string
+        os_family:
+          type: string
+          enum: [linux, windows, darwin]
+        os_version:
+          type: string
+        agent_version:
+          type: string
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+
+    AgentUpdateRequest:
+      type: object
+      properties:
+        labels:
+          type: object
+          additionalProperties:
+            type: string
+        status:
+          type: string
+          enum: [active, inactive]
+        trigger_update:
+          type: boolean
+          description: If true, trigger OTA agent update
+
+    Incident:
+      type: object
+      required: [id, tenant_id, title, severity, status, source, detected_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+          enum: [critical, high, medium, low, info]
+        status:
+          type: string
+          enum: [open, investigating, contained, resolved, closed, false_positive]
+        source:
+          type: string
+          description: Detection source (e.g. sigma, yara, network_ids)
+        mitre_tactics:
+          type: array
+          items:
+            type: string
+          description: MITRE ATT&CK tactic IDs (e.g. TA0001)
+        mitre_techniques:
+          type: array
+          items:
+            type: string
+          description: MITRE ATT&CK technique IDs (e.g. T1059.001)
+        affected_agents:
+          type: array
+          items:
+            type: string
+            format: uuid
+        assignee:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        external_refs:
+          type: object
+          additionalProperties:
+            type: string
+          description: Cross-references to external systems (e.g. thehive_case_id)
+        detected_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        resolved_at:
+          type: string
+          format: date-time
+
+    IncidentUpdateRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [investigating, contained, resolved, closed, false_positive]
+        assignee:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+
+    TimelineEvent:
+      type: object
+      required: [id, event_type, ocsf_class, agent_id, timestamp]
+      properties:
+        id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+          description: Kubric event category (process, file, network, auth, detection)
+        ocsf_class:
+          type: integer
+          description: OCSF class ID (e.g. 4007 = Process Activity)
+        agent_id:
+          type: string
+          format: uuid
+        incident_id:
+          type: string
+          format: uuid
+          description: Correlated incident if applicable
+        severity:
+          type: string
+          enum: [critical, high, medium, low, info]
+        summary:
+          type: string
+        raw_data:
+          type: object
+          description: Original event payload (OCSF-normalised)
+        timestamp:
+          type: string
+          format: date-time
+
+    DetectionHealth:
+      type: object
+      properties:
+        correlation_engine:
+          type: string
+          enum: [ok, degraded, down]
+        sigma_rules_loaded:
+          type: integer
+        yara_rules_loaded:
+          type: integer
+        last_rule_sync:
+          type: string
+          format: date-time
+        events_per_second:
+          type: number
+          format: float
+
+    IntegrationHealth:
+      type: object
+      required: [name, status]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [ok, degraded, error, unconfigured]
+        last_check:
+          type: string
+          format: date-time
+        latency_ms:
+          type: integer
+        error_message:
+          type: string
+
+    WazuhAlert:
+      type: object
+      required: [id, agent_id, rule_id, level, description, timestamp]
+      properties:
+        id:
+          type: string
+        agent_id:
+          type: string
+        rule_id:
+          type: integer
+        rule_group:
+          type: string
+        level:
+          type: integer
+          minimum: 0
+          maximum: 15
+          description: Wazuh rule severity level
+        description:
+          type: string
+        mitre_id:
+          type: string
+          description: MITRE technique ID if mapped
+        full_log:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    TheHiveCase:
+      type: object
+      required: [id, title, severity, status, created_at]
+      properties:
+        id:
+          type: string
+        kubric_incident_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 4
+          description: "1=Low, 2=Medium, 3=High, 4=Critical"
+        status:
+          type: string
+          enum: [Open, Resolved, Deleted, Duplicated]
+        tlp:
+          type: integer
+          minimum: 0
+          maximum: 3
+        tags:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

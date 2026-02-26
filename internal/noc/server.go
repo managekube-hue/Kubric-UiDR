@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/managekube-hue/Kubric-UiDR/internal/bloodhound"
+	"github.com/managekube-hue/Kubric-UiDR/internal/correlation"
 	"github.com/managekube-hue/Kubric-UiDR/internal/cortex"
 	"github.com/managekube-hue/Kubric-UiDR/internal/falco"
 	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
@@ -23,11 +24,12 @@ import (
 // Server wires together the Chi router, NOCStore (pgx → Postgres), Publisher (NATS),
 // and optional security-tool integration clients.
 type Server struct {
-	cfg          Config
-	store        *NOCStore
-	pub          *Publisher
-	router       *chi.Mux
-	integrations *integrationHandler
+	cfg               Config
+	store             *NOCStore
+	pub               *Publisher
+	router            *chi.Mux
+	integrations      *integrationHandler
+	correlationEngine *correlation.Engine
 }
 
 // NewServer initialises all NOC dependencies and returns a ready-to-run Server.
@@ -48,7 +50,17 @@ func NewServer(cfg Config) (*Server, error) {
 
 	ih := initIntegrations(cfg)
 
-	s := &Server{cfg: cfg, store: store, pub: pub, integrations: ih}
+	// Start the correlation engine as a background goroutine.  If NATS is
+	// unavailable the NOC server continues without detection routes.
+	var corrEngine *correlation.Engine
+	if ce, err := correlation.New(cfg.NATSUrl, ih.thehive, ih.shuffle); err != nil {
+		fmt.Printf("noc: warn — correlation engine init failed: %v\n", err)
+	} else {
+		corrEngine = ce
+		go corrEngine.Start(context.Background())
+	}
+
+	s := &Server{cfg: cfg, store: store, pub: pub, integrations: ih, correlationEngine: corrEngine}
 	s.router = s.buildRouter()
 	return s, nil
 }
@@ -218,6 +230,12 @@ func (s *Server) buildRouter() *chi.Mux {
 		s.integrations.RegisterRoutes(r)
 	})
 
+	// Detection routes: backed by the correlation engine.
+	// Only mounted when the engine initialised successfully.
+	if s.correlationEngine != nil {
+		r.Mount("/detection", s.detectionRoutes())
+	}
+
 	return r
 }
 
@@ -230,4 +248,30 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 func writeError(w http.ResponseWriter, status int, msg string) {
 	writeJSON(w, status, map[string]string{"error": msg})
+}
+
+// detectionRoutes builds a chi.Router for the /detection sub-tree.
+// Routes are relative to the mount point (/detection) so they do NOT repeat
+// the /detection prefix.  RBAC mirrors the roles used in handler_detection.go.
+func (s *Server) detectionRoutes() chi.Router {
+	dh := NewDetectionHandler(s.correlationEngine)
+	r := chi.NewRouter()
+
+	// Read endpoints — analyst and readonly roles.
+	r.Group(func(r chi.Router) {
+		r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+		r.Get("/incidents", dh.listIncidents)
+		r.Get("/incidents/{id}", dh.getIncident)
+		r.Get("/timeline", dh.listTimeline)
+		r.Get("/health", dh.engineHealth)
+	})
+
+	// Write endpoints — admin and analyst roles only.
+	r.Group(func(r chi.Router) {
+		r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
+		r.Patch("/incidents/{id}", dh.patchIncident)
+		r.Post("/incidents/{id}/dispatch", dh.dispatchIncident)
+	})
+
+	return r
 }

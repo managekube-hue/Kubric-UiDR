@@ -1,0 +1,779 @@
+openapi: "3.1.0"
+
+info:
+  title: "Kubric KAI API"
+  version: "1.0.0"
+  description: |
+    KAI (Kubric AI) is the agentic intelligence layer of the Kubric UDR platform.
+    It orchestrates AI-driven security analysis, autonomous investigations,
+    remediation workflows, and conversational interaction via a multi-agent crew
+    built on CrewAI / LangGraph.
+
+    ## Authentication
+    All KAI endpoints require a Bearer JWT with the `kai:access` scope.
+    Long-running operations return an `operation_id`; poll `/kai/operations/{id}`
+    for async results.
+
+    ## Rate limits
+    - `/kai/analyze`: 120 req / min per tenant
+    - `/kai/chat`: 60 req / min per tenant
+    - All other endpoints: 30 req / min per tenant
+  contact:
+    name: "Kubric Engineering"
+    url: "https://kubric.io"
+  license:
+    name: "Proprietary"
+
+servers:
+  - url: "https://api.kubric.io"
+    description: "Production"
+  - url: "http://localhost:8084"
+    description: "Development"
+
+tags:
+  - name: analysis
+    description: AI-powered security data analysis
+  - name: investigation
+    description: Autonomous investigation workflows
+  - name: remediation
+    description: AI-driven remediation actions
+  - name: chat
+    description: Conversational interface with the KAI agent
+  - name: reports
+    description: AI-generated security reports
+  - name: workflows
+    description: n8n / Temporal workflow management
+
+security:
+  - BearerAuth: []
+
+paths:
+
+  # ─── Analysis ──────────────────────────────────────────────────────────────
+
+  /kai/analyze:
+    post:
+      operationId: submitAnalysis
+      tags: [analysis]
+      summary: Submit security data for AI analysis
+      description: |
+        Accepts raw or normalised security events, alerts, or artifacts and
+        returns a structured AI analysis including threat classification,
+        MITRE ATT&CK mapping, risk score, and recommended actions.
+        For payloads >256 KB the response is asynchronous — use the returned
+        `operation_id` to poll for the result.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalysisRequest"
+      responses:
+        "200":
+          description: Analysis complete (synchronous path)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResult"
+        "202":
+          description: Analysis accepted (asynchronous — large payload)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AsyncAccepted"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  # ─── Investigation ─────────────────────────────────────────────────────────
+
+  /kai/investigate:
+    post:
+      operationId: startInvestigation
+      tags: [investigation]
+      summary: Start an automated AI investigation workflow
+      description: |
+        Launches a KAI investigation crew against an incident or set of IOCs.
+        The crew autonomously queries SIEM, CMDB, TI feeds, and graph analytics
+        to build an attack narrative and impact assessment.
+        Always returns 202 (async) with an `operation_id`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvestigationRequest"
+      responses:
+        "202":
+          description: Investigation started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AsyncAccepted"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: Referenced incident or agent not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─── Remediation ───────────────────────────────────────────────────────────
+
+  /kai/remediate:
+    post:
+      operationId: triggerRemediation
+      tags: [remediation]
+      summary: Trigger AI-driven remediation for an incident or finding
+      description: |
+        KAI selects and executes the most appropriate remediation playbook
+        based on incident context, asset classification, and risk appetite.
+        A dry-run mode is available to preview actions without executing them.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemediationRequest"
+      responses:
+        "202":
+          description: Remediation workflow dispatched
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RemediationAccepted"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          description: Remediation blocked by change freeze or approval gate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Remediation already in progress for this resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ─── Chat ──────────────────────────────────────────────────────────────────
+
+  /kai/chat:
+    post:
+      operationId: chatWithKAI
+      tags: [chat]
+      summary: Send a message to the KAI conversational agent
+      description: |
+        Stateful conversational interface supporting multi-turn security Q&A,
+        incident context queries, report generation requests, and action
+        approvals. Include a `conversation_id` to continue an existing session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+      responses:
+        "200":
+          description: KAI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  # ─── Reports ───────────────────────────────────────────────────────────────
+
+  /kai/reports:
+    get:
+      operationId: listReports
+      tags: [reports]
+      summary: List AI-generated security reports
+      parameters:
+        - name: report_type
+          in: query
+          schema:
+            type: string
+            enum: [executive_summary, threat_intelligence, compliance, incident, vulnerability]
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+      responses:
+        "200":
+          description: Paginated report list
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data, meta]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AIReport"
+                  meta:
+                    $ref: "#/components/schemas/PaginationMeta"
+
+  /kai/reports/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Retrieve a specific AI-generated report
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, markdown, html, pdf]
+            default: json
+          description: Desired output format. Non-JSON formats are returned as binary content.
+      responses:
+        "200":
+          description: Report content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIReport"
+            text/markdown:
+              schema:
+                type: string
+            text/html:
+              schema:
+                type: string
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  # ─── Workflows ─────────────────────────────────────────────────────────────
+
+  /kai/workflows:
+    get:
+      operationId: listWorkflows
+      tags: [workflows]
+      summary: List available KAI automation workflows
+      description: |
+        Returns all n8n / Temporal workflows registered for the tenant,
+        including their activation status and last execution timestamp.
+      parameters:
+        - name: active_only
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: tag
+          in: query
+          schema:
+            type: string
+          description: Filter workflows by tag (e.g. remediation, enrichment, reporting)
+      responses:
+        "200":
+          description: Workflow list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workflows:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Workflow"
+
+  /kai/workflows/{id}/execute:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Workflow ID (n8n workflow ID or Temporal workflow type name)
+    post:
+      operationId: executeWorkflow
+      tags: [workflows]
+      summary: Trigger a workflow execution
+      description: |
+        Submits a workflow for execution. The `input` payload is passed as the
+        workflow's initial context. Returns an `execution_id` for tracking.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+                  additionalProperties: true
+                  description: Workflow-specific input parameters
+                dry_run:
+                  type: boolean
+                  default: false
+                  description: Validate inputs and simulate execution without side-effects
+      responses:
+        "202":
+          description: Workflow execution started
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [execution_id, workflow_id, status]
+                properties:
+                  execution_id:
+                    type: string
+                    format: uuid
+                  workflow_id:
+                    type: string
+                  status:
+                    type: string
+                    enum: [queued, running]
+                  started_at:
+                    type: string
+                    format: date-time
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Workflow is not active or is already running
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+# ─── Components ──────────────────────────────────────────────────────────────
+
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequest:
+      description: Invalid request payload
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimited:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds until the rate limit resets
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    AsyncAccepted:
+      type: object
+      required: [operation_id, status]
+      properties:
+        operation_id:
+          type: string
+          format: uuid
+          description: Use this ID to poll for the async operation result
+        status:
+          type: string
+          enum: [queued, running]
+        estimated_duration_s:
+          type: integer
+          description: Rough estimate of completion time in seconds
+
+    PaginationMeta:
+      type: object
+      required: [page, limit, total]
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        has_more:
+          type: boolean
+
+    # ─── Analysis ────────────────────────────────────────────────────────────
+
+    AnalysisRequest:
+      type: object
+      required: [data_type, payload]
+      properties:
+        data_type:
+          type: string
+          enum: [alert, event_batch, pcap_summary, log_chunk, ioc_list, cve_list]
+          description: Type of security data being submitted
+        payload:
+          type: object
+          additionalProperties: true
+          description: Data content; structure depends on data_type
+        context:
+          type: object
+          additionalProperties: true
+          description: |
+            Additional context to improve analysis accuracy (e.g. asset tags,
+            environment type, prior incident IDs)
+        urgency:
+          type: string
+          enum: [low, normal, high, critical]
+          default: normal
+
+    AnalysisResult:
+      type: object
+      required: [analysis_id, risk_score, summary, created_at]
+      properties:
+        analysis_id:
+          type: string
+          format: uuid
+        risk_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Composite risk score (0–100)
+        risk_label:
+          type: string
+          enum: [critical, high, medium, low, informational]
+        summary:
+          type: string
+          description: Natural-language executive summary
+        mitre_tactics:
+          type: array
+          items:
+            type: string
+          description: MITRE ATT&CK tactic IDs identified (e.g. TA0001)
+        mitre_techniques:
+          type: array
+          items:
+            type: string
+          description: MITRE technique IDs (e.g. T1059.001)
+        iocs_extracted:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [ip, domain, hash_md5, hash_sha256, url, email, cve]
+              value:
+                type: string
+              confidence:
+                type: number
+                format: float
+        recommended_actions:
+          type: array
+          items:
+            type: string
+        model_used:
+          type: string
+          description: AI model identifier used for analysis
+        created_at:
+          type: string
+          format: date-time
+
+    # ─── Investigation ────────────────────────────────────────────────────────
+
+    InvestigationRequest:
+      type: object
+      required: [scope]
+      properties:
+        incident_id:
+          type: string
+          format: uuid
+          description: Incident to investigate (mutually exclusive with iocs)
+        iocs:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              value:
+                type: string
+          description: IOCs to pivot on (mutually exclusive with incident_id)
+        scope:
+          type: string
+          enum: [tenant, agent, global]
+          description: Scope of the investigation
+        depth:
+          type: string
+          enum: [shallow, standard, deep]
+          default: standard
+          description: |
+            shallow — quick IOC lookup only;
+            standard — full incident context + TI enrichment;
+            deep — lateral movement graph traversal + historical correlation
+        notify_on_complete:
+          type: array
+          items:
+            type: string
+          description: Email addresses or Slack channels to notify when done
+
+    # ─── Remediation ──────────────────────────────────────────────────────────
+
+    RemediationRequest:
+      type: object
+      required: [incident_id, action]
+      properties:
+        incident_id:
+          type: string
+          format: uuid
+        action:
+          type: string
+          enum:
+            - isolate_host
+            - block_ip
+            - kill_process
+            - quarantine_file
+            - revoke_credentials
+            - patch_cve
+            - rotate_secret
+            - auto_select
+          description: |
+            auto_select lets KAI choose the optimal remediation action based on
+            incident context and risk assessment
+        target_agent_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: Specific agents to remediate (all affected agents if omitted)
+        dry_run:
+          type: boolean
+          default: false
+          description: Preview actions without executing them
+        approval_required:
+          type: boolean
+          default: true
+          description: Require human approval before executing irreversible actions
+
+    RemediationAccepted:
+      type: object
+      required: [operation_id, actions_planned, dry_run]
+      properties:
+        operation_id:
+          type: string
+          format: uuid
+        actions_planned:
+          type: array
+          items:
+            type: object
+            properties:
+              action:
+                type: string
+              target:
+                type: string
+              estimated_impact:
+                type: string
+        dry_run:
+          type: boolean
+        approval_url:
+          type: string
+          format: uri
+          description: Approval URL (present when approval_required=true)
+
+    # ─── Chat ────────────────────────────────────────────────────────────────
+
+    ChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          description: User message text
+          maxLength: 8192
+        conversation_id:
+          type: string
+          format: uuid
+          description: Continue an existing conversation session
+        context:
+          type: object
+          properties:
+            incident_id:
+              type: string
+              format: uuid
+            agent_id:
+              type: string
+              format: uuid
+          description: Optional entity context to anchor the conversation
+
+    ChatResponse:
+      type: object
+      required: [conversation_id, reply, created_at]
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        reply:
+          type: string
+          description: KAI's natural-language response
+        suggested_actions:
+          type: array
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+              action_type:
+                type: string
+                enum: [investigate, remediate, generate_report, open_hunt, open_case]
+              payload:
+                type: object
+                additionalProperties: true
+          description: Actionable follow-ups KAI suggests based on the reply
+        sources:
+          type: array
+          items:
+            type: string
+          description: Data sources referenced in the reply
+        created_at:
+          type: string
+          format: date-time
+
+    # ─── Reports ─────────────────────────────────────────────────────────────
+
+    AIReport:
+      type: object
+      required: [id, report_type, title, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        report_type:
+          type: string
+          enum: [executive_summary, threat_intelligence, compliance, incident, vulnerability]
+        title:
+          type: string
+        status:
+          type: string
+          enum: [generating, complete, failed]
+        summary:
+          type: string
+          description: AI-generated executive paragraph
+        markdown_url:
+          type: string
+          format: uri
+          description: Pre-signed URL for Markdown download
+        pdf_url:
+          type: string
+          format: uri
+          description: Pre-signed URL for PDF download
+        related_incident_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+        generated_by_model:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          description: Pre-signed URL expiry
+
+    # ─── Workflows ───────────────────────────────────────────────────────────
+
+    Workflow:
+      type: object
+      required: [id, name, engine, active, created_at]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        engine:
+          type: string
+          enum: [n8n, temporal, native]
+          description: Underlying workflow orchestration engine
+        active:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        trigger_type:
+          type: string
+          enum: [manual, webhook, cron, event]
+        last_execution:
+          type: object
+          properties:
+            execution_id:
+              type: string
+              format: uuid
+            status:
+              type: string
+              enum: [success, failed, running, cancelled]
+            started_at:
+              type: string
+              format: date-time
+            duration_ms:
+              type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
