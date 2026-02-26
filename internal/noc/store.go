@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	kubricdb "github.com/managekube-hue/Kubric-UiDR/internal/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -116,7 +117,14 @@ func (s *NOCStore) CreateCluster(ctx context.Context, c Cluster) (Cluster, error
 		VALUES ($1,$2,$3,$4,$5,$6)
 		RETURNING id, tenant_id, name, provider, version, status, last_seen, created_at
 	`
-	return scanCluster(s.pool.QueryRow(ctx, q, c.ID, c.TenantID, c.Name, c.Provider, c.Version, c.Status))
+	var result Cluster
+	err := kubricdb.RunWithTenant(ctx, s.pool, c.TenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, c.ID, c.TenantID, c.Name, c.Provider, c.Version, c.Status)
+		var e error
+		result, e = scanCluster(row)
+		return e
+	})
+	return result, err
 }
 
 // GetCluster returns a cluster by ID. Returns pgx.ErrNoRows if not found.
@@ -153,6 +161,10 @@ func (s *NOCStore) ListClusters(ctx context.Context, tenantID string, limit int)
 
 // UpdateCluster updates cluster status and/or version, and refreshes last_seen.
 func (s *NOCStore) UpdateCluster(ctx context.Context, id, status, version string) (Cluster, error) {
+	// Look up tenant_id so RunWithTenant can activate RLS for the correct tenant.
+	var tenantID string
+	_ = s.pool.QueryRow(ctx, `SELECT tenant_id FROM noc_clusters WHERE id = $1`, id).Scan(&tenantID)
+
 	const q = `
 		UPDATE noc_clusters
 		SET status    = COALESCE(NULLIF($2,''), status),
@@ -161,19 +173,32 @@ func (s *NOCStore) UpdateCluster(ctx context.Context, id, status, version string
 		WHERE id = $1
 		RETURNING id, tenant_id, name, provider, version, status, last_seen, created_at
 	`
-	return scanCluster(s.pool.QueryRow(ctx, q, id, status, version))
+	var result Cluster
+	err := kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, id, status, version)
+		var e error
+		result, e = scanCluster(row)
+		return e
+	})
+	return result, err
 }
 
 // DeleteCluster removes a cluster. Returns pgx.ErrNoRows if not found.
 func (s *NOCStore) DeleteCluster(ctx context.Context, id string) error {
-	tag, err := s.pool.Exec(ctx, `DELETE FROM noc_clusters WHERE id = $1`, id)
-	if err != nil {
-		return err
-	}
-	if tag.RowsAffected() == 0 {
-		return pgx.ErrNoRows
-	}
-	return nil
+	// Look up tenant_id so RunWithTenant can activate RLS for the correct tenant.
+	var tenantID string
+	_ = s.pool.QueryRow(ctx, `SELECT tenant_id FROM noc_clusters WHERE id = $1`, id).Scan(&tenantID)
+
+	return kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		tag, err := tx.Exec(ctx, `DELETE FROM noc_clusters WHERE id = $1`, id)
+		if err != nil {
+			return err
+		}
+		if tag.RowsAffected() == 0 {
+			return pgx.ErrNoRows
+		}
+		return nil
+	})
 }
 
 // ── Agent methods ─────────────────────────────────────────────────────────────
@@ -194,7 +219,14 @@ func (s *NOCStore) Heartbeat(ctx context.Context, a Agent) (Agent, error) {
 		      last_heartbeat = now()
 		RETURNING id, tenant_id, cluster_id, hostname, agent_type, version, status, last_heartbeat, created_at
 	`
-	return scanAgent(s.pool.QueryRow(ctx, q, a.ID, a.TenantID, a.ClusterID, a.Hostname, a.AgentType, a.Version))
+	var result Agent
+	err := kubricdb.RunWithTenant(ctx, s.pool, a.TenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, a.ID, a.TenantID, a.ClusterID, a.Hostname, a.AgentType, a.Version)
+		var e error
+		result, e = scanAgent(row)
+		return e
+	})
+	return result, err
 }
 
 // GetAgent returns an agent by ID. Returns pgx.ErrNoRows if not found.

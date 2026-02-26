@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	kubricdb "github.com/managekube-hue/Kubric-UiDR/internal/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -85,10 +86,16 @@ func (s *FindingStore) Create(ctx context.Context, f Finding) (Finding, error) {
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
 		RETURNING id, tenant_id, target, scanner, severity, cve_id, title, description, status, raw_json, created_at, updated_at
 	`
-	row := s.pool.QueryRow(ctx, q,
-		f.ID, f.TenantID, f.Target, f.Scanner, f.Severity,
-		f.CVEID, f.Title, f.Description, f.Status, f.RawJSON)
-	return scanFinding(row)
+	var result Finding
+	err := kubricdb.RunWithTenant(ctx, s.pool, f.TenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q,
+			f.ID, f.TenantID, f.Target, f.Scanner, f.Severity,
+			f.CVEID, f.Title, f.Description, f.Status, f.RawJSON)
+		var e error
+		result, e = scanFinding(row)
+		return e
+	})
+	return result, err
 }
 
 // Get returns a single finding by ID. Returns pgx.ErrNoRows if not found.
@@ -129,13 +136,24 @@ func (s *FindingStore) List(ctx context.Context, tenantID, severity, status stri
 
 // UpdateStatus changes the triage status of a finding.
 func (s *FindingStore) UpdateStatus(ctx context.Context, id, status string) (Finding, error) {
+	// Look up tenant_id so RunWithTenant can activate RLS for the correct tenant.
+	var tenantID string
+	_ = s.pool.QueryRow(ctx, `SELECT tenant_id FROM vdr_findings WHERE id = $1`, id).Scan(&tenantID)
+
 	const q = `
 		UPDATE vdr_findings
 		SET status = $2, updated_at = now()
 		WHERE id = $1
 		RETURNING id, tenant_id, target, scanner, severity, cve_id, title, description, status, raw_json, created_at, updated_at
 	`
-	return scanFinding(s.pool.QueryRow(ctx, q, id, status))
+	var result Finding
+	err := kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, id, status)
+		var e error
+		result, e = scanFinding(row)
+		return e
+	})
+	return result, err
 }
 
 func scanFinding(row pgx.Row) (Finding, error) {

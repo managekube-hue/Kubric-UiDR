@@ -1,19 +1,55 @@
 [package]
-name = "netguard"
-version = "0.1.0"
-edition = "2021"
-description = "Kubric NetGuard — 10G network detection and response sensor"
+name        = "netguard"
+version     = "0.2.0"
+edition     = "2021"
+description = "Kubric NetGuard — 10G network detection and response sensor (L0-3)"
 
 [dependencies]
-tokio        = { workspace = true }
-serde        = { workspace = true }
-serde_json   = { workspace = true }
-prost        = { workspace = true }
-prost-types  = { workspace = true }
-async-nats   = { workspace = true }
-blake3       = { workspace = true }
-tracing      = { workspace = true }
+# ── Core ──────────────────────────────────────────────────────────────────────
+tokio              = { workspace = true }
+futures            = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+prost              = { workspace = true }
+prost-types        = { workspace = true }
+async-nats         = { workspace = true }
+blake3             = { workspace = true }
+sha2               = { workspace = true }
+zstd               = { workspace = true }
+tracing            = { workspace = true }
 tracing-subscriber = { workspace = true }
-anyhow       = { workspace = true }
-thiserror    = { workspace = true }
-dotenvy      = { workspace = true }
+anyhow             = { workspace = true }
+thiserror          = { workspace = true }
+dotenvy            = { workspace = true }
+uuid               = { workspace = true }
+chrono             = { workspace = true }
+bytes              = { workspace = true }
+once_cell          = { workspace = true }
+config             = { workspace = true }
+
+# ── Packet capture (L0-3) ─────────────────────────────────────────────────────
+# pcap wraps libpcap (AF_PACKET on Linux, WinPcap/npcap on Windows)
+pcap           = { workspace = true }
+# pnet for frame/IP/TCP/UDP/DNS dissection
+pnet           = { workspace = true }
+
+# ── nDPI FFI stub (L0-3) ──────────────────────────────────────────────────────
+# nDPI is GPL-2.0 — loaded at runtime via dlopen to maintain AGPL boundary.
+# The stub in src/ndpi_ffi.rs declares extern "C" fn signatures only.
+# Actual libnDPI.so must be present at runtime; absent = graceful fallback.
+libc           = { workspace = true }
+
+# ── YARA rule matching for network payloads ───────────────────────────────────
+yara-x         = { workspace = true }
+
+# ── System / metrics ──────────────────────────────────────────────────────────
+sysinfo        = { workspace = true }
+
+# ── OTel ──────────────────────────────────────────────────────────────────────
+opentelemetry         = { workspace = true }
+opentelemetry-otlp    = { workspace = true }
+opentelemetry_sdk     = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+
+[build-dependencies]
+prost-build = "0.13"

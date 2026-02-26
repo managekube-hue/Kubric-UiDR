@@ -1,0 +1,83 @@
+{
+  "id": "kubric-incident-itsm-alert",
+  "name": "Kubric — Incident ITSM Alert",
+  "active": true,
+  "versionId": "a1b2c3d4-0004-0004-0004-000000000004",
+  "meta": { "instanceId": "kubric-dev" },
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    {
+      "id": "n1",
+      "name": "Webhook — kubric-incident",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "kubric-incident",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kubric-incident",
+        "responseMode": "onReceived",
+        "responseData": "allEntries"
+      }
+    },
+    {
+      "id": "n2",
+      "name": "If — CRITICAL or HIGH",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [480, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.severity }}",
+              "operation": "regex",
+              "value2": "^(CRITICAL|HIGH)$"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n3",
+      "name": "Slack — Post Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [720, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify({ text: ':rotating_light: *[Kubric ' + $json.severity + ']* ' + ($json.summary ?? 'Security incident detected') + '\\nTenant: `' + ($json.tenant_id ?? 'unknown') + '`  |  ID: `' + ($json.incident_id ?? '') + '`  |  Type: `' + ($json.event_type ?? '') + '`' }) }}"
+      }
+    },
+    {
+      "id": "n4",
+      "name": "No-op — Below Threshold",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [720, 420],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Webhook — kubric-incident": {
+      "main": [
+        [{ "node": "If — CRITICAL or HIGH", "type": "main", "index": 0 }]
+      ]
+    },
+    "If — CRITICAL or HIGH": {
+      "main": [
+        [{ "node": "Slack — Post Alert", "type": "main", "index": 0 }],
+        [{ "node": "No-op — Below Threshold", "type": "main", "index": 0 }]
+      ]
+    }
+  }
+}

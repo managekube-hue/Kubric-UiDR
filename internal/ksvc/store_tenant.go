@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	kubricdb "github.com/managekube-hue/Kubric-UiDR/internal/db"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -80,8 +81,14 @@ func (s *TenantStore) Create(ctx context.Context, t Tenant) (Tenant, error) {
 		VALUES ($1, $2, $3, $4)
 		RETURNING tenant_id, name, plan, status, created_at, updated_at
 	`
-	row := s.pool.QueryRow(ctx, q, t.TenantID, t.Name, t.Plan, t.Status)
-	return scanTenant(row)
+	var result Tenant
+	err := kubricdb.RunWithTenant(ctx, s.pool, t.TenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, t.TenantID, t.Name, t.Plan, t.Status)
+		var e error
+		result, e = scanTenant(row)
+		return e
+	})
+	return result, err
 }
 
 // Get returns a tenant by tenant_id. Returns pgx.ErrNoRows if not found.
@@ -134,20 +141,28 @@ func (s *TenantStore) Update(ctx context.Context, tenantID, name, plan, status s
 		WHERE tenant_id = $1
 		RETURNING tenant_id, name, plan, status, created_at, updated_at
 	`
-	row := s.pool.QueryRow(ctx, q, tenantID, name, plan, status)
-	return scanTenant(row)
+	var result Tenant
+	err := kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, tenantID, name, plan, status)
+		var e error
+		result, e = scanTenant(row)
+		return e
+	})
+	return result, err
 }
 
 // Delete removes a tenant by tenant_id. Returns pgx.ErrNoRows if not found.
 func (s *TenantStore) Delete(ctx context.Context, tenantID string) error {
-	tag, err := s.pool.Exec(ctx, `DELETE FROM kubric_tenants WHERE tenant_id = $1`, tenantID)
-	if err != nil {
-		return err
-	}
-	if tag.RowsAffected() == 0 {
-		return pgx.ErrNoRows
-	}
-	return nil
+	return kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		tag, err := tx.Exec(ctx, `DELETE FROM kubric_tenants WHERE tenant_id = $1`, tenantID)
+		if err != nil {
+			return err
+		}
+		if tag.RowsAffected() == 0 {
+			return pgx.ErrNoRows
+		}
+		return nil
+	})
 }
 
 // scanTenant scans a single pgx.Row into a Tenant struct.

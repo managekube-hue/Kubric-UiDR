@@ -1,0 +1,61 @@
+# infra/docker-compose.dev.yml — RITA GPL 3.0 sidecar environment
+#
+# RITA (Real Intelligence Threat Analytics) is GPL 3.0.
+# It runs as a completely separate Docker service.  The Kubric Go services
+# communicate with RITA ONLY via HTTP on port 4096 — no direct library imports.
+#
+# Start with:
+#   docker compose -f infra/docker-compose.dev.yml up -d
+#
+# Verify GPL boundary after code changes:
+#   make check-gpl-boundary
+
+version: "3.9"
+
+services:
+  # ── RITA beacon analysis engine ─────────────────────────────────────────────
+  # GPL 3.0 — communicates via HTTP only; never imported as a Go package.
+  rita:
+    image: activecm/rita:v5.0
+    restart: unless-stopped
+    ports:
+      - "4096:4096"
+    environment:
+      - RITA_MONGO_URI=mongodb://rita-mongo:27017
+      - RITA_LOG_LEVEL=info
+    depends_on:
+      rita-mongo:
+        condition: service_healthy
+    networks:
+      - rita-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4096/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── MongoDB backing store for RITA ──────────────────────────────────────────
+  rita-mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - rita-mongo-data:/data/db
+    networks:
+      - rita-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+# ── Volumes ───────────────────────────────────────────────────────────────────
+volumes:
+  rita-mongo-data:
+    driver: local
+
+# ── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  rita-net:
+    driver: bridge

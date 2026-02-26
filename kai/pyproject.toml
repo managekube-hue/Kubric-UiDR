@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name        = "kubric-kai"
-version     = "0.1.0"
-description = "Kubric KAI — AI orchestration layer (CrewAI + LangChain + vLLM)"
+version     = "0.2.0"
+description = "Kubric KAI — AI orchestration layer (CrewAI + LangChain + Temporal + vLLM)"
 requires-python = ">=3.11"
 
 dependencies = [
@@ -19,7 +19,7 @@ dependencies = [
     # Fast JSON (Rust-backed, handles datetime natively)
     "orjson>=3.10.0",
 
-    # HTTP client for internal API calls
+    # HTTP client for Ollama, vLLM, cloud fallback LLMs, internal service calls
     "httpx>=0.28.0",
 
     # Config / env
@@ -38,6 +38,15 @@ ai = [
     "langchain>=0.3.7",
     "langchain-community>=0.3.7",
     "llama-cpp-python>=0.3.2",
+    # ClickHouse analytics reads (KAI-FORESIGHT, KAI-CLERK billing)
+    "clickhouse-connect>=0.8.0",
+    # Ansible-runner for KAI-KEEPER remediation activities
+    "ansible-runner>=2.4.0",
+]
+
+# Temporal durable workflows (Layer 2 — KAI-KEEPER + KAI-CLERK)
+workflows = [
+    "temporalio>=1.7.0",
 ]
 
 # Install for ML training pipelines (Layer 3)
@@ -57,13 +66,19 @@ ti = [
     "requests>=2.32.0",
 ]
 
-# Full install
+# Full Layer 2 install
+layer2 = [
+    "kubric-kai[ai,workflows]",
+]
+
+# Full install (all layers)
 all = [
-    "kubric-kai[ai,ml,ti]",
+    "kubric-kai[ai,workflows,ml,ti]",
 ]
 
 [project.scripts]
-kai = "kai.cli:app"
+kai            = "kai.cli:app"
+kai-worker     = "kai.workers.temporal_worker:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["kai"]

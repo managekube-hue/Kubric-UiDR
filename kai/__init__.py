@@ -1,17 +1,21 @@
 """
 Kubric KAI — AI orchestration layer.
 
-Layer 2 responsibilities:
-  - CrewAI personas (TRIAGE, SENTINEL, KEEPER, COMM, FORESIGHT)
-  - LangChain chains for alert enrichment
-  - vLLM / Ollama model serving
-  - NATS subscriber → enrich → publish back
-  - FastAPI endpoints for Go services to call synchronously
+Layer 2 (this version):
+  - KAI-TRIAGE   alert enrichment via Ollama (local LLM)
+  - KAI-SENTINEL KiSS health score computation
+  - KAI-KEEPER   remediation plan generation + Temporal workflow trigger
+  - KAI-COMM     escalation routing (Vapi voice, Twilio SMS, webhook)
+  - KAI-FORESIGHT predictive risk modelling (heuristic; LSTM in Layer 3)
+  - NATS subscriber routes kubric.* events to agents
+  - Temporal activities: RemediationWorkflow, BillingWorkflow
+  - FastAPI endpoints: /v1/triage, /v1/score, /v1/insights, /v1/remediate, /v1/billing/run
 
-Wiring order:
-  Phase 1 (this file): package skeleton only.
-  Phase 2 (Layer 2):   NATS subscriber + FastAPI + CrewAI agents.
-  Phase 3 (Layer 3):   ML models + training pipelines.
+Layer 3 (next):
+  - HIKARI-2021 LSTM network baseline training
+  - EPSS integration for vulnerability prioritisation
+  - CrewAI multi-agent collaboration (agents delegate tasks between each other)
+  - Vector store (Chroma/Qdrant) for RAG-based alert correlation
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

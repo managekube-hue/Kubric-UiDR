@@ -1,18 +1,40 @@
 [package]
-name = "watchdog"
-version = "0.1.0"
-edition = "2021"
-description = "Kubric Watchdog — agent health monitor and OTA update client"
+name        = "watchdog"
+version     = "0.2.0"
+edition     = "2021"
+description = "Kubric Watchdog — agent health monitor and TUF-based OTA update client"
 
 [dependencies]
-tokio        = { workspace = true }
-serde        = { workspace = true }
-serde_json   = { workspace = true }
-prost        = { workspace = true }
-async-nats   = { workspace = true }
-blake3       = { workspace = true }
-tracing      = { workspace = true }
+# ── Core ──────────────────────────────────────────────────────────────────────
+tokio              = { workspace = true }
+futures            = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+async-nats         = { workspace = true }
+blake3             = { workspace = true }
+sha2               = { workspace = true }
+tracing            = { workspace = true }
 tracing-subscriber = { workspace = true }
-anyhow       = { workspace = true }
-thiserror    = { workspace = true }
-dotenvy      = { workspace = true }
+anyhow             = { workspace = true }
+thiserror          = { workspace = true }
+dotenvy            = { workspace = true }
+uuid               = { workspace = true }
+chrono             = { workspace = true }
+config             = { workspace = true }
+ring               = { workspace = true }
+
+# ── OTA downloads ─────────────────────────────────────────────────────────────
+reqwest        = { workspace = true }
+
+# ── TUF client — secure update metadata verification ─────────────────────────
+# tough is AWS's Rust TUF implementation (more actively maintained than `tuf`)
+tough = "0.18"
+
+# ── Health metrics reported to NOC ────────────────────────────────────────────
+sysinfo        = { workspace = true }
+
+# ── OTel ──────────────────────────────────────────────────────────────────────
+opentelemetry         = { workspace = true }
+opentelemetry-otlp    = { workspace = true }
+opentelemetry_sdk     = { workspace = true }
+tracing-opentelemetry = { workspace = true }

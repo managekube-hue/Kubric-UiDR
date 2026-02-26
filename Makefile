@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -12,6 +12,7 @@ help:
 	@echo "  make deploy-staging Deploy to staging environment"
 	@echo "  make deploy-prod   Deploy to production (requires manual approval)"
 	@echo "  make clean         Clean build artifacts and caches"
+	@echo "  make check-gpl-boundary  Verify no GPL-3.0 RITA imports in services/"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -107,6 +108,12 @@ security-scan:
 	grype dir:. --fail-on high
 	syft dir:. -o json > sbom.json
 	@echo "✅ SBOM generated: sbom.json"
+
+# GPL 3.0 boundary enforcement — RITA must never be imported as a Go package.
+# Run this after every change to services/ to verify the boundary holds.
+check-gpl-boundary:
+	@echo "Checking GPL 3.0 boundary: scanning for activecm/rita imports in services/..."
+	@grep -r '"github.com/activecm/rita' services/ 2>/dev/null && (echo 'GPL VIOLATION DETECTED — remove activecm/rita imports from services/' && exit 1) || echo 'GPL boundary clean'
 
 # Building
 

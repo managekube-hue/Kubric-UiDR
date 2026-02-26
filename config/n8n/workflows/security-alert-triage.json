@@ -1,42 +1,128 @@
 {
-  "name": "Security Alert Triage",
-  "description": "Orchestrate security alert triage workflow",
+  "id": "kubric-security-alert-triage",
+  "name": "Kubric — Security Alert Triage",
+  "active": true,
+  "versionId": "a1b2c3d4-0001-0001-0001-000000000001",
+  "meta": { "instanceId": "kubric-dev" },
+  "settings": { "executionOrder": "v1" },
   "nodes": [
     {
-      "id": "trigger",
-      "type": "trigger",
-      "trigger_type": "webhook",
-      "data": {
-        "url": "https://api.kubric.io/webhooks/alert-trigger"
+      "id": "n1",
+      "name": "Webhook — kubric-alert",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "kubric-alert",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kubric-alert",
+        "responseMode": "onReceived",
+        "responseData": "allEntries"
       }
     },
     {
-      "id": "triage_agent",
-      "type": "http",
-      "method": "POST",
-      "url": "http://kai-orchestration:50051/triage",
-      "data": {
-        "alert": "{{ $json.body }}"
+      "id": "n2",
+      "name": "KAI — Triage Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://kai:8100/v1/triage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Kubric-Tenant-Id", "value": "={{ $json.tenant_id }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify({ event: $json.body ?? $json, tenant_id: $json.tenant_id ?? '' }) }}"
       }
     },
     {
-      "id": "store_incident",
-      "type": "http",
-      "method": "POST",
-      "url": "http://api:8080/incidents",
-      "data": {
-        "triage_result": "{{ $json.body }}"
+      "id": "n3",
+      "name": "If — CRITICAL or HIGH",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.severity }}",
+              "operation": "regex",
+              "value2": "^(CRITICAL|HIGH)$"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "n4",
+      "name": "KAI — Auto-Remediate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [960, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "http://kai:8100/v1/remediate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Kubric-Tenant-Id", "value": "={{ $json.tenant_id }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify({ finding_id: $json.triage_id, tenant_id: $json.tenant_id, finding: $json, auto_apply: false }) }}"
+      }
+    },
+    {
+      "id": "n5",
+      "name": "K-SVC — Store Incident",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [960, 420],
+      "parameters": {
+        "method": "POST",
+        "url": "http://ksvc:8080/incidents",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Kubric-Tenant-Id", "value": "={{ $json.tenant_id }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
       }
     }
   ],
-  "connections": [
-    {
-      "source": "trigger",
-      "target": "triage_agent"
+  "connections": {
+    "Webhook — kubric-alert": {
+      "main": [
+        [{ "node": "KAI — Triage Event", "type": "main", "index": 0 }]
+      ]
     },
-    {
-      "source": "triage_agent",
-      "target": "store_incident"
+    "KAI — Triage Event": {
+      "main": [
+        [{ "node": "If — CRITICAL or HIGH", "type": "main", "index": 0 }]
+      ]
+    },
+    "If — CRITICAL or HIGH": {
+      "main": [
+        [{ "node": "KAI — Auto-Remediate", "type": "main", "index": 0 }],
+        [{ "node": "K-SVC — Store Incident", "type": "main", "index": 0 }]
+      ]
+    },
+    "KAI — Auto-Remediate": {
+      "main": [
+        [{ "node": "K-SVC — Store Incident", "type": "main", "index": 0 }]
+      ]
     }
-  ]
+  }
 }

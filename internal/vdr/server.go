@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
 )
 
 // Server wires together the Chi router, FindingStore (pgx → Postgres), and Publisher (NATS).
@@ -76,6 +77,7 @@ func (s *Server) buildRouter() *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(25 * time.Second))
+	r.Use(kubricmw.TenantContext)
 
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})

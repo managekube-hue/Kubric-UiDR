@@ -1,19 +1,74 @@
 [package]
-name = "coresec"
-version = "0.1.0"
-edition = "2021"
-description = "Kubric CoreSec — eBPF endpoint detection and response agent"
+name        = "coresec"
+version     = "0.2.0"
+edition     = "2021"
+description = "Kubric CoreSec — eBPF endpoint detection and response agent (L0-2)"
 
 [dependencies]
-tokio        = { workspace = true }
-serde        = { workspace = true }
-serde_json   = { workspace = true }
-prost        = { workspace = true }
-prost-types  = { workspace = true }
-async-nats   = { workspace = true }
-blake3       = { workspace = true }
-tracing      = { workspace = true }
+# ── Core ──────────────────────────────────────────────────────────────────────
+tokio              = { workspace = true }
+futures            = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+prost              = { workspace = true }
+prost-types        = { workspace = true }
+async-nats         = { workspace = true }
+blake3             = { workspace = true }
+sha2               = { workspace = true }
+zstd               = { workspace = true }
+tracing            = { workspace = true }
 tracing-subscriber = { workspace = true }
-anyhow       = { workspace = true }
-thiserror    = { workspace = true }
-dotenvy      = { workspace = true }
+anyhow             = { workspace = true }
+thiserror          = { workspace = true }
+dotenvy            = { workspace = true }
+uuid               = { workspace = true }
+chrono             = { workspace = true }
+bytes              = { workspace = true }
+once_cell          = { workspace = true }
+regex              = { workspace = true }
+config             = { workspace = true }
+
+# ── eBPF user-space loader (L0-2, Linux only) ─────────────────────────────────
+# aya loads pre-compiled eBPF ELF objects from vendor/ebpf/
+aya            = { workspace = true, optional = true }
+aya-log        = { workspace = true, optional = true }
+
+# ── Packet capture & network parsing (L0-2) ───────────────────────────────────
+pcap           = { workspace = true }
+pnet           = { workspace = true }
+libc           = { workspace = true }
+
+# ── ML on-device inference — candle (L0-2) ────────────────────────────────────
+# HuggingFace candle: runs safetensors / ONNX models, no PyTorch required
+candle-core         = { workspace = true }
+candle-nn           = { workspace = true }
+candle-transformers = { workspace = true }
+
+# ── YARA rule matching (L0-2) ─────────────────────────────────────────────────
+# yara-x: pure-Rust YARA v4 — loads rules from 00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-YARA/
+yara-x         = { workspace = true }
+
+# ── Sigma detection rules (L3-2) ──────────────────────────────────────────────
+# serde_yaml: YAML deserialisation for native Sigma rule evaluator
+# (sigma-rust 0.8 not yet published to crates.io; evaluator lives in detection/sigma.rs)
+serde_yaml     = { workspace = true }
+
+# ── System metrics ────────────────────────────────────────────────────────────
+sysinfo        = { workspace = true }
+
+# ── PDF report generation ─────────────────────────────────────────────────────
+printpdf       = { workspace = true }
+
+# ── OTel traces + metrics (L0-2) ──────────────────────────────────────────────
+opentelemetry         = { workspace = true }
+opentelemetry-otlp    = { workspace = true }
+opentelemetry_sdk     = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+
+[build-dependencies]
+prost-build = "0.13"
+
+[features]
+default  = []
+# Enable eBPF user-space loading (Linux only; no-op on other platforms)
+ebpf     = ["dep:aya", "dep:aya-log"]

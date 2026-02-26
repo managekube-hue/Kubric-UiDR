@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
 )
 
 // Server wires together the Chi router, TenantStore (pgx → Postgres),
@@ -88,6 +89,7 @@ func (s *Server) buildRouter() *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(25 * time.Second))
+	r.Use(kubricmw.TenantContext)
 
 	// Health probes — no auth required, used by K8s liveness/readiness probes
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {

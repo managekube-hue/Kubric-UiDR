@@ -8,33 +8,93 @@ members = [
 resolver = "2"
 
 # ─── Shared dependency versions ───────────────────────────────────────────────
-# Pin versions here; individual crates inherit with `{ workspace = true }`.
+# Pin all versions here; individual crates inherit with `{ workspace = true }`.
 [workspace.dependencies]
-# Async runtime
-tokio = { version = "1", features = ["full"] }
-futures = "0.3"
 
-# Serialization
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+# ── Async runtime ──────────────────────────────────────────────────────────────
+tokio       = { version = "1",    features = ["full"] }
+futures     = "0.3"
 
-# Protobuf (wire format between agents and Go services via NATS)
-prost = "0.13"
+# ── Serialization ─────────────────────────────────────────────────────────────
+serde       = { version = "1",    features = ["derive"] }
+serde_json  = "1"
+prost       = "0.13"
 prost-types = "0.13"
+# ZSTD compression for event payloads (L0-2)
+zstd        = "0.13"
+# Apache Avro (Kafka schema registry topics)
+apache-avro = "0.17"
 
-# Messaging – async-nats is the modern Rust NATS client (JetStream-aware)
-async-nats = "0.37"
+# ── Messaging ─────────────────────────────────────────────────────────────────
+async-nats  = "0.37"
+# Kafka producer/consumer for ML pipeline (L3)
+rdkafka     = { version = "0.37", features = ["cmake-build"] }
 
-# Hashing – Blake3 for event integrity chains
-blake3 = "1.5"
+# ── Cryptography & Integrity ───────────────────────────────────────────────────
+blake3  = "1.5"
+sha2    = "0.10"
+ring    = "0.17"
 
-# Logging / tracing
-tracing = "0.1"
+# ── eBPF — CoreSec (Linux only; no-op on other platforms) ─────────────────────
+# aya provides safe eBPF program loading and kernel map access from user-space
+aya     = { version = "0.13", features = ["async_tokio"] }
+aya-log = "0.2"
+
+# ── Packet capture & network (CoreSec, NetGuard) ──────────────────────────────
+# pcap wraps libpcap/WinPcap for raw packet access
+pcap    = { version = "2.2", features = ["capture-stream"] }
+# pnet — portable packet parsing (Ethernet, IP, TCP, UDP, DNS frames)
+pnet    = "0.35"
+# libc — nDPI FFI boundary (nDPI is GPL, loaded at runtime per L0-3 license note)
+libc    = "0.2"
+
+# ── ML inference (CoreSec on-device scoring) ──────────────────────────────────
+# candle — HuggingFace Rust ML framework; no PyTorch link required
+candle-core         = "0.9"
+candle-nn           = "0.9"
+candle-transformers = "0.9"
+
+# ── Detection rules ────────────────────────────────────────────────────────────
+# yara-x — pure-Rust YARA v4 implementation, no libyara dynamic link
+yara-x  = "0.12"
+# serde_yaml — YAML deserialisation for Sigma rule files (L3-2)
+# sigma-rust = "0.8"  # LGPL 2.1 — pin when stable; native evaluator lives in
+#                       agents/coresec/src/detection/sigma.rs in the meantime.
+serde_yaml = "0.9"
+
+# ── System metrics (PerTrace, CoreSec health) ─────────────────────────────────
+sysinfo = "0.33"
+
+# ── PDF/report generation (KAI executive PDF reports) ─────────────────────────
+printpdf = "0.7"
+
+# ── HTTP client (Watchdog OTA, KAI-COMM webhook) ──────────────────────────────
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+
+# ── Logging / tracing ──────────────────────────────────────────────────────────
+tracing            = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+# OTel — unified trace + metric propagation to Grafana Tempo/Prometheus
+opentelemetry         = { version = "0.28", features = ["trace", "metrics"] }
+opentelemetry-otlp    = { version = "0.28", features = ["http-proto"] }
+opentelemetry_sdk     = { version = "0.28", features = ["rt-tokio"] }
+tracing-opentelemetry = "0.29"
 
-# Error handling
-anyhow = "1.0"
+# ── Error handling ─────────────────────────────────────────────────────────────
+anyhow    = "1.0"
 thiserror = "1.0"
 
-# Config / env
-dotenvy = "0.15"
+# ── Config / env ───────────────────────────────────────────────────────────────
+dotenvy   = "0.15"
+config    = "0.15"
+
+# ── UUID / time ────────────────────────────────────────────────────────────────
+uuid   = { version = "1.10", features = ["v4", "serde"] }
+chrono = { version = "0.4",  features = ["serde"] }
+
+# ── Utilities ──────────────────────────────────────────────────────────────────
+base64    = "0.22"
+hex       = "0.4"
+regex     = "1"
+once_cell = "1"
+bytes     = "1"

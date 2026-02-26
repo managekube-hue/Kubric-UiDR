@@ -16,6 +16,7 @@ import (
 )
 
 type processEvent struct {
+	TenantID   string          `json:"-"`          // parsed from NATS subject, not payload
 	Time       string          `json:"time"`
 	ActivityID uint8           `json:"activity_id"`
 	Process    json.RawMessage `json:"process"`
@@ -64,6 +65,14 @@ func main() {
 		if err := json.Unmarshal(message.Data, &event); err != nil {
 			return
 		}
+		// Parse tenant_id from subject: kubric.{tenant_id}.endpoint.process.v1
+		parts := strings.SplitN(message.Subject, ".", 3)
+		if len(parts) >= 2 {
+			event.TenantID = parts[1]
+		}
+		if event.TenantID == "" {
+			event.TenantID = "default"
+		}
 		select {
 		case events <- event:
 		default:
@@ -109,7 +118,7 @@ func main() {
 }
 
 func flushBatch(ctx context.Context, conn clickhouse.Conn, table string, values []processEvent) error {
-	query := fmt.Sprintf("INSERT INTO %s (time, activity_id, process, actor, metadata) VALUES", table)
+	query := fmt.Sprintf("INSERT INTO %s (tenant_id, time, activity_id, process, actor, metadata) VALUES", table)
 	batch, err := conn.PrepareBatch(ctx, query)
 	if err != nil {
 		return err
@@ -121,6 +130,7 @@ func flushBatch(ctx context.Context, conn clickhouse.Conn, table string, values 
 			timestamp = time.Now().UTC()
 		}
 		if err := batch.Append(
+			value.TenantID,
 			timestamp,
 			value.ActivityID,
 			string(value.Process),

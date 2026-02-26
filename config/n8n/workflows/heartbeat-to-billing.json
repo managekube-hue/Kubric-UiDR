@@ -1,29 +1,93 @@
 {
-  "name": "Heartbeat to Billing",
-  "description": "Process agent heartbeats and trigger billing reconciliation",
+  "id": "kubric-heartbeat-to-billing",
+  "name": "Kubric — Heartbeat → Billing Aggregation",
+  "active": true,
+  "versionId": "a1b2c3d4-0003-0003-0003-000000000003",
+  "meta": { "instanceId": "kubric-dev" },
+  "settings": { "executionOrder": "v1" },
   "nodes": [
     {
-      "id": "nats_subscribe",
-      "type": "trigger",
-      "trigger_type": "nats",
-      "data": {
-        "subject": "heartbeat.agents.*"
+      "id": "n1",
+      "name": "Cron — Hourly",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 1 }]
+        }
       }
     },
     {
-      "id": "validate_heartbeat",
-      "type": "function",
-      "function": "validateHeartbeat"
+      "id": "n2",
+      "name": "K-SVC — List Tenants",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "http://ksvc:8080/tenants",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Accept", "value": "application/json" }
+          ]
+        }
+      }
     },
     {
-      "id": "billing_aggregator",
-      "type": "http",
-      "method": "POST",
-      "url": "http://api:8080/billing/heartbeat",
-      "data": {
-        "agent_id": "{{ $json.agent_id }}",
-        "timestamp": "{{ $json.timestamp }}"
+      "id": "n3",
+      "name": "Split — Per Tenant",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [720, 300],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "n4",
+      "name": "KAI — Billing Run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [960, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "http://kai:8100/v1/billing/run",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Kubric-Tenant-Id", "value": "={{ $json.id }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify({ tenant_id: $json.id, stripe_customer_id: $json.stripe_customer_id ?? '', billing_period: new Date().toISOString().substring(0,7) }) }}"
       }
     }
-  ]
+  ],
+  "connections": {
+    "Cron — Hourly": {
+      "main": [
+        [{ "node": "K-SVC — List Tenants", "type": "main", "index": 0 }]
+      ]
+    },
+    "K-SVC — List Tenants": {
+      "main": [
+        [{ "node": "Split — Per Tenant", "type": "main", "index": 0 }]
+      ]
+    },
+    "Split — Per Tenant": {
+      "main": [
+        [{ "node": "KAI — Billing Run", "type": "main", "index": 0 }]
+      ]
+    },
+    "KAI — Billing Run": {
+      "main": [
+        [{ "node": "Split — Per Tenant", "type": "main", "index": 0 }]
+      ]
+    }
+  }
 }

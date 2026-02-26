@@ -1,29 +1,104 @@
 {
-  "name": "Host Drift Detection to Remediation",
-  "description": "Detect configuration drift and trigger housekeeper remediation",
+  "id": "kubric-drift-to-housekeeper",
+  "name": "Kubric — Drift Detection → Housekeeper",
+  "active": true,
+  "versionId": "a1b2c3d4-0002-0002-0002-000000000002",
+  "meta": { "instanceId": "kubric-dev" },
+  "settings": { "executionOrder": "v1" },
   "nodes": [
     {
-      "id": "cron_trigger",
-      "type": "trigger",
-      "trigger_type": "cron",
-      "data": {
-        "schedule": "*/15 * * * *"
+      "id": "n1",
+      "name": "Cron — Every 15 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+        }
       }
     },
     {
-      "id": "query_drift_detection",
-      "type": "http",
-      "method": "GET",
-      "url": "http://clickhouse:8123/?query=SELECT%20*%20FROM%20drift_detection%20WHERE%20detected_at%20%3E%20now()%20-%20interval%2015%20minute"
+      "id": "n2",
+      "name": "KAI — Get Drift Insights",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "=http://kai:8100/v1/insights/{{ $env.DEFAULT_TENANT }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Kubric-Tenant-Id", "value": "={{ $env.DEFAULT_TENANT }}" }
+          ]
+        }
+      }
     },
     {
-      "id": "trigger_housekeeper",
-      "type": "http",
-      "method": "POST",
-      "url": "http://kai-orchestration:50051/housekeeper",
-      "data": {
-        "changes": "{{ $json.body }}"
+      "id": "n3",
+      "name": "If — Has Findings",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [720, 300],
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.top_risks?.length ?? 0 }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
       }
+    },
+    {
+      "id": "n4",
+      "name": "KAI — Submit Remediation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [960, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "http://kai:8100/v1/remediate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "X-Kubric-Tenant-Id", "value": "={{ $env.DEFAULT_TENANT }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyContentType": "json",
+        "jsonBody": "={{ JSON.stringify({ finding_id: 'drift-' + Date.now(), tenant_id: $env.DEFAULT_TENANT ?? '', finding: { top_risks: $json.top_risks, recommended_actions: $json.recommended_actions }, auto_apply: false }) }}"
+      }
+    },
+    {
+      "id": "n5",
+      "name": "No-op — No Drift",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [960, 420],
+      "parameters": {}
     }
-  ]
+  ],
+  "connections": {
+    "Cron — Every 15 min": {
+      "main": [
+        [{ "node": "KAI — Get Drift Insights", "type": "main", "index": 0 }]
+      ]
+    },
+    "KAI — Get Drift Insights": {
+      "main": [
+        [{ "node": "If — Has Findings", "type": "main", "index": 0 }]
+      ]
+    },
+    "If — Has Findings": {
+      "main": [
+        [{ "node": "KAI — Submit Remediation", "type": "main", "index": 0 }],
+        [{ "node": "No-op — No Drift", "type": "main", "index": 0 }]
+      ]
+    }
+  }
 }

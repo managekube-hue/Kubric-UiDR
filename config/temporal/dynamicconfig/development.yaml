@@ -1,0 +1,30 @@
+# Temporal dynamic configuration for development
+# Provides sensible defaults that allow high-throughput local testing.
+
+system.forceSearchAttributesCacheRefreshOnRead:
+  - value: true
+    constraints: {}
+
+frontend.enableClientVersionCheck:
+  - value: false
+    constraints: {}
+
+history.defaultWorkflowRetryPolicy:
+  - value:
+      InitialInterval: 1s
+      BackoffCoefficient: 2.0
+      MaximumInterval: 100s
+      MaximumAttempts: 5
+    constraints: {}
+
+limit.maxIDLength:
+  - value: 1000
+    constraints: {}
+
+frontend.workerVersioningDataAPIs:
+  - value: true
+    constraints: {}
+
+frontend.workerVersioningWorkflowAPIs:
+  - value: true
+    constraints: {}

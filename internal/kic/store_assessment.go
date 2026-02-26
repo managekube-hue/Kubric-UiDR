@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	kubricdb "github.com/managekube-hue/Kubric-UiDR/internal/db"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -83,10 +84,16 @@ func (s *AssessmentStore) Create(ctx context.Context, a Assessment) (Assessment,
 		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
 		RETURNING id, tenant_id, framework, control_id, title, status, evidence_json, assessed_by, assessed_at, created_at, updated_at
 	`
-	row := s.pool.QueryRow(ctx, q,
-		a.ID, a.TenantID, a.Framework, a.ControlID, a.Title,
-		a.Status, a.EvidenceJSON, a.AssessedBy, a.AssessedAt)
-	return scanAssessment(row)
+	var result Assessment
+	err := kubricdb.RunWithTenant(ctx, s.pool, a.TenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q,
+			a.ID, a.TenantID, a.Framework, a.ControlID, a.Title,
+			a.Status, a.EvidenceJSON, a.AssessedBy, a.AssessedAt)
+		var e error
+		result, e = scanAssessment(row)
+		return e
+	})
+	return result, err
 }
 
 // Get returns a single assessment by ID. Returns pgx.ErrNoRows if not found.
@@ -127,6 +134,10 @@ func (s *AssessmentStore) List(ctx context.Context, tenantID, framework, status 
 
 // UpdateStatus updates the pass/fail status and optional evidence of an assessment.
 func (s *AssessmentStore) UpdateStatus(ctx context.Context, id, status, evidenceJSON string) (Assessment, error) {
+	// Look up tenant_id so RunWithTenant can activate RLS for the correct tenant.
+	var tenantID string
+	_ = s.pool.QueryRow(ctx, `SELECT tenant_id FROM kic_assessments WHERE id = $1`, id).Scan(&tenantID)
+
 	const q = `
 		UPDATE kic_assessments
 		SET status        = $2,
@@ -135,7 +146,14 @@ func (s *AssessmentStore) UpdateStatus(ctx context.Context, id, status, evidence
 		WHERE id = $1
 		RETURNING id, tenant_id, framework, control_id, title, status, evidence_json, assessed_by, assessed_at, created_at, updated_at
 	`
-	return scanAssessment(s.pool.QueryRow(ctx, q, id, status, evidenceJSON))
+	var result Assessment
+	err := kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, id, status, evidenceJSON)
+		var e error
+		result, e = scanAssessment(row)
+		return e
+	})
+	return result, err
 }
 
 func scanAssessment(row pgx.Row) (Assessment, error) {

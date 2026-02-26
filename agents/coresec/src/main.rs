@@ -3,6 +3,7 @@ use tracing::info;
 
 mod agent;
 mod config;
+mod detection;
 mod event;
 
 #[tokio::main]
