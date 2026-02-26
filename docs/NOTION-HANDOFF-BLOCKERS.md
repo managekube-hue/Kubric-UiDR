@@ -127,21 +127,24 @@ kai serve                # should start FastAPI on :8100
 
 ---
 
-## Layer 1 — What a Developer Needs to Build Next
+## Layer 1 — COMPLETE ✓
 
-The following Go services need to be created under `cmd/` or `internal/`:
+All four Go services are built, compiled, and live-tested against Supabase (2026-02-25).
 
-| Service | Path | Responsibility |
-|---|---|---|
-| K-SVC | `cmd/ksvc/` | Tenant/customer REST API. Chi router + pgx + NATS publisher |
-| VDR | `cmd/vdr/` | Vulnerability scan API. Nuclei + Trivy + Grype results intake |
-| KIC | `cmd/kic/` | Compliance API. OSCAL + Lula validation results |
-| NOC | `cmd/noc/` | Operations API. Cluster health, agent status, backup status |
+| Service | Path | Status | Port |
+|---|---|---|---|
+| K-SVC | `cmd/ksvc/` | ✅ Live — tenant CRUD + NATS events | `:8080` |
+| VDR | `cmd/vdr/` | ✅ Live — vuln findings intake, triage | `:8081` |
+| KIC | `cmd/kic/` | ✅ Live — compliance assessments CRUD | `:8082` |
+| NOC | `cmd/noc/` | ✅ Live — cluster registration + agent heartbeat | `:8083` |
 
-**Before writing these services:**
-- Lock the Temporal ↔ KAI contract (who owns workflow definitions?)
-- Run ClickHouse DDL (Step 5 above)
-- Confirm Supabase project is created (connection string for `DATABASE_URL`)
+See `docs/LAYER1-API-REFERENCE.md` for full endpoint documentation.
+
+**Tables auto-created on startup:** `kubric_tenants`, `vdr_findings`, `kic_assessments`, `noc_clusters`, `noc_agents`
+
+---
+
+## Layer 2 — What Needs to Be Built Next (KAI Python + Temporal)
 
 ---
 
@@ -175,11 +178,22 @@ git push origin main
 
 ## What Is Fully Done (no developer action needed)
 
+**Layer 0:**
 - [x] Rust workspace (`Cargo.toml` + 4 agent stubs)
 - [x] OCSF proto schema with `tenant_id` as field 1 (`proto/ocsf/v1/event.proto`)
 - [x] `internal/schema/tenant.go` — tenant validation + NATS subject builder
-- [x] `go.mod` — module path locked, Phase 0 deps declared
+- [x] `go.mod` — module path locked, all Layer 1 deps declared + `go.sum` generated
 - [x] KAI Python package (`kai/pyproject.toml`, FastAPI stub, config, CLI)
 - [x] Layer sequence documented and agreed
-- [x] ClickHouse DDL designed (above — needs execution)
+- [x] ClickHouse DDL designed (above — needs execution against a ClickHouse instance)
 - [x] Supabase strategy documented (above)
+
+**Layer 1:**
+- [x] K-SVC — tenant CRUD API (`cmd/ksvc/`, `internal/ksvc/`)
+- [x] VDR — vulnerability findings intake (`cmd/vdr/`, `internal/vdr/`)
+- [x] KIC — compliance assessment intake (`cmd/kic/`, `internal/kic/`)
+- [x] NOC — cluster + agent operations (`cmd/noc/`, `internal/noc/`)
+- [x] All 5 Postgres tables auto-migrating on startup
+- [x] NATS lifecycle events on all mutations (non-fatal if NATS absent)
+- [x] `docs/LAYER1-API-REFERENCE.md` — full endpoint documentation
+- [x] Live-tested against Supabase — all endpoints verified
