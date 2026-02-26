@@ -33,6 +33,16 @@ pcap           = { workspace = true }
 # pnet for frame/IP/TCP/UDP/DNS dissection
 pnet           = { workspace = true }
 
+# ── CLI parsing ────────────────────────────────────────────────────────────────
+clap           = { workspace = true }
+
+# ── YAML config parsing (Suricata rule files, network profiles) ───────────────
+serde_yaml     = { workspace = true }
+
+# ── File system watcher for rule hot-reload ────────────────────────────────────
+notify               = { workspace = true }
+notify-debouncer-mini = { workspace = true }
+
 # ── nDPI FFI stub (L0-3) ──────────────────────────────────────────────────────
 # nDPI is GPL-2.0 — loaded at runtime via dlopen to maintain AGPL boundary.
 # The stub in src/ndpi_ffi.rs declares extern "C" fn signatures only.

@@ -1,0 +1,517 @@
+# =============================================================================
+# Kubric UIDR — Full Platform docker-compose (L0-8)
+# =============================================================================
+# Start infrastructure only:
+#   docker compose up -d
+#
+# Start full stack including app services:
+#   docker compose --profile app up -d
+#
+# For RITA GPL-3.0 beacon analysis sidecar:
+#   docker compose -f infra/docker-compose.dev.yml up -d
+#
+# Secrets: copy .env.example → .env and fill in values before first run.
+# =============================================================================
+
+version: "3.9"
+
+# ─── Shared environment defaults (override via .env) ─────────────────────────
+x-kubric-env: &kubric-env
+  KUBRIC_DATABASE_URL: "postgresql://kubric:kubric@postgres:5432/kubric"
+  KUBRIC_NATS_URL: "nats://nats:4222"
+  KUBRIC_CLICKHOUSE_URL: "clickhouse://default:@clickhouse:9000/kubric"
+  KUBRIC_VAULT_ADDR: "http://vault:8200"
+  VAULT_ADDR: "http://vault:8200"
+  VAULT_TOKEN: "root"
+
+services:
+
+  # ── NATS JetStream ────────────────────────────────────────────────────────
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    command: ["-js", "-m", "8222", "--name", "kubric"]
+    ports:
+      - "4222:4222"   # Client
+      - "8222:8222"   # HTTP monitoring
+    volumes:
+      - nats-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [kubric]
+
+  # ── PostgreSQL (Supabase-compatible) ─────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kubric
+      POSTGRES_PASSWORD: kubric
+      POSTGRES_DB: kubric
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kubric -d kubric"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── ClickHouse (tenant-partitioned events) ────────────────────────────────
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    restart: unless-stopped
+    ports:
+      - "9000:9000"   # Native protocol
+      - "8123:8123"   # HTTP interface
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./config/clickhouse/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./config/clickhouse/config.xml:/etc/clickhouse-server/config.d/kubric.xml:ro
+      - ./config/clickhouse/users.xml:/etc/clickhouse-server/users.d/kubric.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [kubric]
+
+  # ── Neo4j (BloodHound AD graph / identity risk) ───────────────────────────
+  neo4j:
+    image: neo4j:5.18-community
+    restart: unless-stopped
+    environment:
+      NEO4J_AUTH: "neo4j/kubric-neo4j"
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*"
+    ports:
+      - "7474:7474"   # HTTP browser
+      - "7687:7687"   # Bolt
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:7474"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks: [kubric]
+
+  # ── Redis (CrewAI cache, Celery broker) ───────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [kubric]
+
+  # ── HashiCorp Vault (secrets, PKI, agent tokens) ──────────────────────────
+  vault:
+    image: hashicorp/vault:1.17
+    restart: unless-stopped
+    cap_add: [IPC_LOCK]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "root"
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+    command: ["vault", "server", "-dev"]
+    ports:
+      - "8200:8200"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8200/v1/sys/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [kubric]
+
+  # ── Temporal (durable workflow orchestration) ─────────────────────────────
+  temporal-postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_DB: temporal
+    volumes:
+      - temporal-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temporal -d temporal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  temporal:
+    image: temporalio/auto-setup:1.24
+    restart: unless-stopped
+    environment:
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      POSTGRES_SEEDS: temporal-postgres
+      DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
+    ports:
+      - "7233:7233"   # gRPC frontend
+    depends_on:
+      temporal-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "temporal", "workflow", "list", "--namespace", "default", "--address", "localhost:7233"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 45s
+    networks: [kubric]
+
+  temporal-ui:
+    image: temporalio/ui:2.29
+    restart: unless-stopped
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: "http://localhost:3001"
+    ports:
+      - "8233:8080"
+    depends_on: [temporal]
+    networks: [kubric]
+
+  # ── Qdrant (vector DB for KAI RAG / embeddings) ───────────────────────────
+  qdrant:
+    image: qdrant/qdrant:v1.9.0
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # HTTP
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant-data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [kubric]
+
+  # ── Ollama (local LLM inference — llama3.2) ───────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    # Pull the default model on first start
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llama3.2 && wait"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 60s
+    networks: [kubric]
+
+  # ── n8n (workflow automation / ITSM routing) ──────────────────────────────
+  n8n:
+    image: n8nio/n8n:1.45.1
+    restart: unless-stopped
+    environment:
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: "http"
+      N8N_HOST: "localhost"
+      WEBHOOK_URL: "http://n8n:5678/"
+      N8N_BASIC_AUTH_ACTIVE: "false"
+      GENERIC_TIMEZONE: "UTC"
+      N8N_RUNNERS_ENABLED: "true"
+      DEFAULT_TENANT: "${KUBRIC_DEFAULT_TENANT:-acme-corp}"
+      SLACK_WEBHOOK_URL: "${SLACK_WEBHOOK_URL:-}"
+      N8N_WORKFLOW_DIRECTORY: /home/node/.n8n/workflows
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ./config/n8n/workflows:/home/node/.n8n/workflows:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5678/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks: [kubric]
+
+  # ── MinIO (S3-compatible object storage for evidence / models) ────────────
+  minio:
+    image: minio/minio:RELEASE.2024-07-16T23-46-41Z
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: kubric
+      MINIO_ROOT_PASSWORD: kubric-minio-secret
+    ports:
+      - "9050:9000"   # S3 API (offset to avoid ClickHouse 9000 conflict)
+      - "9051:9001"   # Console
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    networks: [kubric]
+
+  # ── Prometheus (metrics scrape) ───────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-lifecycle
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus-data:/prometheus
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── Loki (log aggregation) ────────────────────────────────────────────────
+  loki:
+    image: grafana/loki:3.1.0
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki-data:/loki
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3100/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [kubric]
+
+  # ── Grafana (dashboards — AGPL, runs as service not import) ──────────────
+  grafana:
+    image: grafana/grafana:11.1.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: kubric-grafana
+      GF_FEATURE_TOGGLES_ENABLE: "traceqlEditor tempoSearch"
+      GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on: [prometheus, loki]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [kubric]
+
+  # =========================================================================
+  # APPLICATION SERVICES — profile: app
+  # Build locally: docker compose --profile app build
+  # =========================================================================
+
+  # ── K-SVC: Tenant management API (:8080) ─────────────────────────────────
+  ksvc:
+    build:
+      context: .
+      dockerfile: build/ksvc/Dockerfile
+      target: final
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── VDR: Vulnerability findings API (:8081) ───────────────────────────────
+  vdr:
+    build:
+      context: .
+      dockerfile: build/vdr/Dockerfile
+      target: final
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8081"
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── KIC: Compliance assessments API (:8082) ───────────────────────────────
+  kic:
+    build:
+      context: .
+      dockerfile: build/kic/Dockerfile
+      target: final
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8082"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8082/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── NOC: Cluster & agent heartbeat API (:8083) ────────────────────────────
+  noc:
+    build:
+      context: .
+      dockerfile: build/noc/Dockerfile
+      target: final
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8083"
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8083/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── KAI: Python AI orchestration (:8100) ─────────────────────────────────
+  kai:
+    build:
+      context: kai
+      dockerfile: Dockerfile
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      KUBRIC_TENANT_ID: "${KUBRIC_DEFAULT_TENANT:-acme-corp}"
+      KUBRIC_NATS_URL: "nats://nats:4222"
+      KUBRIC_DATABASE_URL: "postgresql://kubric:kubric@postgres:5432/kubric"
+      KUBRIC_CLICKHOUSE_URL: "clickhouse://default:@clickhouse:9000/kubric"
+      KUBRIC_OLLAMA_URL: "http://ollama:11434"
+      KUBRIC_N8N_BASE_URL: "http://n8n:5678"
+      KUBRIC_KSVC_URL: "http://ksvc:8080"
+      KUBRIC_VDR_URL: "http://vdr:8081"
+      KUBRIC_KIC_URL: "http://kic:8082"
+      KUBRIC_NOC_URL: "http://noc:8083"
+      KUBRIC_TEMPORAL_ADDRESS: "temporal:7233"
+    ports:
+      - "8100:8100"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+      temporal:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8100/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks: [kubric]
+
+# ─── Volumes ─────────────────────────────────────────────────────────────────
+volumes:
+  nats-data:
+  postgres-data:
+  clickhouse-data:
+  neo4j-data:
+  neo4j-logs:
+  redis-data:
+  temporal-pg-data:
+  qdrant-data:
+  ollama-data:
+  n8n-data:
+  minio-data:
+  prometheus-data:
+  loki-data:
+  grafana-data:
+
+# ─── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  kubric:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

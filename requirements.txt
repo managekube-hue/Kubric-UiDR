@@ -1,11 +1,12 @@
 # =============================================================================
 # Kubric — Master Python requirements (L0-6)
 # =============================================================================
-# Install order: pip install -r requirements.txt
+# Install: pip install -r requirements.txt
 # For KAI API only: pip install "kai/.[layer2]"
-# For full platform: pip install -r requirements.txt
 #
-# Sections follow the orchestration document library taxonomy (§45-§52).
+# Sections follow orchestration doc library taxonomy (§45-§52).
+# GPU-only packages (vllm, bitsandbytes, torchvision) are commented out;
+# uncomment on CUDA-capable Linux hosts.
 # =============================================================================
 
 # ─── KAI API core (always required) ─────────────────────────────────────────
@@ -14,6 +15,8 @@ uvicorn[standard]>=0.32.0
 nats-py>=2.9.0
 orjson>=3.10.0
 httpx>=0.28.0
+aiohttp>=3.10.0
+requests>=2.32.0
 pydantic>=2.9.0
 pydantic-settings>=2.6.0
 python-dotenv>=1.0.0
@@ -29,19 +32,31 @@ tabulate>=0.9.0
 jsonpath-ng>=1.7.0
 jmespath>=1.0.1
 
-# ─── AI / LLM Orchestration (Layer 2 — §50 cloud fallbacks) ─────────────────
+# ─── AI / LLM Orchestration (Layer 2 — §50) ──────────────────────────────────
 crewai>=0.80.0
+crewai-tools>=0.17.0
+composio-crewai>=0.6.0
 langchain>=0.3.7
 langchain-community>=0.3.7
 langchain-core>=0.3.7
+langchain-openai>=0.2.0
+langgraph>=0.2.0
 llama-cpp-python>=0.3.2
 openai>=1.57.0
 anthropic>=0.40.0
 cohere>=5.12.0
 
+# ─── HuggingFace transformers (Layer 3 — embedding / classification) ─────────
+transformers>=4.45.0
+accelerate>=0.34.0
+# bitsandbytes>=0.44.0        # GPU quantization — Linux + CUDA only
+
+# ─── Vector DB / RAG (Layer 2/3 — §18 KAI embeddings) ───────────────────────
+qdrant-client>=1.11.0
+chromadb>=0.5.0
+
 # ─── Local LLM inference server (Layer 3 — GPU node) ────────────────────────
-# vllm requires Linux + CUDA; comment out on non-GPU hosts
-# vllm>=0.6.4
+# vllm>=0.6.4                  # Linux + CUDA only
 
 # ─── Temporal durable workflows (Layer 2) ────────────────────────────────────
 temporalio>=1.7.0
@@ -51,9 +66,17 @@ asyncpg>=0.30.0
 psycopg2-binary>=2.9.10
 clickhouse-connect>=0.8.0
 aiokafka>=0.11.0
+redis>=5.2.0
+duckdb>=1.0.0
 python-socketio>=5.11.0
 
+# ─── Protobuf / gRPC (§30) ───────────────────────────────────────────────────
+protobuf>=5.28.0
+grpcio>=1.67.0
+grpcio-tools>=1.67.0
+
 # ─── Data processing — high-performance (§45) ──────────────────────────────
+numpy>=2.0.0
 polars>=1.15.0
 pyarrow>=18.0.0
 pandas>=2.2.4
@@ -62,12 +85,16 @@ ujson>=5.10.0
 msgpack>=1.1.0
 dpkt>=1.9.8
 scapy>=2.6.1
+pypcap>=1.3.0
 geoip2>=4.8.0
 
 # ─── ML / Training (§49 — Layer 3) ──────────────────────────────────────────
 torch>=2.4.0
+# torchvision>=0.19.0          # GPU optional
 scikit-learn>=1.5.2
 xgboost>=2.1.3
+shap>=0.46.0
+imbalanced-learn>=0.12.0
 ray[default]>=2.40.0
 mlflow>=2.19.0
 tensorboard>=2.18.0
@@ -78,20 +105,23 @@ pyspark>=3.5.4
 pymisp>=2.5.0
 stix2>=3.0.0
 stix2-patterns>=2.0.0
+taxii2-client>=2.3.0
 shodan>=1.31.0
 censys>=2.2.16
 greynoise>=2.3.0
-# compliance-trestle — FedRAMP/OSCAL compliance framework
 compliance-trestle>=3.6.0
+ssvc>=2.1.0
+pycti>=6.3.0
 
-# ─── Security scanning (Layer 3 — KAI-KEEPER IaC review) ────────────────────
+# ─── Security scanning (Layer 3 — KAI-KEEPER) ────────────────────────────────
 checkov>=3.2.346
-# ansible-runner — KAI-KEEPER remediation activities
 ansible-runner>=2.4.0
+pynetbox>=7.4.0
 
 # ─── Privacy / PII detection (GDPR boundary enforcement) ────────────────────
 presidio-analyzer>=2.2.354
 presidio-anonymizer>=2.2.354
+spacy>=3.8.0
 
 # ─── Risk quantification (FAIR model — customer portal) ─────────────────────
 pyfair>=0.1.3
@@ -113,6 +143,7 @@ pytest-cov>=6.0.0
 factory-boy>=3.3.1
 faker>=33.0.0
 hypothesis>=6.119.0
+safety>=3.2.0
 
 # ─── Type checking + linting ──────────────────────────────────────────────────
 mypy>=1.13.0

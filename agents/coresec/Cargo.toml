@@ -53,6 +53,18 @@ yara-x         = { workspace = true }
 # (sigma-rust 0.8 not yet published to crates.io; evaluator lives in detection/sigma.rs)
 serde_yaml     = { workspace = true }
 
+# ── CLI parsing ────────────────────────────────────────────────────────────────
+clap           = { workspace = true }
+
+# ── HuggingFace tokenizers for candle inference (L3) ─────────────────────────
+# Deferred: tokenizers requires onig_sys native lib on Windows; re-enable on
+# Linux build host when Layer 3 transformer inference is wired.
+# tokenizers = { workspace = true }
+
+# ── File system watcher for rule hot-reload (L3) ──────────────────────────────
+notify               = { workspace = true }
+notify-debouncer-mini = { workspace = true }
+
 # ── System metrics ────────────────────────────────────────────────────────────
 sysinfo        = { workspace = true }
 
@@ -72,3 +84,5 @@ prost-build = "0.13"
 default  = []
 # Enable eBPF user-space loading (Linux only; no-op on other platforms)
 ebpf     = ["dep:aya", "dep:aya-log"]
+# Enable Unix-only signal handling and POSIX system calls
+unix     = []
