@@ -22,8 +22,12 @@ import structlog
 
 from kai.core.crew import make_comm_crew, parse_crew_output
 from kai.core.nats_client import nats_client
+from kai.psa.zammad import ZammadClient
 
 log = structlog.get_logger(__name__)
+
+# Zammad PSA client — credentials from Vault/env
+_zammad = ZammadClient()
 
 _VAPI_API_KEY  = os.getenv("KUBRIC_VAPI_API_KEY", "")
 _TWILIO_SID    = os.getenv("KUBRIC_TWILIO_SID", "")
@@ -32,6 +36,7 @@ _TWILIO_FROM   = os.getenv("KUBRIC_TWILIO_FROM", "")
 
 _VOICE_THRESHOLD = {"CRITICAL"}
 _SMS_THRESHOLD   = {"CRITICAL", "HIGH"}
+_TICKET_THRESHOLD = {"CRITICAL"}  # Auto-create PSA tickets for CRITICAL alerts
 
 
 class CommAgent:
@@ -61,6 +66,29 @@ class CommAgent:
             ok = await _send_twilio_sms(event)
             if ok:
                 dispatched.append("sms")
+
+        # PSA ticket creation — CRITICAL alerts, compliance failures, agent offline
+        if await _should_create_ticket(severity, event):
+            event_id = event.get("event_id", event.get("triage_id", ""))
+            ticket_title = f"[{severity}] {event.get('summary', event.get('title', 'Security Alert'))}"
+            ticket_body = (
+                f"Tenant: {tenant_id}\n"
+                f"Severity: {severity}\n"
+                f"Source: {event.get('source', 'unknown')}\n"
+                f"Summary: {event.get('summary', event.get('description', 'N/A'))}\n"
+                f"Timestamp: {event.get('timestamp', 'N/A')}\n"
+            )
+            try:
+                ticket_id = await _zammad.create_ticket(
+                    tenant_id=tenant_id,
+                    title=ticket_title,
+                    body=ticket_body,
+                    priority=severity.lower(),
+                    event_id=event_id if event_id else None,
+                )
+                dispatched.append(f"zammad:{ticket_id}")
+            except Exception as exc:
+                log.warning("comm.zammad_failed", error=str(exc))
 
         result: dict[str, Any] = {
             "tenant_id":         tenant_id,
@@ -133,3 +161,22 @@ async def _send_twilio_sms(event: dict[str, Any]) -> bool:
 def _extract_tenant(subject: str) -> str:
     parts = subject.split(".")
     return parts[1] if len(parts) >= 2 else "default"
+
+
+async def _should_create_ticket(severity: str, event: dict[str, Any]) -> bool:
+    """Determine if a PSA ticket should be auto-created.
+
+    Triggers:
+    - CRITICAL severity alerts
+    - Compliance framework failures (event_type contains 'compliance' and status is 'failed')
+    - Agent offline > 5 minutes (event_type contains 'agent' and status is 'offline')
+    """
+    if severity in _TICKET_THRESHOLD:
+        return True
+    event_type = str(event.get("event_type", event.get("type", ""))).lower()
+    status = str(event.get("status", "")).lower()
+    if "compliance" in event_type and status == "failed":
+        return True
+    if "agent" in event_type and status == "offline":
+        return True
+    return False

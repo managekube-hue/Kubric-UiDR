@@ -18,6 +18,8 @@ dependencies = [
 
     # Fast JSON (Rust-backed, handles datetime natively)
     "orjson>=3.10.0",
+    # MessagePack serialization for NATS payloads
+    "msgpack>=1.1.0",
 
     # HTTP client for Ollama, vLLM, cloud fallback LLMs, internal service calls
     "httpx>=0.28.0",
@@ -29,19 +31,35 @@ dependencies = [
 
     # Logging
     "structlog>=24.4.0",
+
+    # CLI framework (kai CLI entry point)
+    "typer>=0.12.0",
+    "rich>=13.9.0",
+    "click>=8.1.0",
+
+    # Async Postgres driver
+    "asyncpg>=0.30.0",
 ]
 
 [project.optional-dependencies]
 # Install when wiring KAI agents (Layer 2)
 ai = [
     "crewai>=0.80.0",
+    "composio-crewai>=0.5.0",
     "langchain>=0.3.7",
     "langchain-community>=0.3.7",
+    "langgraph>=0.2.0",
     "llama-cpp-python>=0.3.2",
+    # Cloud LLM fallbacks (cost/sovereignty aware)
+    "openai>=1.55.0",
+    "anthropic>=0.39.0",
+    "cohere>=5.12.0",
     # ClickHouse analytics reads (KAI-FORESIGHT, KAI-CLERK billing)
     "clickhouse-connect>=0.8.0",
     # Ansible-runner for KAI-KEEPER remediation activities
     "ansible-runner>=2.4.0",
+    # FAIR risk quantification
+    "pyfair>=0.1a1",
 ]
 
 # Temporal durable workflows (Layer 2 — KAI-KEEPER + KAI-CLERK)
@@ -57,12 +75,17 @@ ml = [
     "pandas>=2.2.0",
     "polars>=1.0.0",
     "pyarrow>=18.0.0",
+    # Distributed ML training
+    "ray[tune]>=2.38.0",
+    # ML experiment tracking
+    "mlflow>=2.18.0",
 ]
 
 # Install for threat intelligence (Layer 3)
 ti = [
     "pymisp>=2.5.0",
     "stix2>=3.0.0",
+    "stix2-patterns>=2.0.0",
     "requests>=2.32.0",
     # Feed scheduler
     "apscheduler>=3.10.0,<4",
@@ -70,6 +93,30 @@ ti = [
     "polars>=1.0.0",
     # Async HTTP for all feed pullers (already in core; explicit for ti extra)
     "httpx>=0.28.0",
+    # External intelligence APIs
+    "shodan>=1.31.0",
+    "censys>=2.2.0",
+    "greynoise>=2.3.0",
+    # IP geolocation
+    "geoip2>=4.8.0",
+]
+
+# Security scanning + compliance (Layer 3)
+security = [
+    "checkov>=3.2.0",
+    "ssvc>=0.1.0",
+    "compliance-trestle>=3.0.0",
+    # PII detection (DDR module)
+    "presidio-analyzer>=2.2.0",
+    # PCAP analysis
+    "dpkt>=1.9.8",
+    "scapy>=2.6.0",
+]
+
+# PSA integration + QBR reports (Layer 5)
+psa = [
+    "reportlab>=4.2.0",
+    "minio>=7.2.0",
 ]
 
 # Full Layer 2 install
@@ -79,7 +126,15 @@ layer2 = [
 
 # Full install (all layers)
 all = [
-    "kubric-kai[ai,workflows,ml,ti]",
+    "kubric-kai[ai,workflows,ml,ti,security,psa]",
+]
+
+# Dev / test tooling
+dev = [
+    "pytest>=8.3.0",
+    "hypothesis>=6.115.0",
+    "factory-boy>=3.3.0",
+    "ruff>=0.7.0",
 ]
 
 [project.scripts]

@@ -22,6 +22,7 @@ uuid               = { workspace = true }
 chrono             = { workspace = true }
 config             = { workspace = true }
 ring               = { workspace = true }
+zstd               = { workspace = true }
 
 # ── OTA downloads ─────────────────────────────────────────────────────────────
 reqwest        = { workspace = true }

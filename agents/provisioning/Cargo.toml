@@ -1,0 +1,32 @@
+[package]
+name        = "provisioning"
+version     = "0.2.0"
+edition     = "2021"
+description = "Kubric Provisioning — agent registration, install script generation, and binary fingerprinting"
+
+[dependencies]
+# ── Core ──────────────────────────────────────────────────────────────────────
+tokio              = { workspace = true }
+futures            = { workspace = true }
+serde              = { workspace = true }
+serde_json         = { workspace = true }
+async-nats         = { workspace = true }
+blake3             = { workspace = true }
+sha2               = { workspace = true }
+tracing            = { workspace = true }
+tracing-subscriber = { workspace = true }
+anyhow             = { workspace = true }
+thiserror          = { workspace = true }
+dotenvy            = { workspace = true }
+uuid               = { workspace = true }
+chrono             = { workspace = true }
+config             = { workspace = true }
+
+# ── HTTP for agent registration endpoint ──────────────────────────────────────
+reqwest            = { workspace = true }
+
+# ── OTel ──────────────────────────────────────────────────────────────────────
+opentelemetry         = { workspace = true }
+opentelemetry-otlp    = { workspace = true }
+opentelemetry_sdk     = { workspace = true }
+tracing-opentelemetry = { workspace = true }

@@ -2,6 +2,10 @@ use anyhow::{Context, Result};
 use tracing::info;
 
 mod config;
+mod manifest;
+mod orchestrator;
+mod tuf_updater;
+mod zstd_delta;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -18,10 +22,5 @@ async fn main() -> Result<()> {
     let cfg = config::Config::from_env().context("load config")?;
     info!(tenant_id = %cfg.tenant_id, "Watchdog starting");
 
-    // Phase 1 stub — parks until signal.
-    // Phase 3 will wire: Vault TUF → signed agent binary fetch → restart other agents
-    info!("Watchdog stub running — awaiting Phase 3 TUF/Vault wiring");
-    tokio::signal::ctrl_c().await.ok();
-    info!("Watchdog shutting down");
-    Ok(())
+    orchestrator::run(cfg).await
 }

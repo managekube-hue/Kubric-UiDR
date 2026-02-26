@@ -3,6 +3,12 @@ use tracing::info;
 
 mod capture;
 mod config;
+mod dpi;
+mod ids;
+mod ipsum_lookup;
+mod ndpi_ffi;
+mod rita_client;
+mod tls;
 
 #[tokio::main]
 async fn main() -> Result<()> {

@@ -3,6 +3,7 @@ members = [
     "agents/coresec",
     "agents/netguard",
     "agents/perftrace",
+    "agents/provisioning",
     "agents/watchdog",
 ]
 resolver = "2"

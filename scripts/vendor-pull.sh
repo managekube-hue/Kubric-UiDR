@@ -156,6 +156,30 @@ pull_velociraptor() {
     info "Velociraptor: artifacts pulled (loaded as data — not imported as code)"
 }
 
+# ─── NIST OSCAL (Public Domain) ─────────────────────────────────────────────
+pull_oscal() {
+    clone_or_pull \
+        "https://github.com/usnistgov/oscal-content.git" \
+        "$VENDOR_DIR/oscal"
+    info "OSCAL: NIST content pulled"
+}
+
+# ─── Cortex Analyzers/Responders (AGPL — subprocess only) ───────────────────
+pull_cortex() {
+    clone_or_pull \
+        "https://github.com/TheHive-Project/Cortex-Analyzers.git" \
+        "$VENDOR_DIR/cortex"
+    info "Cortex: analyzers + responders pulled (subprocess only — AGPL boundary)"
+}
+
+# ─── Wazuh Rules (GPL 2.0 data) ────────────────────────────────────────────
+pull_wazuh() {
+    clone_or_pull \
+        "https://github.com/wazuh/wazuh.git" \
+        "$VENDOR_DIR/wazuh-rules"
+    info "Wazuh: rules pulled (data only — GPL boundary)"
+}
+
 # =============================================================================
 # Main dispatch
 # =============================================================================
@@ -174,6 +198,11 @@ case "$FILTER" in
         pull_coreruleset
         pull_suricata
         pull_velociraptor
+        pull_oscal
+        pull_cortex
+        pull_wazuh
+        # Strip .git dirs from cloned repos (keep data only)
+        find "$VENDOR_DIR" -maxdepth 3 -name ".git" -type d -exec rm -rf {} + 2>/dev/null || true
         ;;
     sigma)        pull_sigma ;;
     yara)         pull_yara ;;
@@ -186,9 +215,12 @@ case "$FILTER" in
     coreruleset)  pull_coreruleset ;;
     suricata)     pull_suricata ;;
     velociraptor) pull_velociraptor ;;
+    oscal)        pull_oscal ;;
+    cortex)       pull_cortex ;;
+    wazuh)        pull_wazuh ;;
     *)
         echo "Unknown filter: $FILTER"
-        echo "Usage: $0 [all|sigma|yara|mitre|misp|nuclei|falco|bloodhound|osquery|coreruleset|suricata|velociraptor]"
+        echo "Usage: $0 [all|sigma|yara|mitre|misp|nuclei|falco|bloodhound|osquery|coreruleset|suricata|velociraptor|oscal|cortex|wazuh]"
         exit 1
         ;;
 esac

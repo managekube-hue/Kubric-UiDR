@@ -297,4 +297,56 @@
 | L2 KAI Python | 100% | CrewAI 5 personas, Temporal worker, n8n 4 workflows, Vault injection, Stripe webhook |
 | L3 Detection | 100% | Sigma/YARA wired into agent loop, NetGuard pcap, EPSS enrichment, TI 7-feed scheduler, Nuclei bridge |
 | L4 K8s/GitOps | 100% | Kustomize base+overlays, Helm values, ArgoCD app-of-apps, cert-manager, ESO, Authentik blueprint, Grafana 6 alerts, backup DR scripts |
-| L5 Portal | 0% | Not started — Next.js + Authentik OIDC + Stripe + KiSS dashboard |
+| L5 Portal | 100% | Next.js 14 App Router, Authentik OIDC, KiSS 5-domain scorecard, Stripe billing, NATS WebSocket alerts, agent health, Go billing package, PSA/Zammad auto-tickets, QBR PDF reports |
+
+---
+
+## Layer 5 — Customer Portal, Billing, PSA
+
+### Frontend Portal (Next.js 14 App Router) — frontend/
+
+| File | Purpose |
+|------|---------|
+| `frontend/package.json` | All deps: next@14, react, @tremor/react, next-auth, stripe, swr, nats.ws, lucide-react, shadcn radix primitives |
+| `frontend/tsconfig.json` | TypeScript config with path aliases |
+| `frontend/next.config.js` | Standalone output, env vars for API + NATS WS URLs |
+| `frontend/tailwind.config.ts` | Kubric branding colors, Tremor content paths |
+| `frontend/postcss.config.js` | Tailwind + autoprefixer |
+| `frontend/app/layout.tsx` | Root layout with AuthProvider (next-auth SessionProvider) |
+| `frontend/app/page.tsx` | Root redirect to /dashboard |
+| `frontend/app/globals.css` | Tailwind base + Kubric CSS custom properties |
+| `frontend/app/api/auth/[...nextauth]/route.ts` | Authentik OIDC provider: JWT callbacks extract tenant_id + groups, 1hr session |
+| `frontend/app/api/webhook/stripe/route.ts` | Stripe webhook: signature validation, forwards subscription/invoice events to K-SVC |
+| `frontend/app/(auth)/login/page.tsx` | SSO login page with Authentik redirect |
+| `frontend/app/(tenant)/layout.tsx` | Sidebar nav with session check, sign-out, 6-page navigation |
+| `frontend/app/(tenant)/dashboard/page.tsx` | Real-time alert dashboard: NATS WebSocket + Tremor AreaChart + KPI cards |
+| `frontend/app/(tenant)/vulns/page.tsx` | Vulnerability findings: searchable Tremor Table with EPSS scores |
+| `frontend/app/(tenant)/compliance/page.tsx` | Compliance assessments: framework cards with score ProgressBar |
+| `frontend/app/(tenant)/kiss/page.tsx` | KiSS scorecard: overall DonutChart + 5 domain cards (Identity, Endpoint, Network, Cloud, Compliance) |
+| `frontend/app/(tenant)/agents/page.tsx` | Agent health: Healthy/Stale/Offline indicators, heartbeat table |
+| `frontend/app/(tenant)/billing/page.tsx` | Billing: usage metrics, Stripe portal link, metered billing display |
+| `frontend/lib/api-client.ts` | Typed API client: K-SVC, VDR, KIC, NOC, Billing, KiSS endpoints |
+| `frontend/lib/nats-client.ts` | NATS WebSocket: tenant-scoped subscription, typed NatsAlert |
+| `frontend/lib/auth-provider.tsx` | Client-side SessionProvider wrapper |
+| `frontend/lib/utils.ts` | cn() utility (clsx + tailwind-merge) |
+| `frontend/components/ui/button.tsx` | Button component with variant/size props |
+| `frontend/types/next-auth.d.ts` | next-auth type augmentation: accessToken, tenantId, groups |
+
+### K-SVC Billing (Go) — services/k-svc/billing/
+
+| File | Purpose |
+|------|---------|
+| `services/k-svc/billing/stripe.go` | Stripe SDK: CreateCustomer, CreateSubscription, CreateUsageRecord, GetBillingPortalURL, CreateCheckoutSession |
+| `services/k-svc/billing/metering.go` | NATS usage subscriber, billing_usage table insert, AggregateUsage, MerkleRoot (SHA-256), StoreMerkleRoot |
+| `services/k-svc/billing/metering_test.go` | TestBillingMerkleRoot: deterministic + order-independent + collision-free. TestMerkleRootEmpty |
+
+### PSA Integration (Python) — kai/psa/
+
+| File | Purpose |
+|------|---------|
+| `kai/psa/__init__.py` | Exports ZammadClient |
+| `kai/psa/zammad.py` | Zammad REST client: create_ticket (idempotent via event_id dedup), update_ticket. Priority + state mapping |
+| `kai/reports/__init__.py` | Exports generate_qbr |
+| `kai/reports/qbr.py` | QBR PDF generator: reportlab rendering (title, exec summary, risk trends, metrics table), MinIO upload |
+| `kai/agents/comm.py` | Updated: auto-creates PSA tickets for CRITICAL alerts, compliance failures, agent offline events |
+| `kai/tests/test_psa.py` | Mock Zammad server tests: create_ticket, idempotency (same event_id = 1 ticket), different events = separate tickets, update_ticket |

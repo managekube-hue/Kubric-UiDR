@@ -5,6 +5,10 @@ mod agent;
 mod config;
 mod detection;
 mod event;
+mod fim;
+mod governor;
+mod hooks;
+mod ml;
 
 #[tokio::main]
 async fn main() -> Result<()> {

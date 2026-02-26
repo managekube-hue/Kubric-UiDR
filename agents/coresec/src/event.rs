@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 /// tenant_id is first-class — set at the agent before NATS publish.
 ///
 /// NATS subject: kubric.{tenant_id}.endpoint.process.v1
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ProcessEvent {
     pub tenant_id: String,
     pub agent_id: String,
