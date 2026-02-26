@@ -1,0 +1,54 @@
+# infra/helm/values/nats-values.yaml
+# NATS JetStream cluster — 3 replicas
+# Helm chart: nats/nats  (https://nats-io.github.io/k8s/helm/charts/)
+
+config:
+  cluster:
+    enabled: true
+    replicas: 3
+    name: kubric-nats
+
+  jetstream:
+    enabled: true
+    fileStore:
+      enabled: true
+      storageDirectory: /data
+      pvc:
+        enabled: true
+        size: 10Gi
+        storageClassName: standard
+
+  merge:
+    accounts:
+      kubric:
+        jetstream: enabled
+        users:
+          - user: kubric
+            password: $NATS_PASSWORD  # ESO injects from Vault
+
+container:
+  image:
+    tag: "2.10"
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+podTemplate:
+  labels:
+    app.kubernetes.io/part-of: kubric
+
+service:
+  ports:
+    - name: nats
+      port: 4222
+    - name: cluster
+      port: 6222
+    - name: monitor
+      port: 8222
+
+natsBox:
+  enabled: false

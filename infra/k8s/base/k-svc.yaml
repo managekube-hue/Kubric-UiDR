@@ -1,0 +1,81 @@
+---
+# ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: k-svc
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: k-svc
+    app.kubernetes.io/part-of: kubric
+    kubric/tenant-aware: "true"
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: k-svc
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: k-svc
+    app.kubernetes.io/part-of: kubric
+spec:
+  selector:
+    app: k-svc
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k-svc
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: k-svc
+    app.kubernetes.io/part-of: kubric
+    kubric/tenant-aware: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k-svc
+  template:
+    metadata:
+      labels:
+        app: k-svc
+        app.kubernetes.io/name: k-svc
+        app.kubernetes.io/part-of: kubric
+        kubric/tenant-aware: "true"
+    spec:
+      serviceAccountName: k-svc
+      containers:
+        - name: k-svc
+          image: kubric/k-svc:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: VAULT_ADDR
+              value: http://vault:8200
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 30
+            initialDelaySeconds: 15

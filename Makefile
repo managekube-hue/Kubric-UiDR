@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -84,6 +84,13 @@ test-integration:
 
 test-coverage:
 	cargo tarpaulin --out Html --output-dir coverage/
+
+# Restore Drill — must pass before customer 1 (L4-3)
+# Requires running ClickHouse + MinIO (make dev)
+restore-drill:
+	@echo "Running DR restore drill..."
+	go test ./scripts/backup/... -run TestRestoreDrill -v -timeout 10m
+	@echo "Restore drill complete"
 
 # Linting & Code Quality
 

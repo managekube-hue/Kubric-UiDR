@@ -1,0 +1,60 @@
+# infra/helm/values/vault-values.yaml
+# HashiCorp Vault — HA with Raft integrated storage
+# Helm chart: hashicorp/vault
+
+global:
+  enabled: true
+  tlsDisable: true  # TLS terminated at Ingress / service mesh
+
+server:
+  ha:
+    enabled: true
+    replicas: 3
+    raft:
+      enabled: true
+      setNodeId: true
+      config: |
+        ui = true
+
+        listener "tcp" {
+          tls_disable = 1
+          address     = "[::]:8200"
+          cluster_address = "[::]:8201"
+        }
+
+        storage "raft" {
+          path    = "/vault/data"
+          node_id = "{{ .NodeID }}"
+        }
+
+        service_registration "kubernetes" {}
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+  dataStorage:
+    enabled: true
+    size: 10Gi
+    storageClass: standard
+
+  ingress:
+    enabled: false
+
+  extraLabels:
+    app.kubernetes.io/part-of: kubric
+
+  # Auto-unseal via Kubernetes Transit (configure after initial setup)
+  # Uncomment once Transit Auto-Unseal is configured:
+  # extraArgs: "-config=/vault/config/auto-unseal.hcl"
+
+ui:
+  enabled: true
+  serviceType: ClusterIP
+
+injector:
+  enabled: false   # Using External Secrets Operator instead of Vault Agent

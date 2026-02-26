@@ -1,0 +1,82 @@
+# infra/helm/values/grafana-values.yaml
+# Grafana with ClickHouse datasource
+# Helm chart: grafana/grafana
+
+replicas: 1
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+podLabels:
+  app.kubernetes.io/part-of: kubric
+
+service:
+  type: ClusterIP
+  port: 3000
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClassName: standard
+
+# Admin credentials injected via External Secrets Operator
+adminUser: admin
+# adminPassword: set via ESO Secret ref
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: ClickHouse
+        type: grafana-clickhouse-datasource
+        uid: clickhouse-kubric
+        url: http://clickhouse:8123
+        jsonData:
+          defaultDatabase: kubric
+          port: 8123
+          server: clickhouse
+          username: default
+          protocol: native
+        secureJsonData:
+          password: ""  # ESO injects at mount time
+        isDefault: true
+
+      - name: Prometheus
+        type: prometheus
+        uid: prometheus-kubric
+        url: http://prometheus:9090
+        isDefault: false
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: kubric
+        orgId: 1
+        folder: Kubric
+        type: file
+        disableDeletion: false
+        options:
+          path: /var/lib/grafana/dashboards/kubric
+
+# Dashboards are mounted from infra/k8s/base/grafana-provisioning.yaml (ConfigMap)
+dashboardsConfigMaps:
+  kubric: grafana-dashboards-kubric
+
+grafana.ini:
+  server:
+    root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+  auth.anonymous:
+    enabled: false
+  alerting:
+    enabled: true
+  unified_alerting:
+    enabled: true
+
+plugins:
+  - grafana-clickhouse-datasource

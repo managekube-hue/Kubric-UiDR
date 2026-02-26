@@ -62,6 +62,13 @@ class Settings(BaseSettings):
     # Composio tool-bridge (KAI core — GitHub, Jira, Slack integrations)
     composio_api_key: str = ""                 # KUBRIC_COMPOSIO_API_KEY
 
+    # ── Threat Intelligence (Layer 3 — L3-4) ────────────────────────────────
+    nvd_api_key: str = ""                      # KUBRIC_NVD_API_KEY
+    otx_api_key: str = ""                      # KUBRIC_OTX_API_KEY
+    abuseipdb_api_key: str = ""                # KUBRIC_ABUSEIPDB_API_KEY
+    misp_url: str = ""                         # KUBRIC_MISP_URL
+    misp_api_key: str = ""                     # KUBRIC_MISP_API_KEY
+
 
 # Module-level singleton — import this everywhere in kai/
 settings = Settings()  # type: ignore[call-arg]

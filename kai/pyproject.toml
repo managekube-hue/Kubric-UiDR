@@ -64,6 +64,12 @@ ti = [
     "pymisp>=2.5.0",
     "stix2>=3.0.0",
     "requests>=2.32.0",
+    # Feed scheduler
+    "apscheduler>=3.10.0,<4",
+    # Fast CSV parsing (EPSS feed)
+    "polars>=1.0.0",
+    # Async HTTP for all feed pullers (already in core; explicit for ti extra)
+    "httpx>=0.28.0",
 ]
 
 # Full Layer 2 install
@@ -79,6 +85,7 @@ all = [
 [project.scripts]
 kai            = "kai.cli:app"
 kai-worker     = "kai.workers.temporal_worker:main"
+kai-ti         = "kai.intel.scheduler:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["kai"]

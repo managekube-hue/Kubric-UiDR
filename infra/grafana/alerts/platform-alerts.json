@@ -1,0 +1,330 @@
+{
+  "apiVersion": 1,
+  "groups": [
+    {
+      "name": "Platform Critical Alerts",
+      "folder": "Kubric Platform",
+      "interval": "1m",
+      "rules": [
+        {
+          "uid": "nats-consumer-lag",
+          "title": "NATS Consumer Lag Critical",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "prometheus-kubric",
+              "model": {
+                "expr": "nats_consumer_num_pending > 10000",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {"params": [0], "type": "gt"},
+                    "operator": {"type": "and"},
+                    "query": {"params": ["A"]},
+                    "reducer": {"params": [], "type": "last"},
+                    "type": "query"
+                  }
+                ],
+                "datasource": {"type": "__expr__", "uid": "__expr__"},
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "2m",
+          "annotations": {
+            "summary": "NATS consumer lag critical — events not being processed",
+            "description": "NATS consumer {{ $labels.consumer }} on stream {{ $labels.stream }} has {{ $values.A.Value }} pending messages (threshold: 10000)"
+          },
+          "labels": {
+            "severity": "critical",
+            "team": "platform"
+          }
+        },
+        {
+          "uid": "clickhouse-insert-rate-zero",
+          "title": "ClickHouse Ingestion Stopped",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "prometheus-kubric",
+              "model": {
+                "expr": "rate(clickhouse_written_rows_total[2m]) == 0 AND on() kubric_events_total > 0",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {"params": [0], "type": "gt"},
+                    "operator": {"type": "and"},
+                    "query": {"params": ["A"]},
+                    "reducer": {"params": [], "type": "last"},
+                    "type": "query"
+                  }
+                ],
+                "datasource": {"type": "__expr__", "uid": "__expr__"},
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "2m",
+          "annotations": {
+            "summary": "ClickHouse ingestion stopped",
+            "description": "ClickHouse insert rate has been 0 for >2 minutes while events are still arriving on the NATS bus"
+          },
+          "labels": {
+            "severity": "critical",
+            "team": "platform"
+          }
+        },
+        {
+          "uid": "vault-sealed",
+          "title": "Vault Is Sealed",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "prometheus-kubric",
+              "model": {
+                "expr": "vault_core_unsealed == 0",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {"params": [0], "type": "gt"},
+                    "operator": {"type": "and"},
+                    "query": {"params": ["A"]},
+                    "reducer": {"params": [], "type": "last"},
+                    "type": "query"
+                  }
+                ],
+                "datasource": {"type": "__expr__", "uid": "__expr__"},
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "noDataState": "Alerting",
+          "execErrState": "Error",
+          "for": "1m",
+          "annotations": {
+            "summary": "VAULT IS SEALED — all services will fail secret lookups",
+            "description": "Vault node {{ $labels.host }} is sealed. All Kubric services that rely on Vault for secret injection will begin failing."
+          },
+          "labels": {
+            "severity": "critical",
+            "team": "platform"
+          }
+        },
+        {
+          "uid": "agent-heartbeat-gap",
+          "title": "Agent Heartbeat Gap",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "",
+              "relativeTimeRange": {"from": 600, "to": 0},
+              "datasourceUid": "prometheus-kubric",
+              "model": {
+                "expr": "time() - kubric_agent_last_seen_timestamp_seconds > 300",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "queryType": "",
+              "relativeTimeRange": {"from": 600, "to": 0},
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {"params": [0], "type": "gt"},
+                    "operator": {"type": "and"},
+                    "query": {"params": ["A"]},
+                    "reducer": {"params": [], "type": "last"},
+                    "type": "query"
+                  }
+                ],
+                "datasource": {"type": "__expr__", "uid": "__expr__"},
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "5m",
+          "annotations": {
+            "summary": "Agent {{ $labels.agent_id }} has not reported in 5min",
+            "description": "Agent {{ $labels.agent_id }} on tenant {{ $labels.tenant_id }} / host {{ $labels.hostname }} has missed its heartbeat for more than 5 minutes."
+          },
+          "labels": {
+            "severity": "warning",
+            "team": "platform"
+          }
+        },
+        {
+          "uid": "temporal-workflow-failure",
+          "title": "Temporal Workflow Failure Rate High",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "",
+              "relativeTimeRange": {"from": 600, "to": 0},
+              "datasourceUid": "prometheus-kubric",
+              "model": {
+                "expr": "rate(temporal_workflow_failed_total[5m]) / rate(temporal_workflow_completed_total[5m]) > 0.05",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "queryType": "",
+              "relativeTimeRange": {"from": 600, "to": 0},
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {"params": [0], "type": "gt"},
+                    "operator": {"type": "and"},
+                    "query": {"params": ["A"]},
+                    "reducer": {"params": [], "type": "last"},
+                    "type": "query"
+                  }
+                ],
+                "datasource": {"type": "__expr__", "uid": "__expr__"},
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "2m",
+          "annotations": {
+            "summary": "Temporal workflow failure rate exceeds 5%",
+            "description": "The ratio of failed-to-completed Temporal workflows in the last 5 minutes is {{ $values.A.Value | humanizePercentage }}. Investigate Temporal workflow logs."
+          },
+          "labels": {
+            "severity": "critical",
+            "team": "platform"
+          }
+        },
+        {
+          "uid": "pod-crashloopbackoff",
+          "title": "Pod CrashLoopBackOff in kubric namespace",
+          "condition": "C",
+          "data": [
+            {
+              "refId": "A",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "prometheus-kubric",
+              "model": {
+                "expr": "kube_pod_container_status_waiting_reason{reason=\"CrashLoopBackOff\",namespace=\"kubric\"} > 0",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "A"
+              }
+            },
+            {
+              "refId": "C",
+              "queryType": "",
+              "relativeTimeRange": {"from": 300, "to": 0},
+              "datasourceUid": "__expr__",
+              "model": {
+                "conditions": [
+                  {
+                    "evaluator": {"params": [0], "type": "gt"},
+                    "operator": {"type": "and"},
+                    "query": {"params": ["A"]},
+                    "reducer": {"params": [], "type": "last"},
+                    "type": "query"
+                  }
+                ],
+                "datasource": {"type": "__expr__", "uid": "__expr__"},
+                "expression": "A",
+                "intervalMs": 1000,
+                "maxDataPoints": 43200,
+                "refId": "C",
+                "type": "threshold"
+              }
+            }
+          ],
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "for": "2m",
+          "annotations": {
+            "summary": "Pod {{ $labels.pod }} is in CrashLoopBackOff",
+            "description": "Container {{ $labels.container }} in pod {{ $labels.pod }} (namespace {{ $labels.namespace }}) is in CrashLoopBackOff. Check: kubectl logs {{ $labels.pod }} -n kubric"
+          },
+          "labels": {
+            "severity": "critical",
+            "team": "platform"
+          }
+        }
+      ]
+    }
+  ]
+}

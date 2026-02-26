@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kai-core
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: kai-core
+    app.kubernetes.io/part-of: kubric
+    kubric/tenant-aware: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kai-core
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: kai-core
+    app.kubernetes.io/part-of: kubric
+spec:
+  selector:
+    app: kai-core
+  ports:
+    - name: http
+      port: 8100
+      targetPort: 8100
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kai-core
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: kai-core
+    app.kubernetes.io/part-of: kubric
+    kubric/tenant-aware: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kai-core
+  template:
+    metadata:
+      labels:
+        app: kai-core
+        app.kubernetes.io/name: kai-core
+        app.kubernetes.io/part-of: kubric
+        kubric/tenant-aware: "true"
+    spec:
+      serviceAccountName: kai-core
+      containers:
+        - name: kai-core
+          image: kubric/kai:latest
+          ports:
+            - containerPort: 8100
+          env:
+            - name: VAULT_ADDR
+              value: http://vault:8200
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8100
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8100
+            periodSeconds: 30
+            initialDelaySeconds: 15

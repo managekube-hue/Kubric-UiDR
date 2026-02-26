@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: noc
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: noc
+    app.kubernetes.io/part-of: kubric
+    kubric/tenant-aware: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: noc
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: noc
+    app.kubernetes.io/part-of: kubric
+spec:
+  selector:
+    app: noc
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: noc
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: noc
+    app.kubernetes.io/part-of: kubric
+    kubric/tenant-aware: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: noc
+  template:
+    metadata:
+      labels:
+        app: noc
+        app.kubernetes.io/name: noc
+        app.kubernetes.io/part-of: kubric
+        kubric/tenant-aware: "true"
+    spec:
+      serviceAccountName: noc
+      containers:
+        - name: noc
+          image: kubric/noc:latest
+          ports:
+            - containerPort: 8083
+          env:
+            - name: VAULT_ADDR
+              value: http://vault:8200
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8083
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8083
+            periodSeconds: 30
+            initialDelaySeconds: 15

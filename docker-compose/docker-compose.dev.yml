@@ -115,8 +115,24 @@ services:
       start_period: 30s
 
   # ── n8n — workflow automation (alert routing, ITSM integration) ─────────────
+  # Workflows in config/n8n/workflows/ are auto-imported on every startup via
+  # `n8n import:workflow`.  Add new workflows to that directory and restart the
+  # container — they will be upserted into n8n's PostgreSQL-backed store.
   n8n:
     image: n8nio/n8n:latest
+    # Overridden entrypoint: import all JSONs from /opt/n8n-workflows/, then
+    # start n8n normally.  `|| true` ensures a duplicate-workflow import error
+    # never prevents startup.  `$$` escapes the $ sign in docker-compose.
+    entrypoint: ""
+    command: >
+      sh -c "
+        echo '[kubric] importing n8n workflows...' &&
+        for wf in /opt/n8n-workflows/*.json; do
+          n8n import:workflow --input=\"$$wf\" 2>&1 || true;
+        done &&
+        echo '[kubric] workflow import done, starting n8n...' &&
+        exec n8n start
+      "
     environment:
       N8N_HOST: "0.0.0.0"
       N8N_PORT: "5678"
@@ -131,11 +147,16 @@ services:
       N8N_BASIC_AUTH_ACTIVE: "true"
       N8N_BASIC_AUTH_USER: admin
       N8N_BASIC_AUTH_PASSWORD: dev_password
+      # Stable encryption key — prevents credential loss on container restart.
+      # Override with a real secret in production via Vault-injected env.
+      N8N_ENCRYPTION_KEY: "kubric-dev-n8n-enc-key-change-in-prod"
     ports:
       - "5678:5678"
     volumes:
       - n8n_data:/home/node/.n8n
-      - ../config/n8n/workflows:/home/node/.n8n/workflows
+      # Workflows mounted read-only at a separate path — n8n stores them in
+      # Postgres via `n8n import:workflow`; this dir is the source of truth.
+      - ../config/n8n/workflows:/opt/n8n-workflows:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -144,7 +165,7 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
-      start_period: 20s
+      start_period: 30s
 
   # ── MinIO — S3-compatible object storage (Temporal archival, SBOM storage) ──
   minio:
@@ -316,6 +337,31 @@ services:
       KUBRIC_STRIPE_SECRET_KEY: ${KUBRIC_STRIPE_SECRET_KEY:-}
     depends_on:
       temporal:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Layer 3: KAI TI Feed Scheduler ───────────────────────────────────────
+  # Runs all 7 threat intelligence feeds on their defined cadences.
+  # API keys are injected via environment (Vault in production).
+  kai-ti:
+    build:
+      context: ../
+      dockerfile: docker/kai.Dockerfile
+    command: ["kai-ti"]
+    environment:
+      KUBRIC_TENANT_ID: ${KUBRIC_TENANT_ID:-dev-tenant}
+      KUBRIC_NATS_URL: nats://nats:4222
+      KUBRIC_CLICKHOUSE_URL: clickhouse://default:@clickhouse:9000/kubric
+      # TI API keys — set in .env or inject from Vault
+      KUBRIC_NVD_API_KEY: ${KUBRIC_NVD_API_KEY:-}
+      KUBRIC_OTX_API_KEY: ${KUBRIC_OTX_API_KEY:-}
+      KUBRIC_ABUSEIPDB_API_KEY: ${KUBRIC_ABUSEIPDB_API_KEY:-}
+      KUBRIC_MISP_URL: ${KUBRIC_MISP_URL:-}
+      KUBRIC_MISP_API_KEY: ${KUBRIC_MISP_API_KEY:-}
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      nats:
         condition: service_healthy
     restart: unless-stopped
 

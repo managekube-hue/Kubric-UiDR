@@ -1,0 +1,68 @@
+# infra/helm/values/temporal-values.yaml
+# Temporal cluster — cassandra persistence
+# Helm chart: temporalio/temporal
+
+server:
+  replicaCount: 2
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  podLabels:
+    app.kubernetes.io/part-of: kubric
+
+  config:
+    logLevel: info
+    numHistoryShards: 512
+
+frontend:
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 7233
+
+history:
+  replicaCount: 2
+
+matching:
+  replicaCount: 2
+
+worker:
+  replicaCount: 2
+
+admintools:
+  enabled: true
+
+web:
+  enabled: true
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 8080
+
+cassandra:
+  enabled: true
+  config:
+    cluster_size: 3
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1000m"
+      memory: "2Gi"
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: standard
+
+prometheus:
+  enabled: true
+
+grafana:
+  enabled: false   # Kubric runs its own Grafana instance

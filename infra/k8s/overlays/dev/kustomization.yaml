@@ -1,0 +1,73 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Dev overlay — single replicas, dev image tags
+resources:
+  - ../../base
+
+namespace: kubric
+
+patches:
+  # All services: 1 replica
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: k-svc
+        namespace: kubric
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: vdr
+        namespace: kubric
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: kic
+        namespace: kubric
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: noc
+        namespace: kubric
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: kai-core
+        namespace: kubric
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: n8n
+        namespace: kubric
+      spec:
+        replicas: 1
+
+images:
+  - name: kubric/k-svc
+    newTag: dev
+  - name: kubric/vdr
+    newTag: dev
+  - name: kubric/kic
+    newTag: dev
+  - name: kubric/noc
+    newTag: dev
+  - name: kubric/kai
+    newTag: dev
+  - name: n8nio/n8n
+    newTag: latest

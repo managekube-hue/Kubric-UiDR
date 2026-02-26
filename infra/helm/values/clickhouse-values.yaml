@@ -1,0 +1,49 @@
+# infra/helm/values/clickhouse-values.yaml
+# ClickHouse cluster — single shard, 2 replicas
+# Helm chart: bitnami/clickhouse
+
+auth:
+  username: default
+  # password injected via External Secrets Operator — not set here
+
+shards: 1
+replicaCount: 2
+
+zookeeper:
+  enabled: true
+  replicaCount: 3
+
+persistence:
+  enabled: true
+  size: 50Gi
+  storageClass: standard
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "2000m"
+    memory: "4Gi"
+
+podLabels:
+  app.kubernetes.io/part-of: kubric
+
+service:
+  type: ClusterIP
+  ports:
+    http: 8123
+    tcp: 9000
+
+extraEnvVars:
+  - name: CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT
+    value: "1"
+
+initdbScripts:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS kubric;
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false
