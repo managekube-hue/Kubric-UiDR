@@ -17,6 +17,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault/api v1.22.0
+	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/twilio/twilio-go v1.30.2
 	golang.org/x/time v0.12.0
@@ -53,7 +54,6 @@ require (
 	github.com/klauspost/compress v1.18.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.11 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
-	github.com/marcboeker/go-duckdb v1.8.5 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect

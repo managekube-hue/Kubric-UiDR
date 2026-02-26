@@ -77,6 +77,10 @@ tmpclaude-*-cwd
 00_K-VENDOR-00_DETECTION_ASSETS/tmpclaude-*-cwd
 nul
 
+# Generated lib.exe intermediate files (wpcap.lib + Packet.lib are committed, .exp are not)
+vendor/pcap-sdk/x64/*.exp
+vendor/pcap-sdk/x64/exports.txt
+
 # Windows build artifacts
 *.exe
 target/
