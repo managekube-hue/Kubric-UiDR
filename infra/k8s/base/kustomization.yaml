@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: kubric
 
 resources:
+  # ── Core services ──────────────────────────────────────────────
   - namespace.yaml
   - k-svc.yaml
   - vdr.yaml
@@ -12,6 +13,18 @@ resources:
   - kai-core.yaml
   - n8n.yaml
   - grafana-provisioning.yaml
+
+  # ── StatefulSets (data layer) ──────────────────────────────────
+  - ../statefulsets/clickhouse-statefulset.yaml
+  - ../statefulsets/nats-statefulset.yaml
+  - ../statefulsets/postgresql-statefulset.yaml
+
+  # ── Security policies ──────────────────────────────────────────
+  - ../policy/networkpolicy-defaults.yaml
+  - ../policy/resourcequota.yaml
+
+  # ── Observability ──────────────────────────────────────────────
+  - ../observability/prometheus-operator.yaml
 
 # Grafana dashboards loaded from files — ConfigMap always in sync with source JSON.
 # `kustomize build infra/k8s/base/` inlines the JSON at build time; no placeholders.

@@ -8,6 +8,9 @@ metadata:
     app.kubernetes.io/name: kic
     app.kubernetes.io/part-of: kubric
     kubric/tenant-aware: "true"
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "kubric-kic"
 ---
 apiVersion: v1
 kind: Service
@@ -24,6 +27,9 @@ spec:
     - name: http
       port: 8082
       targetPort: 8082
+    - name: metrics
+      port: 9090
+      targetPort: 9090
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -53,10 +59,17 @@ spec:
         - name: kic
           image: kubric/kic:latest
           ports:
-            - containerPort: 8082
+            - name: http
+              containerPort: 8082
+            - name: metrics
+              containerPort: 9090
           env:
             - name: VAULT_ADDR
               value: http://vault:8200
+            - name: VAULT_ROLE
+              value: kubric-kic
+            - name: KIC_LISTEN_ADDR
+              value: ":8082"
           resources:
             requests:
               cpu: "500m"

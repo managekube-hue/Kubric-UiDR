@@ -8,6 +8,9 @@ metadata:
     app.kubernetes.io/name: noc
     app.kubernetes.io/part-of: kubric
     kubric/tenant-aware: "true"
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "kubric-noc"
 ---
 apiVersion: v1
 kind: Service
@@ -24,6 +27,9 @@ spec:
     - name: http
       port: 8083
       targetPort: 8083
+    - name: metrics
+      port: 9090
+      targetPort: 9090
   type: ClusterIP
 ---
 apiVersion: apps/v1
@@ -53,10 +59,17 @@ spec:
         - name: noc
           image: kubric/noc:latest
           ports:
-            - containerPort: 8083
+            - name: http
+              containerPort: 8083
+            - name: metrics
+              containerPort: 9090
           env:
             - name: VAULT_ADDR
               value: http://vault:8200
+            - name: VAULT_ROLE
+              value: kubric-noc
+            - name: NOC_LISTEN_ADDR
+              value: ":8083"
           resources:
             requests:
               cpu: "500m"

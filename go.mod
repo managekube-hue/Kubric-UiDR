@@ -20,6 +20,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/vault/api v1.22.0
+	github.com/hashicorp/vault/api/auth/kubernetes v0.10.0
 	github.com/marcboeker/go-duckdb v1.8.5
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/neo4j/neo4j-go-driver/v5 v5.28.4

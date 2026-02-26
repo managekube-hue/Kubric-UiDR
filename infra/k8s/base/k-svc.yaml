@@ -9,6 +9,9 @@ metadata:
     app.kubernetes.io/name: k-svc
     app.kubernetes.io/part-of: kubric
     kubric/tenant-aware: "true"
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "kubric-ksvc"
 ---
 # Service
 apiVersion: v1
@@ -26,6 +29,9 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+    - name: metrics
+      port: 9090
+      targetPort: 9090
   type: ClusterIP
 ---
 # Deployment
@@ -52,14 +58,38 @@ spec:
         kubric/tenant-aware: "true"
     spec:
       serviceAccountName: k-svc
+      initContainers:
+        - name: migrate
+          image: migrate/migrate:v4.17.0
+          args:
+            - "-path=/migrations"
+            - "-database=$(DATABASE_URL)"
+            - "up"
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: kubric-db-credentials
+                  key: url
+                  optional: true
+          volumeMounts:
+            - name: migrations
+              mountPath: /migrations
       containers:
         - name: k-svc
           image: kubric/k-svc:latest
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
+            - name: metrics
+              containerPort: 9090
           env:
             - name: VAULT_ADDR
               value: http://vault:8200
+            - name: VAULT_ROLE
+              value: kubric-ksvc
+            - name: KSVC_LISTEN_ADDR
+              value: ":8080"
           resources:
             requests:
               cpu: "500m"
@@ -79,3 +109,8 @@ spec:
               port: 8080
             periodSeconds: 30
             initialDelaySeconds: 15
+      volumes:
+        - name: migrations
+          configMap:
+            name: kubric-pg-migrations
+            optional: true

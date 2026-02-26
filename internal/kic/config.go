@@ -4,26 +4,30 @@
 package kic
 
 import (
+	"context"
 	"os"
 	"strings"
+
+	"github.com/managekube-hue/Kubric-UiDR/internal/security"
 )
 
-// Config holds all KIC runtime configuration read from environment variables.
+// Config holds all KIC runtime configuration.
 type Config struct {
 	// ListenAddr — KIC_LISTEN_ADDR (default :8082)
 	ListenAddr string
-	// DatabaseURL — KUBRIC_DATABASE_URL (Supabase or local Postgres)
+	// DatabaseURL — Vault dynamic creds or KUBRIC_DATABASE_URL env
 	DatabaseURL string
-	// NATSUrl — KUBRIC_NATS_URL (default nats://127.0.0.1:4222)
+	// NATSUrl — Vault KV or KUBRIC_NATS_URL env
 	NATSUrl string
 }
 
-// LoadConfig reads KIC configuration from environment variables.
+// LoadConfig reads KIC configuration. Vault-backed in K8s, env vars in dev.
 func LoadConfig() Config {
+	creds := security.LoadServiceCreds(context.Background(), "kic")
 	return Config{
 		ListenAddr:  getenv("KIC_LISTEN_ADDR", ":8082"),
-		DatabaseURL: getenv("KUBRIC_DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/kubric"),
-		NATSUrl:     getenv("KUBRIC_NATS_URL", "nats://127.0.0.1:4222"),
+		DatabaseURL: creds.DatabaseURL,
+		NATSUrl:     creds.NATSUrl,
 	}
 }
 

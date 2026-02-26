@@ -34,6 +34,26 @@ datasources:
           name: TenantID
           url: ''
 
+  # ── Tempo — distributed tracing ────────────────────────────────────────────
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    isDefault: false
+    jsonData:
+      httpMethod: GET
+      tracesToLogs:
+        datasourceUid: loki
+        filterByTraceID: true
+        filterBySpanID: false
+      tracesToMetrics:
+        datasourceUid: prometheus
+      serviceMap:
+        datasourceUid: prometheus
+      nodeGraph:
+        enabled: true
+
   # ── ClickHouse — event lakehouse ──────────────────────────────────────────
   - name: ClickHouse
     type: grafana-clickhouse-datasource

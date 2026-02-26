@@ -4,26 +4,30 @@
 package noc
 
 import (
+	"context"
 	"os"
 	"strings"
+
+	"github.com/managekube-hue/Kubric-UiDR/internal/security"
 )
 
-// Config holds all NOC runtime configuration read from environment variables.
+// Config holds all NOC runtime configuration.
 type Config struct {
 	// ListenAddr — NOC_LISTEN_ADDR (default :8083)
 	ListenAddr string
-	// DatabaseURL — KUBRIC_DATABASE_URL (Supabase or local Postgres)
+	// DatabaseURL — Vault dynamic creds or KUBRIC_DATABASE_URL env
 	DatabaseURL string
-	// NATSUrl — KUBRIC_NATS_URL (default nats://127.0.0.1:4222)
+	// NATSUrl — Vault KV or KUBRIC_NATS_URL env
 	NATSUrl string
 }
 
-// LoadConfig reads NOC configuration from environment variables.
+// LoadConfig reads NOC configuration. Vault-backed in K8s, env vars in dev.
 func LoadConfig() Config {
+	creds := security.LoadServiceCreds(context.Background(), "noc")
 	return Config{
 		ListenAddr:  getenv("NOC_LISTEN_ADDR", ":8083"),
-		DatabaseURL: getenv("KUBRIC_DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/kubric"),
-		NATSUrl:     getenv("KUBRIC_NATS_URL", "nats://127.0.0.1:4222"),
+		DatabaseURL: creds.DatabaseURL,
+		NATSUrl:     creds.NATSUrl,
 	}
 }
 

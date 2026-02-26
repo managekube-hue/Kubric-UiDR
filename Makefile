@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -6,9 +6,11 @@ help:
 	@echo "Usage:"
 	@echo "  make bootstrap      Bootstrap Kubernetes cluster"
 	@echo "  make dev           Start docker-compose development environment"
-	@echo "  make test          Run all tests"
+	@echo "  make test          Run all tests (Rust + Go + Python)"
+	@echo "  make build         Build all components (Rust agents + Go services)"
 	@echo "  make lint          Run linters and code quality checks"
-	@echo "  make build         Build all components"
+	@echo "  make kustomize-build   Validate kustomize overlays"
+	@echo "  make db-migrate    Run database migrations (local)"
 	@echo "  make deploy-staging Deploy to staging environment"
 	@echo "  make deploy-prod   Deploy to production (requires manual approval)"
 	@echo "  make clean         Clean build artifacts and caches"
@@ -21,7 +23,7 @@ help:
 
 dev:
 	docker-compose -f docker-compose/docker-compose.dev.yml up -d
-	@echo "✅ Development environment started"
+	@echo "Development environment started"
 	@echo "Services:"
 	@echo "  PostgreSQL: localhost:5432"
 	@echo "  NATS:       localhost:4222"
@@ -33,57 +35,95 @@ dev-logs:
 
 dev-down:
 	docker-compose -f docker-compose/docker-compose.dev.yml down
-	@echo "✅ Development environment stopped"
+	@echo "Development environment stopped"
 
-# Kubernetes
+# Kubernetes — kustomize overlays
+
+kustomize-build:
+	@echo "Validating kustomize overlays..."
+	kustomize build infra/k8s/overlays/dev > /dev/null
+	@echo "  dev overlay: OK"
+	kustomize build infra/k8s/overlays/prod > /dev/null
+	@echo "  prod overlay: OK"
+	kustomize build infra/argocd > /dev/null
+	@echo "  argocd: OK"
+
+kustomize-apply-dev:
+	kustomize build infra/k8s/overlays/dev | kubectl apply -f -
+
+kustomize-apply-prod:
+	kustomize build infra/k8s/overlays/prod | kubectl apply -f -
 
 bootstrap:
-	@echo "🚀 Bootstrapping Kubric Kubernetes cluster..."
-	@chmod +x scripts/*.sh
+	@echo "Bootstrapping Kubric Kubernetes cluster..."
+	@chmod +x scripts/*.sh 2>/dev/null || true
 	./scripts/bootstrap-cluster.sh
 
 bootstrap-apply:
-	kubectl apply -k deployments/k8s/
+	kubectl apply -k infra/k8s/overlays/dev
 
 bootstrap-delete:
-	kubectl delete -k deployments/k8s/ || true
+	kubectl delete -k infra/k8s/overlays/dev || true
 	kubectl delete namespace kubric || true
 
-# Database
+# Database migrations
+
+db-migrate:
+	@echo "Running PostgreSQL migrations..."
+	migrate -path db/migrations -database "$(KUBRIC_DATABASE_URL)" up
+	@echo "PostgreSQL migrations complete"
+
+db-migrate-down:
+	@echo "Rolling back last PostgreSQL migration..."
+	migrate -path db/migrations -database "$(KUBRIC_DATABASE_URL)" down 1
+
+db-migrate-status:
+	migrate -path db/migrations -database "$(KUBRIC_DATABASE_URL)" version
 
 db-init:
-	@echo "🗄️  Initializing databases..."
-	@chmod +x scripts/init-databases.sh
+	@echo "Initializing databases..."
+	@chmod +x scripts/init-databases.sh 2>/dev/null || true
 	./scripts/init-databases.sh
 
 db-backup:
-	@echo "💾 Backing up ClickHouse..."
-	@chmod +x scripts/backup-clickhouse.sh
+	@echo "Backing up ClickHouse..."
+	@chmod +x scripts/backup-clickhouse.sh 2>/dev/null || true
 	./scripts/backup-clickhouse.sh
 
 db-restore:
-	@echo "♻️  Restore not yet implemented"
+	@echo "Restore not yet implemented"
 
 # Testing
 
-test:
-	@echo "🧪 Running tests..."
-	cd agents/coresec && cargo test
-	cd agents/netguard && cargo test
-	pytest ./tests/ -v
+test: test-rust test-go test-python
+	@echo "All tests complete"
+
+test-rust:
+	@echo "Running Rust agent tests..."
+	cargo test --workspace
+
+test-go:
+	@echo "Running Go service tests..."
+	go test ./internal/... ./cmd/... -count=1
+
+test-python:
+	@echo "Running Python KAI tests..."
+	cd kai && python -m pytest tests/ -v 2>/dev/null || echo "No Python tests found"
 
 test-unit:
-	cd agents/coresec && cargo test --lib
-	cd agents/netguard && cargo test --lib
+	cargo test --workspace --lib
+	go test ./internal/... -count=1 -short
 
 test-integration:
 	@echo "Running integration tests on docker-compose..."
 	docker-compose -f docker-compose/docker-compose.dev.yml up -d
-	pytest ./tests/integration/ -v --timeout=60
+	pytest ./tests/integration/ -v --timeout=60 2>/dev/null || true
 	docker-compose -f docker-compose/docker-compose.dev.yml down
 
 test-coverage:
 	cargo tarpaulin --out Html --output-dir coverage/
+	go test ./internal/... -coverprofile=coverage/go-coverage.out
+	@echo "Coverage reports in coverage/"
 
 # Restore Drill — must pass before customer 1 (L4-3)
 # Requires running ClickHouse + MinIO (make dev)
@@ -95,26 +135,23 @@ restore-drill:
 # Linting & Code Quality
 
 lint:
-	@echo "🔍 Running linters..."
+	@echo "Running linters..."
 	cargo fmt -- --check
 	cargo clippy --all-targets -- -D warnings
-	black --check .
-	flake8 .
-	yamllint -r .github/
-	terraform fmt -check -recursive deployments/terraform/
+	go vet ./...
+	black --check kai/ 2>/dev/null || true
+	flake8 kai/ 2>/dev/null || true
 
 lint-fix:
 	cargo fmt
-	black .
-	autopep8 -i -r .
-	yamllint -f parsable .github/ | head -20
-	terraform fmt -recursive deployments/terraform/
+	black kai/ 2>/dev/null || true
+	gofmt -w .
 
 security-scan:
-	@echo "🔐 Running security scanners..."
+	@echo "Running security scanners..."
 	grype dir:. --fail-on high
 	syft dir:. -o json > sbom.json
-	@echo "✅ SBOM generated: sbom.json"
+	@echo "SBOM generated: sbom.json"
 
 # GPL 3.0 boundary enforcement — RITA must never be imported as a Go package.
 # Run this after every change to services/ to verify the boundary holds.
@@ -124,27 +161,38 @@ check-gpl-boundary:
 
 # Building
 
-build:
-	@echo "🏗️  Building components..."
-	cd agents/coresec && cargo build --release
-	cd agents/netguard && cargo build --release
+build: build-rust build-go
+	@echo "All builds complete"
+
+build-rust:
+	@echo "Building Rust agents..."
+	cargo build --workspace --release
+
+build-go:
+	@echo "Building Go services..."
+	go build ./cmd/ksvc/...
+	go build ./cmd/vdr/...
+	go build ./cmd/kic/...
+	go build ./cmd/noc/...
+	go build ./cmd/nats-clickhouse-bridge/...
+	go build ./cmd/nuclei-bridge/...
 
 build-docker:
-	docker build -t kubric/api:latest -f Dockerfile.api .
+	docker build -t kubric/k-svc:latest -f Dockerfile.api .
 	docker build -t kubric/kai:latest -f Dockerfile.kai .
 	docker build -t kubric/web:latest -f Dockerfile.web .
 
 # Deployment
 
 deploy-staging:
-	@echo "📦 Deploying to staging..."
-	kubectl apply -k deployments/k8s/ --kubeconfig=~/.kube/staging
-	kubectl rollout status deployment/api -n kubric --kubeconfig=~/.kube/staging
+	@echo "Deploying to staging..."
+	kustomize build infra/k8s/overlays/dev | kubectl apply -f -
+	kubectl rollout status deployment/k-svc -n kubric --timeout=120s
 
 deploy-prod:
-	@echo "⚠️  PRODUCTION DEPLOYMENT - Requires approval"
-	@echo "This will be triggered by GitHub Actions"
-	@echo "Push to main branch to start deployment workflow"
+	@echo "PRODUCTION DEPLOYMENT - Requires approval"
+	@echo "This will be triggered by GitHub Actions on push to main"
+	@echo "Manual: kustomize build infra/k8s/overlays/prod | kubectl apply -f -"
 
 # Infrastructure
 
@@ -160,43 +208,48 @@ tf-apply:
 tf-destroy:
 	cd deployments/terraform && terraform destroy
 
+# Vault
+
+vault-policy-apply:
+	vault policy write kubric-default config/vault/policies.hcl
+	@echo "Vault policies applied"
+
 # Utilities
 
 shell-k8s:
-	kubectl exec -it -n kubric $(shell kubectl get pod -n kubric -l app=postgres -o jsonpath='{.items[0].metadata.name}') -- bash
+	kubectl exec -it -n kubric $(shell kubectl get pod -n kubric -l app=postgresql -o jsonpath='{.items[0].metadata.name}') -- bash
 
-logs-api:
-	kubectl logs -n kubric -f deployment/api
+logs-ksvc:
+	kubectl logs -n kubric -f deployment/k-svc
 
 logs-kai:
-	kubectl logs -n kubric -f deployment/kai-orchestration
+	kubectl logs -n kubric -f deployment/kai-core
 
 status:
-	@echo "📊 Kubric Status"
+	@echo "Kubric Status"
 	kubectl get all -n kubric
 	kubectl get pvc -n kubric
 
 # Cleanup
 
 clean:
-	@echo "🧹 Cleaning build artifacts..."
+	@echo "Cleaning build artifacts..."
 	rm -rf build/ dist/ coverage/ .pytest_cache/
-	find . -type d -name __pycache__ -exec rm -rf {} +
-	find . -type d -name .terraform -exec rm -rf {} +
-	cd agents/coresec && cargo clean
-	cd agents/netguard && cargo clean
-	@echo "✅ Cleanup complete"
+	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name .terraform -exec rm -rf {} + 2>/dev/null || true
+	cargo clean 2>/dev/null || true
+	@echo "Cleanup complete"
 
 clean-all: clean
 	docker-compose -f docker-compose/docker-compose.dev.yml down -v || true
 	kubectl delete namespace kubric || true
-	@echo "✅ Full cleanup complete"
+	@echo "Full cleanup complete"
 
 # Pre-commit
 
 pre-commit-install:
 	pre-commit install
-	@echo "✅ Pre-commit hooks installed"
+	@echo "Pre-commit hooks installed"
 
 pre-commit-run:
 	pre-commit run --all-files

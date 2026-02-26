@@ -4,28 +4,32 @@
 package vdr
 
 import (
+	"context"
 	"os"
 	"strings"
+
+	"github.com/managekube-hue/Kubric-UiDR/internal/security"
 )
 
-// Config holds all VDR runtime configuration read from environment variables.
+// Config holds all VDR runtime configuration.
 type Config struct {
 	// ListenAddr — VDR_LISTEN_ADDR (default :8081)
 	ListenAddr string
-	// DatabaseURL — KUBRIC_DATABASE_URL (Supabase or local Postgres)
+	// DatabaseURL — Vault dynamic creds or KUBRIC_DATABASE_URL env
 	DatabaseURL string
-	// NATSUrl — KUBRIC_NATS_URL (default nats://127.0.0.1:4222)
+	// NATSUrl — Vault KV or KUBRIC_NATS_URL env
 	NATSUrl string
 	// ClickHouseURL — KUBRIC_CLICKHOUSE_URL (optional; enables EPSS enrichment)
 	ClickHouseURL string
 }
 
-// LoadConfig reads VDR configuration from environment variables.
+// LoadConfig reads VDR configuration. Vault-backed in K8s, env vars in dev.
 func LoadConfig() Config {
+	creds := security.LoadServiceCreds(context.Background(), "vdr")
 	return Config{
 		ListenAddr:    getenv("VDR_LISTEN_ADDR", ":8081"),
-		DatabaseURL:   getenv("KUBRIC_DATABASE_URL", "postgres://postgres:postgres@127.0.0.1:5432/kubric"),
-		NATSUrl:       getenv("KUBRIC_NATS_URL", "nats://127.0.0.1:4222"),
+		DatabaseURL:   creds.DatabaseURL,
+		NATSUrl:       creds.NATSUrl,
 		ClickHouseURL: getenv("KUBRIC_CLICKHOUSE_URL", ""),
 	}
 }

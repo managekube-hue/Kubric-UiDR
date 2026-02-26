@@ -177,3 +177,98 @@ spec:
     automated:
       prune: true
       selfHeal: true
+
+---
+# Helm-managed infrastructure: Loki (log aggregation)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-loki
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: kubric
+spec:
+  project: kubric
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: loki-stack
+    targetRevision: "2.*"
+    helm:
+      parameters:
+        - name: loki.persistence.enabled
+          value: "true"
+        - name: loki.persistence.size
+          value: "50Gi"
+        - name: promtail.enabled
+          value: "true"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Helm-managed infrastructure: Tempo (distributed tracing)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-tempo
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: kubric
+spec:
+  project: kubric
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    chart: tempo
+    targetRevision: "1.*"
+    helm:
+      parameters:
+        - name: tempo.metricsGenerator.enabled
+          value: "true"
+        - name: tempo.metricsGenerator.remoteWriteUrl
+          value: "http://prometheus:9090/api/v1/write"
+        - name: persistence.enabled
+          value: "true"
+        - name: persistence.size
+          value: "50Gi"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+---
+# Helm-managed infrastructure: Prometheus (kube-prometheus-stack)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-prometheus
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: kubric
+spec:
+  project: kubric
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: "61.*"
+    helm:
+      parameters:
+        - name: prometheus.prometheusSpec.retention
+          value: "30d"
+        - name: prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage
+          value: "100Gi"
+        - name: grafana.enabled
+          value: "false"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

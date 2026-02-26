@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"strconv"
@@ -13,6 +14,8 @@ import (
 
 	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/nats-io/nats.go"
+
+	"github.com/managekube-hue/Kubric-UiDR/internal/security"
 )
 
 type processEvent struct {
@@ -145,17 +148,45 @@ func flushBatch(ctx context.Context, conn clickhouse.Conn, table string, values 
 }
 
 func loadConfig() appConfig {
-	return appConfig{
-		natsURL:   getenv("KUBRIC_NATS_URL", "nats://127.0.0.1:4222"),
+	cfg := appConfig{
 		subject:   getenv("KUBRIC_NATS_SUBJECT", "kubric.proc.events"),
 		batchSize: getenvInt("KUBRIC_BATCH_SIZE", 10000),
 		flushSec:  getenvInt("KUBRIC_FLUSH_SECONDS", 5),
-		chAddr:    getenv("KUBRIC_CLICKHOUSE_ADDR", "127.0.0.1:9000"),
-		chDB:      getenv("KUBRIC_CLICKHOUSE_DB", "default"),
-		chUser:    getenv("KUBRIC_CLICKHOUSE_USER", "default"),
-		chPass:    getenv("KUBRIC_CLICKHOUSE_PASS", ""),
 		table:     getenv("KUBRIC_CLICKHOUSE_TABLE", "ocsf_process_events"),
 	}
+
+	// Use Vault for NATS + ClickHouse credentials when in K8s
+	creds := security.LoadServiceCreds(context.Background(), "bridge")
+	cfg.natsURL = creds.NATSUrl
+
+	// ClickHouse: try Vault for credentials, fall back to env
+	if os.Getenv("KUBERNETES_SERVICE_HOST") != "" {
+		vc, err := security.NewVaultClient()
+		if err == nil {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			data, err := vc.GetSecret(ctx, "clickhouse/bridge")
+			if err == nil {
+				if u, ok := data["username"].(string); ok {
+					cfg.chUser = u
+				}
+				if p, ok := data["password"].(string); ok {
+					cfg.chPass = p
+				}
+			} else {
+				log.Printf("bridge: vault clickhouse creds: %v (falling back to env)", err)
+			}
+		}
+	}
+	if cfg.chUser == "" {
+		cfg.chUser = getenv("KUBRIC_CLICKHOUSE_USER", "default")
+	}
+	if cfg.chPass == "" {
+		cfg.chPass = getenv("KUBRIC_CLICKHOUSE_PASS", "")
+	}
+	cfg.chAddr = getenv("KUBRIC_CLICKHOUSE_ADDR", "127.0.0.1:9000")
+	cfg.chDB = getenv("KUBRIC_CLICKHOUSE_DB", "default")
+	return cfg
 }
 
 func getenv(key, fallback string) string {
