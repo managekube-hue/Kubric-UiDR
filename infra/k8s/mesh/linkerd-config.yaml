@@ -1,0 +1,73 @@
+# K-K8S-MESH-002 — Linkerd Configuration
+# Lightweight alternative to Istio — lower resource overhead
+# Recommended for customer deployments with <10 microservices
+#
+# Install: linkerd install | kubectl apply -f -
+# Annotate namespace: linkerd.io/inject: enabled
+# Viz: linkerd viz install | kubectl apply -f -
+
+# Namespace annotation for automatic proxy injection
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubric
+  annotations:
+    linkerd.io/inject: enabled
+    config.linkerd.io/proxy-cpu-request: "100m"
+    config.linkerd.io/proxy-memory-request: "64Mi"
+    config.linkerd.io/proxy-cpu-limit: "500m"
+    config.linkerd.io/proxy-memory-limit: "256Mi"
+---
+# ServerAuthorization — restrict traffic to known callers
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  name: k-svc-http
+  namespace: kubric
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: k-svc
+  port: 8080
+  proxyProtocol: HTTP/2
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: ServerAuthorization
+metadata:
+  name: k-svc-allow-kai
+  namespace: kubric
+spec:
+  server:
+    name: k-svc-http
+  client:
+    meshTLS:
+      serviceAccounts:
+        - name: kai-core
+        - name: vdr
+        - name: kic
+---
+# Service profile for retries and timeouts
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: k-svc.kubric.svc.cluster.local
+  namespace: kubric
+spec:
+  routes:
+    - name: "POST /api/v1/alerts"
+      condition:
+        method: POST
+        pathRegex: /api/v1/alerts
+      responseClasses:
+        - condition:
+            status:
+              min: 500
+              max: 599
+          isFailure: true
+      isRetryable: true
+      timeout: 10s
+    - name: "GET /api/v1/health"
+      condition:
+        method: GET
+        pathRegex: /api/v1/health
+      timeout: 5s

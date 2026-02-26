@@ -1,0 +1,75 @@
+# K-K8S-MESH-004 — Hubble Service Map
+# Real-time K8s service dependency map via Cilium eBPF flows
+# Powers K8s topology view in Kubric portal
+#
+# Enable: cilium hubble enable --ui
+# Access: kubectl port-forward -n kube-system svc/hubble-ui 12000:80
+
+# Hubble flow export to ClickHouse for historical topology queries
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hubble-export-config
+  namespace: kube-system
+data:
+  hubble-export.yaml: |
+    # Export Hubble flows to ClickHouse via Vector sidecar
+    flowLogs:
+      enabled: true
+      export:
+        # Vector sidecar picks up flow JSON and inserts to ClickHouse
+        filePath: /var/run/hubble/flows.jsonl
+        maxSizeMB: 100
+        maxBackups: 3
+    metrics:
+      enabled:
+        - dns
+        - drop
+        - tcp
+        - flow
+        - icmp
+        - http
+      port: 9965
+---
+# ServiceMonitor for Hubble metrics -> Prometheus
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: hubble-metrics
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/part-of: kubric
+spec:
+  selector:
+    matchLabels:
+      k8s-app: hubble
+  endpoints:
+    - port: peer-metrics
+      interval: 30s
+      path: /metrics
+---
+# Hubble UI Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: kubric-ca
+    nginx.ingress.kubernetes.io/auth-url: "https://auth.kubric.io/outpost.goauthentik.io/auth/nginx"
+spec:
+  tls:
+    - hosts:
+        - hubble.kubric.internal
+      secretName: hubble-ui-tls
+  rules:
+    - host: hubble.kubric.internal
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hubble-ui
+                port:
+                  number: 80

@@ -1,0 +1,117 @@
+# K-K8S-OBS-001 — Prometheus Operator
+# Manages Prometheus deployment via CRDs (PodMonitor, ServiceMonitor, PrometheusRule)
+# All Kubric services expose /metrics; Operator auto-discovers and scrapes them
+#
+# Install: helm install kube-prom prometheus-community/kube-prometheus-stack -n monitoring
+
+# ServiceMonitor for all Kubric Go services
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubric-go-services
+  namespace: kubric
+  labels:
+    app.kubernetes.io/part-of: kubric
+    release: kube-prom
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubric
+  endpoints:
+    - port: metrics
+      interval: 15s
+      path: /metrics
+      scheme: http
+---
+# ServiceMonitor for Rust agents (PerfTrace exposes Prometheus metrics)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubric-rust-agents
+  namespace: kubric
+  labels:
+    app.kubernetes.io/part-of: kubric
+    release: kube-prom
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: rust-agent
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics
+---
+# PodMonitor for NATS JetStream metrics
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: nats-jetstream
+  namespace: kubric
+  labels:
+    release: kube-prom
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+  podMetricsEndpoints:
+    - port: monitor
+      path: /metrics
+      interval: 15s
+---
+# PrometheusRule — Kubric alerting and recording rules
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubric-platform-rules
+  namespace: kubric
+  labels:
+    release: kube-prom
+spec:
+  groups:
+    - name: kubric_recording_rules
+      interval: 30s
+      rules:
+        - record: agent:uptime_hours
+          expr: (time() - process_start_time_seconds{job=~"kubric.*"}) / 3600
+        - record: detection:events_per_second:rate5m
+          expr: rate(kubric_events_total[5m])
+        - record: detection:alerts_per_second:rate5m
+          expr: rate(kubric_alerts_total[5m])
+        - record: risk:customer_score:avg
+          expr: avg(kubric_customer_risk_score) by (customer_id)
+        - record: perf:api_latency_ms:p99
+          expr: histogram_quantile(0.99, rate(kubric_api_request_duration_ms_bucket[5m]))
+        - record: business:active_endpoints
+          expr: count(kubric_endpoint_heartbeat{status="online"}) by (customer_id)
+        - record: business:mrr_usd
+          expr: sum(kubric_billing_mrr) by (customer_id)
+    - name: kubric_alerting_rules
+      rules:
+        - alert: KubricAgentDown
+          expr: up{job=~"kubric.*"} == 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kubric agent {{ $labels.instance }} is down"
+        - alert: KubricHighAlertRate
+          expr: rate(kubric_alerts_total{severity="critical"}[5m]) > 10
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High critical alert rate: {{ $value }}/s"
+        - alert: KubricClickHouseStorageHigh
+          expr: kubric_clickhouse_disk_usage_percent > 85
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "ClickHouse storage at {{ $value }}%"
+        - alert: KubricNATSConsumerLag
+          expr: nats_jetstream_consumer_num_pending > 10000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "NATS JetStream consumer lag: {{ $value }} pending"
