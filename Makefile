@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -16,6 +16,11 @@ help:
 	@echo "  make clean         Clean build artifacts and caches"
 	@echo "  make check-gpl-boundary  Verify no GPL-3.0 RITA imports in services/"
 	@echo "  make enterprise-check  Run monorepo enterprise readiness gate"
+	@echo "  make deploy-sandbox-no-vault  Deploy full stack without Vault/ESO"
+	@echo "  make ops-batch-01  External closure preflight"
+	@echo "  make ops-batch-02  External closure detection assets"
+	@echo "  make ops-batch-03  External closure runtime deploy"
+	@echo "  make ops-batch-04  External closure runtime smoke"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -168,6 +173,22 @@ check-gpl-boundary:
 enterprise-check:
 	@echo "Running enterprise readiness gate..."
 	@python3 scripts/validate_enterprise_readiness.py || python scripts/validate_enterprise_readiness.py || py -3 scripts/validate_enterprise_readiness.py
+
+deploy-sandbox-no-vault:
+	@echo "Deploying sandbox overlay without Vault..."
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/deploy-sandbox-no-vault.ps1
+
+ops-batch-01:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-01-preflight.ps1 -Namespace kubric
+
+ops-batch-02:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-02-detection-assets.ps1
+
+ops-batch-03:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-03-deploy-runtime.ps1 -Namespace kubric
+
+ops-batch-04:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-04-runtime-smoke.ps1 -Namespace kubric
 
 # Building
 

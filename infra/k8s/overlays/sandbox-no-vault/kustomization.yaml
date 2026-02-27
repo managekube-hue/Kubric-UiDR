@@ -1,0 +1,75 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kubric
+
+resources:
+  - ../../base
+  - secrets-and-config.yaml
+
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: k-svc
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: vdr
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: kic
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: noc
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: kai-core
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: web
+      spec:
+        replicas: 1
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: n8n
+      spec:
+        replicas: 1
+
+images:
+  - name: kubric/k-svc
+    newTag: latest
+  - name: kubric/vdr
+    newTag: latest
+  - name: kubric/kic
+    newTag: latest
+  - name: kubric/noc
+    newTag: latest
+  - name: kubric/kai
+    newTag: latest
+  - name: kubric/web
+    newTag: latest
+  - name: n8nio/n8n
+    newTag: latest
