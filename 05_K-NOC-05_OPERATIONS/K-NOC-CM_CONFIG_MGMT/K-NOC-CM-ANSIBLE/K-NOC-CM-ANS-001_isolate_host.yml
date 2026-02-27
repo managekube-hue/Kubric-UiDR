@@ -1,0 +1,189 @@
+---
+# K-NOC-CM-ANS-001 -- Host Network Isolation
+# Blocks all inbound/outbound traffic via iptables (SSH/22 excepted).
+# Backs up iptables state, adds host to quarantine_group inventory,
+# and notifies the Kubric NOC API via POST /api/v1/incidents.
+#
+# Required vars:
+#   target_host      - FQDN or IP of the host to isolate
+#   isolation_reason - Free-text reason (stored in NOC API and iptables comment)
+#   ticket_id        - Incident ticket reference (e.g. INC-20240312-001)
+#
+# Usage (pass vars via -e or vault-encrypted file):
+#   ansible-playbook K-NOC-CM-ANS-001_isolate_host.yml #     -e "target_host=10.10.1.42 isolation_reason=C2-beacon ticket_id=INC-20240312-001"
+#
+# Tags: security, isolation, incident-response
+
+- name: "K-NOC-CM-ANS-001 | Isolate host via iptables quarantine"
+  hosts: "{{ target_host }}"
+  gather_facts: true
+  become: true
+
+  vars:
+    kubric_noc_api: "{{ lookup('env', 'KUBRIC_NOC_URL') | default('http://noc:8083', true) }}"
+    kubric_api_token: "{{ lookup('env', 'KUBRIC_API_TOKEN') }}"
+    iptables_backup_dir: "/var/backups/iptables"
+    quarantine_chain: "KUBRIC_QUARANTINE"
+
+  pre_tasks:
+    - name: "Validate required vars"
+      ansible.builtin.assert:
+        that:
+          - target_host is defined and target_host | length > 0
+          - isolation_reason is defined and isolation_reason | length > 0
+          - ticket_id is defined and ticket_id | length > 0
+        fail_msg: "target_host, isolation_reason, and ticket_id are all required."
+
+  tasks:
+    # ------------------------------------------------------------------ #
+    # 1. Backup current iptables state before modification                #
+    # ------------------------------------------------------------------ #
+    - name: "Ensure iptables backup directory exists"
+      ansible.builtin.file:
+        path: "{{ iptables_backup_dir }}"
+        state: directory
+        mode: "0700"
+        owner: root
+        group: root
+      tags: [security, isolation, incident-response]
+
+    - name: "Set timestamped backup filename"
+      ansible.builtin.set_fact:
+        iptables_backup_file: >-
+          {{ iptables_backup_dir }}/iptables-pre-{{ ticket_id }}-{{ ansible_date_time.iso8601_basic_short }}.rules
+
+    - name: "Save current iptables state to backup file"
+      ansible.builtin.shell:
+        cmd: "iptables-save > {{ iptables_backup_file }}"
+      changed_when: true
+      tags: [security, isolation, incident-response]
+
+    # ------------------------------------------------------------------ #
+    # 2. Build KUBRIC_QUARANTINE chain                                    #
+    # ------------------------------------------------------------------ #
+    - name: "Create KUBRIC_QUARANTINE iptables chain (idempotent)"
+      ansible.builtin.iptables:
+        chain: "{{ quarantine_chain }}"
+        chain_management: true
+        state: present
+      tags: [security, isolation, incident-response]
+
+    - name: "Allow ESTABLISHED/RELATED (preserves active SSH session)"
+      ansible.builtin.iptables:
+        chain: "{{ quarantine_chain }}"
+        ctstate: [ESTABLISHED, RELATED]
+        jump: ACCEPT
+        comment: "kubric-quarantine: allow established - {{ ticket_id }}"
+      notify: persist iptables
+      tags: [security, isolation, incident-response]
+
+    - name: "Allow inbound SSH (tcp/22) for operator management"
+      ansible.builtin.iptables:
+        chain: "{{ quarantine_chain }}"
+        protocol: tcp
+        destination_port: "22"
+        jump: ACCEPT
+        comment: "kubric-quarantine: SSH inbound - {{ ticket_id }}"
+      notify: persist iptables
+      tags: [security, isolation, incident-response]
+
+    - name: "Allow outbound SSH reply (source port 22)"
+      ansible.builtin.iptables:
+        chain: "{{ quarantine_chain }}"
+        protocol: tcp
+        source_port: "22"
+        jump: ACCEPT
+        comment: "kubric-quarantine: SSH outbound - {{ ticket_id }}"
+      notify: persist iptables
+      tags: [security, isolation, incident-response]
+
+    - name: "DROP all other traffic in quarantine chain"
+      ansible.builtin.iptables:
+        chain: "{{ quarantine_chain }}"
+        jump: DROP
+        comment: "kubric-quarantine: DROP all - {{ ticket_id }}"
+      notify: persist iptables
+      tags: [security, isolation, incident-response]
+
+    # ------------------------------------------------------------------ #
+    # 3. Jump INPUT and OUTPUT into the quarantine chain                  #
+    # ------------------------------------------------------------------ #
+    - name: "Redirect INPUT chain to KUBRIC_QUARANTINE"
+      ansible.builtin.iptables:
+        chain: INPUT
+        jump: "{{ quarantine_chain }}"
+        comment: "kubric-quarantine: isolate INPUT - {{ ticket_id }}"
+      notify: persist iptables
+      tags: [security, isolation, incident-response]
+
+    - name: "Redirect OUTPUT chain to KUBRIC_QUARANTINE"
+      ansible.builtin.iptables:
+        chain: OUTPUT
+        jump: "{{ quarantine_chain }}"
+        comment: "kubric-quarantine: isolate OUTPUT - {{ ticket_id }}"
+      notify: persist iptables
+      tags: [security, isolation, incident-response]
+
+    # ------------------------------------------------------------------ #
+    # 4. Register host in quarantine_group inventory                      #
+    # ------------------------------------------------------------------ #
+    - name: "Append isolated host to kubric quarantine inventory"
+      ansible.builtin.lineinfile:
+        path: /etc/ansible/quarantine_inventory
+        create: true
+        mode: "0640"
+        owner: root
+        group: root
+        line: "{{ target_host }}  # quarantine: {{ ticket_id }} | {{ isolation_reason }}"
+        state: present
+      delegate_to: localhost
+      tags: [security, isolation, incident-response]
+
+    # ------------------------------------------------------------------ #
+    # 5. Notify Kubric NOC API                                            #
+    # ------------------------------------------------------------------ #
+    - name: "POST quarantine incident to Kubric NOC API"
+      ansible.builtin.uri:
+        url: "{{ kubric_noc_api }}/api/v1/incidents"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ kubric_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          tenant_id: "{{ ansible_domain | default('default') }}"
+          title: "Host quarantined: {{ target_host }}"
+          severity: "high"
+          source: "ansible/K-NOC-CM-ANS-001"
+          description: "{{ isolation_reason }}"
+          metadata:
+            ticket_id: "{{ ticket_id }}"
+            hostname: "{{ ansible_hostname }}"
+            ip_address: "{{ ansible_default_ipv4.address | default(target_host) }}"
+            iptables_backup: "{{ iptables_backup_file }}"
+            os_family: "{{ ansible_os_family }}"
+        status_code: [200, 201, 204]
+        timeout: 15
+      register: noc_response
+      delegate_to: localhost
+      ignore_errors: true
+      tags: [security, isolation, incident-response]
+
+    - name: "Log NOC API response"
+      ansible.builtin.debug:
+        msg: >-
+          NOC API status={{ noc_response.status | default('N/A') }}
+          incident_id={{ noc_response.json.id | default('N/A') }}
+      tags: [security, isolation, incident-response]
+
+  handlers:
+    - name: "persist iptables"
+      ansible.builtin.shell: |
+        if [ -f /etc/debian_version ]; then
+          mkdir -p /etc/iptables && iptables-save > /etc/iptables/rules.v4
+        elif [ -f /etc/redhat-release ]; then
+          service iptables save 2>/dev/null || iptables-save > /etc/sysconfig/iptables
+        else
+          iptables-save > /etc/iptables.rules
+        fi
+      changed_when: true

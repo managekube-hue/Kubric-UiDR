@@ -1,36 +1,131 @@
+---
+# =============================================================================
+# Kubric KAI — Go gateway service
+# Deployment + ClusterIP Service for the KAI Go API gateway (port 8100).
+#
+# The Go gateway forwards LLM-heavy requests to the KAI Python FastAPI service
+# (kai-python:8101) and handles auth, routing, and NATS publishing directly.
+#
+# Secret references: kubric-secrets must exist in the kubric namespace.
+#   kubectl create secret generic kubric-secrets \
+#     --from-literal=DATABASE_URL="postgres://..." \
+#     --from-literal=NATS_URL="nats://nats:4222" \
+#     --from-literal=JWT_SECRET="..." \
+#     --from-literal=ANTHROPIC_API_KEY="sk-ant-..." \
+#     --from-literal=OPENAI_API_KEY="sk-..."
+# =============================================================================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kai-orchestration
+  name: kai
   namespace: kubric
+  labels:
+    app: kai
+    component: gateway
+    platform: kubric
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: kai-orchestration
+      app: kai
   template:
     metadata:
       labels:
-        app: kai-orchestration
+        app: kai
+        component: gateway
+        platform: kubric
+      annotations:
+        # Restart on kubric-secrets rotation (checksum injected by Helm/Kustomize).
+        checksum/secret: "placeholder-replaced-by-helm"
     spec:
-      serviceAccountName: kai-orchestration
+      terminationGracePeriodSeconds: 30
       containers:
-      - name: kai
-        image: kubric/kai-orchestration:latest
-        ports:
-        - containerPort: 50051
-          name: grpc
-        env:
-        - name: TEMPORAL_HOST
-          value: temporal
-        - name: TEMPORAL_PORT
-          value: "7233"
-        - name: NATS_URL
-          value: nats://nats:4222
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "2000m"
+        - name: kai
+          image: ghcr.io/managekube-hue/kubric-kai:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8100
+              protocol: TCP
+          env:
+            # ── Secrets (from kubric-secrets) ─────────────────────────────────
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: kubric-secrets
+                  key: DATABASE_URL
+            - name: NATS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: kubric-secrets
+                  key: NATS_URL
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kubric-secrets
+                  key: JWT_SECRET
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kubric-secrets
+                  key: ANTHROPIC_API_KEY
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: kubric-secrets
+                  key: OPENAI_API_KEY
+            # ── Literals ──────────────────────────────────────────────────────
+            - name: KAI_SERVICE_URL
+              value: "http://kai-python:8101"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8100
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8100
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+      securityContext:
+        fsGroup: 1000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kai
+  namespace: kubric
+  labels:
+    app: kai
+    component: gateway
+    platform: kubric
+spec:
+  type: ClusterIP
+  selector:
+    app: kai
+  ports:
+    - name: http
+      port: 8100
+      targetPort: 8100
+      protocol: TCP

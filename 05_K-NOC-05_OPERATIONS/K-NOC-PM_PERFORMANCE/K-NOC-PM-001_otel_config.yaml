@@ -1,0 +1,175 @@
+# K-NOC-PM-001 -- OpenTelemetry Collector Configuration
+# Kubric unified telemetry pipeline.
+# Receives OTLP traces/metrics/logs + Prometheus scrapes.
+# Routes: traces -> Tempo, metrics -> Prometheus, logs -> Loki.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+        cors:
+          allowed_origins:
+            - "http://grafana:3000"
+            - "https://kubric.internal"
+
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "kubric-noc"
+          scrape_interval: 15s
+          static_configs:
+            - targets: ["noc:8083"]
+              labels:
+                service: noc
+                service.namespace: kubric
+
+        - job_name: "kubric-vdr"
+          scrape_interval: 15s
+          static_configs:
+            - targets: ["vdr:8081"]
+              labels:
+                service: vdr
+                service.namespace: kubric
+
+        - job_name: "kubric-ksvc"
+          scrape_interval: 15s
+          static_configs:
+            - targets: ["ksvc:8080"]
+              labels:
+                service: ksvc
+                service.namespace: kubric
+
+        - job_name: "kubric-kic"
+          scrape_interval: 15s
+          static_configs:
+            - targets: ["kic:8082"]
+              labels:
+                service: kic
+                service.namespace: kubric
+
+        - job_name: "nats"
+          scrape_interval: 15s
+          static_configs:
+            - targets: ["nats:8222"]
+              labels:
+                service: nats
+                service.namespace: kubric
+
+        - job_name: "clickhouse"
+          scrape_interval: 30s
+          static_configs:
+            - targets: ["clickhouse:9363"]
+              labels:
+                service: clickhouse
+                service.namespace: kubric
+
+        - job_name: "postgres"
+          scrape_interval: 30s
+          static_configs:
+            - targets: ["postgres-exporter:9187"]
+              labels:
+                service: postgres
+                service.namespace: kubric
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 1000
+    send_batch_max_size: 2000
+
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  resource:
+    attributes:
+      - key: service.namespace
+        value: kubric
+        action: insert
+      - key: deployment.environment
+        from_attribute: KUBRIC_ENV
+        action: insert
+
+  resourcedetection:
+    detectors: [env, system, docker]
+    timeout: 10s
+
+  filter/drop_health_checks:
+    error_mode: ignore
+    traces:
+      span:
+        - 'attributes["http.route"] == "/healthz"'
+        - 'attributes["http.route"] == "/readyz"'
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: kubric
+    const_labels:
+      cluster: kubric-platform
+
+  otlp/tempo:
+    endpoint: "tempo:4317"
+    tls:
+      insecure: true
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_elapsed_time: 300s
+
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    default_labels_enabled:
+      exporter: false
+      job: true
+    labels:
+      resource:
+        service.name: "service_name"
+        service.namespace: "service_namespace"
+        k8s.pod.name: "pod"
+        k8s.namespace.name: "namespace"
+      attributes:
+        severity: ""
+        log.level: ""
+
+  debug:
+    verbosity: basic
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+extensions:
+  health_check:
+    endpoint: "0.0.0.0:13133"
+  pprof:
+    endpoint: "0.0.0.0:1777"
+  zpages:
+    endpoint: "0.0.0.0:55679"
+
+service:
+  extensions: [health_check, pprof, zpages]
+
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, resourcedetection, filter/drop_health_checks, batch]
+      exporters: [otlp/tempo]
+
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [memory_limiter, resource, resourcedetection, batch]
+      exporters: [prometheus]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, resourcedetection, batch]
+      exporters: [loki]
+
+  telemetry:
+    logs:
+      level: warn
+    metrics:
+      address: "0.0.0.0:8888"

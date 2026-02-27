@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -84,6 +84,11 @@ db-init:
 	@echo "Initializing databases..."
 	@chmod +x scripts/init-databases.sh 2>/dev/null || true
 	./scripts/init-databases.sh
+
+nats-init: ## Initialize NATS JetStream streams
+	@echo "Initialising NATS streams and consumers..."
+	@chmod +x scripts/nats-stream-init.sh 2>/dev/null || true
+	@./scripts/nats-stream-init.sh $(NATS_URL)
 
 db-backup:
 	@echo "Backing up ClickHouse..."

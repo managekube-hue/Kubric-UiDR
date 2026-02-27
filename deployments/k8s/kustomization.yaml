@@ -10,6 +10,7 @@ resources:
   - postgres-statefulset.yaml
   - api-deployment.yaml
   - kai-deployment.yaml
+  - kai-python-deployment.yaml
   - web-deployment.yaml
   - caddy-ingress.yaml
   - pvc-ceph.yaml

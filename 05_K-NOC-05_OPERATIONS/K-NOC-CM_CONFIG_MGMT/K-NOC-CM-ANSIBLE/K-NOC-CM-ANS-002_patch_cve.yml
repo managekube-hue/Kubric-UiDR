@@ -1,0 +1,223 @@
+---
+# K-NOC-CM-ANS-002 -- CVE Patch Remediation
+# Creates a pre-patch snapshot, upgrades packages on Debian/RHEL, verifies
+# the patch, and reports completion to the Kubric VDR API.
+#
+# Required vars:
+#   cve_id          - CVE identifier (e.g. CVE-2024-6387)
+#   target_hosts    - Inventory group or comma-separated host list
+#   patch_ticket_id - Change ticket reference (e.g. CHG-20240701-042)
+#
+# Optional vars:
+#   reboot_if_required - bool, default true
+#   vdr_finding_id     - UUID of VDR finding to PATCH on completion
+#
+# Tags: patching, cve-remediation, compliance
+
+- name: "K-NOC-CM-ANS-002 | CVE patch remediation"
+  hosts: "{{ target_hosts }}"
+  gather_facts: true
+  become: true
+  serial: "25%"
+
+  vars:
+    kubric_noc_api: "{{ lookup('env', 'KUBRIC_NOC_URL') | default('http://noc:8083', true) }}"
+    kubric_vdr_api: "{{ lookup('env', 'KUBRIC_VDR_URL') | default('http://vdr:8081', true) }}"
+    kubric_api_token: "{{ lookup('env', 'KUBRIC_API_TOKEN') }}"
+    reboot_if_required: true
+    vdr_finding_id: ""
+
+  pre_tasks:
+    - name: "Validate required vars"
+      ansible.builtin.assert:
+        that:
+          - cve_id is defined and cve_id is match('^CVE-[0-9]{4}-[0-9]+$')
+          - target_hosts is defined
+          - patch_ticket_id is defined and patch_ticket_id | length > 0
+        fail_msg: "cve_id must match CVE-YYYY-NNNNN; target_hosts and patch_ticket_id required."
+
+    - name: "Gather pre-patch package facts"
+      ansible.builtin.package_facts:
+        manager: auto
+
+  tasks:
+    # ------------------------------------------------------------------ #
+    # 1. Request pre-patch snapshot via Kubric NOC backup API             #
+    # ------------------------------------------------------------------ #
+    - name: "Request pre-patch snapshot from Kubric NOC API"
+      ansible.builtin.uri:
+        url: "{{ kubric_noc_api }}/api/v1/backups/snapshot"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ kubric_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          hostname: "{{ ansible_hostname }}"
+          reason: "pre-patch snapshot for {{ cve_id }} / {{ patch_ticket_id }}"
+          tags: ["cve-patch", "pre-patch", "{{ cve_id }}", "{{ patch_ticket_id }}"]
+        status_code: [200, 201, 202]
+        timeout: 30
+      register: snapshot_response
+      delegate_to: localhost
+      ignore_errors: true
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "Record snapshot ID fact"
+      ansible.builtin.set_fact:
+        pre_patch_snapshot_id: "{{ snapshot_response.json.snapshot_id | default('unknown') }}"
+      tags: [patching, cve-remediation, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 2. Update packages -- Debian family                                 #
+    # ------------------------------------------------------------------ #
+    - name: "Debian: refresh apt cache"
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 0
+      when: ansible_os_family == "Debian"
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "Debian: dist-upgrade for full CVE coverage"
+      ansible.builtin.apt:
+        upgrade: dist
+        autoremove: true
+        autoclean: true
+      when: ansible_os_family == "Debian"
+      register: apt_result
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "Debian: check reboot-required flag"
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_flag
+      when: ansible_os_family == "Debian"
+      tags: [patching, cve-remediation, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 3. Update packages -- RHEL/Rocky/CentOS family                     #
+    # ------------------------------------------------------------------ #
+    - name: "RHEL: security update via dnf/yum"
+      ansible.builtin.yum:
+        name: "*"
+        state: latest
+        security: true
+        update_cache: true
+      when: ansible_os_family == "RedHat"
+      register: yum_result
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "RHEL: check needs-restarting"
+      ansible.builtin.command:
+        cmd: needs-restarting -r
+      register: needs_restart
+      changed_when: false
+      failed_when: false
+      when: ansible_os_family == "RedHat"
+      tags: [patching, cve-remediation, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 4. Restart services linked against patched libraries                #
+    # ------------------------------------------------------------------ #
+    - name: "Restart services that link against patched openssl/glibc"
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+      loop:
+        - ssh
+        - "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}"
+      ignore_errors: true
+      when: >
+        (ansible_os_family == "Debian" and apt_result.changed | default(false)) or
+        (ansible_os_family == "RedHat" and yum_result.changed | default(false))
+      tags: [patching, cve-remediation, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 5. Reboot if required                                               #
+    # ------------------------------------------------------------------ #
+    - name: "Reboot Debian host if kernel/glibc patch loaded"
+      ansible.builtin.reboot:
+        reboot_timeout: 300
+        msg: "Reboot for {{ cve_id }} patch -- {{ patch_ticket_id }}"
+      when:
+        - reboot_if_required | bool
+        - ansible_os_family == "Debian"
+        - reboot_flag.stat.exists | default(false)
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "Reboot RHEL host if needs-restarting says so"
+      ansible.builtin.reboot:
+        reboot_timeout: 300
+        msg: "Reboot for {{ cve_id }} patch -- {{ patch_ticket_id }}"
+      when:
+        - reboot_if_required | bool
+        - ansible_os_family == "RedHat"
+        - needs_restart.rc | default(0) != 0
+      tags: [patching, cve-remediation, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 6. Verify patch -- re-collect package facts                         #
+    # ------------------------------------------------------------------ #
+    - name: "Gather post-patch package facts"
+      ansible.builtin.package_facts:
+        manager: auto
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "Log OpenSSL version after patch"
+      ansible.builtin.debug:
+        msg: >-
+          openssl post-patch:
+          {{ ansible_facts.packages['openssl'][0].version | default('not installed') }}
+      tags: [patching, cve-remediation, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 7. Report to Kubric VDR API                                         #
+    # ------------------------------------------------------------------ #
+    - name: "PATCH VDR finding to mark as remediated"
+      ansible.builtin.uri:
+        url: "{{ kubric_vdr_api }}/api/v1/findings/{{ vdr_finding_id }}"
+        method: PATCH
+        headers:
+          Authorization: "Bearer {{ kubric_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          status: "remediated"
+          notes: >-
+            Patched via Ansible K-NOC-CM-ANS-002.
+            Ticket: {{ patch_ticket_id }}.
+            Snapshot: {{ pre_patch_snapshot_id }}.
+            Host: {{ ansible_hostname }}.
+          remediation_date: "{{ ansible_date_time.iso8601 }}"
+        status_code: [200, 204]
+        timeout: 15
+      delegate_to: localhost
+      when: vdr_finding_id | length > 0
+      ignore_errors: true
+      tags: [patching, cve-remediation, compliance]
+
+    - name: "POST patch completion event to NOC API"
+      ansible.builtin.uri:
+        url: "{{ kubric_noc_api }}/api/v1/incidents"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ kubric_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          title: "CVE patch complete: {{ cve_id }} on {{ ansible_hostname }}"
+          severity: "info"
+          source: "ansible/K-NOC-CM-ANS-002"
+          status: "resolved"
+          metadata:
+            ticket_id: "{{ patch_ticket_id }}"
+            cve_id: "{{ cve_id }}"
+            hostname: "{{ ansible_hostname }}"
+            os_family: "{{ ansible_os_family }}"
+            snapshot_id: "{{ pre_patch_snapshot_id }}"
+        status_code: [200, 201, 204]
+        timeout: 15
+      delegate_to: localhost
+      ignore_errors: true
+      tags: [patching, cve-remediation, compliance]

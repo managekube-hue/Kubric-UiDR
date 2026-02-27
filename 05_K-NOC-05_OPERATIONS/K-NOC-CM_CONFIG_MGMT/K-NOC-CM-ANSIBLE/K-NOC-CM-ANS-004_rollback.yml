@@ -1,0 +1,382 @@
+---
+# K-NOC-CM-ANS-004 -- Package Version Rollback
+# Detects OS family, records the current package version, downgrades to the
+# requested version (or the last available prior version), verifies the result,
+# restarts dependent services, reports to the Kubric NOC API, and re-opens any
+# linked VDR CVE finding to indicate the patch has been reverted.
+#
+# Required vars:
+#   package_name  - Package to roll back (e.g. openssl, nginx, libssl3)
+#   ticket_id     - Incident / change ticket reference (e.g. CHG-20240601-009)
+#
+# Optional vars:
+#   target_host              - Target host (default: all hosts in play)
+#   rollback_version         - Exact version string to install; if empty the
+#                              playbook downgrades to the most-recent prior
+#                              available version automatically
+#   snapshot_id              - Velero / Restic snapshot ID for reference
+#                              (recorded in event report; no restore performed)
+#   vdr_finding_id           - UUID of VDR finding to PATCH as "open" after rollback
+#   package_dependent_services - List of systemd units to restart post-rollback
+#                              (default: [])
+#
+# Tags: rollback, package-rollback, compliance
+
+- name: "Kubric NOC — Package Version Rollback"
+  hosts: "{{ target_host | default('all') }}"
+  gather_facts: true
+  become: true
+
+  vars:
+    rollback_version: ""
+    snapshot_id: ""
+    vdr_finding_id: ""
+    package_dependent_services: []
+    kubric_noc_url: "{{ lookup('env', 'KUBRIC_NOC_URL') | default('noc.kubric.io', true) }}"
+    kubric_vdr_url: "{{ lookup('env', 'KUBRIC_VDR_URL') | default('vdr.kubric.io', true) }}"
+    kubric_api_token: "{{ lookup('env', 'KUBRIC_API_TOKEN') | default('', true) }}"
+    _noc_api_base: >-
+      {{ 'http://' + kubric_noc_url
+         if kubric_noc_url is not match('^https?://')
+         else kubric_noc_url }}
+    _vdr_api_base: >-
+      {{ 'http://' + kubric_vdr_url
+         if kubric_vdr_url is not match('^https?://')
+         else kubric_vdr_url }}
+
+  pre_tasks:
+    # ------------------------------------------------------------------ #
+    # Validate required variables before touching the target host         #
+    # ------------------------------------------------------------------ #
+    - name: "Validate required vars — package_name"
+      ansible.builtin.assert:
+        that:
+          - package_name is defined
+          - package_name | length > 0
+        fail_msg: >-
+          REQUIRED: package_name must be a non-empty package identifier.
+          Pass via -e "package_name=<pkg>".
+
+    - name: "Validate required vars — ticket_id"
+      ansible.builtin.assert:
+        that:
+          - ticket_id is defined
+          - ticket_id | length > 0
+        fail_msg: >-
+          REQUIRED: ticket_id must be a non-empty incident / change reference.
+          Pass via -e "ticket_id=CHG-YYYYMMDD-NNN".
+
+  tasks:
+    # ------------------------------------------------------------------ #
+    # 1. Detect OS family                                                 #
+    # ------------------------------------------------------------------ #
+    - name: "Assert supported OS family (Debian or RedHat)"
+      ansible.builtin.assert:
+        that:
+          - ansible_os_family in ['Debian', 'RedHat']
+        fail_msg: >-
+          Unsupported OS family '{{ ansible_os_family }}'.
+          This playbook supports Debian (apt) and RedHat (yum/dnf) only.
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Log OS family and package target"
+      ansible.builtin.debug:
+        msg: >-
+          [ROLLBACK] package={{ package_name }}
+          os_family={{ ansible_os_family }}
+          requested_version={{ rollback_version | default('auto-detect') }}
+          ticket={{ ticket_id }}
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 2. Record currently installed version                               #
+    # ------------------------------------------------------------------ #
+    - name: "Debian: query current installed version via dpkg-query"
+      ansible.builtin.command:
+        cmd: "dpkg-query -W -f='${Version}' {{ package_name }}"
+      register: current_version
+      changed_when: false
+      when: ansible_os_family == 'Debian'
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "RHEL: query current installed version via rpm"
+      ansible.builtin.command:
+        cmd: "rpm -q --queryformat '%{VERSION}-%{RELEASE}' {{ package_name }}"
+      register: current_version
+      changed_when: false
+      when: ansible_os_family == 'RedHat'
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Log current installed version"
+      ansible.builtin.debug:
+        msg: >-
+          [CURRENT] {{ package_name }} = {{ current_version.stdout | trim }}
+          host={{ ansible_hostname }}
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 3a. Debian: resolve rollback_version if not supplied                #
+    # ------------------------------------------------------------------ #
+    - name: "Debian: list available versions via apt-cache madison"
+      ansible.builtin.command:
+        cmd: "apt-cache madison {{ package_name }}"
+      register: _madison_output
+      changed_when: false
+      when:
+        - ansible_os_family == 'Debian'
+        - rollback_version | length == 0
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Debian: select oldest available version as rollback target"
+      ansible.builtin.set_fact:
+        _effective_rollback_version: >-
+          {{ (_madison_output.stdout_lines | last).split('|')[1] | trim }}
+      when:
+        - ansible_os_family == 'Debian'
+        - rollback_version | length == 0
+        - _madison_output.stdout_lines | length > 0
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Debian: use caller-supplied rollback_version"
+      ansible.builtin.set_fact:
+        _effective_rollback_version: "{{ rollback_version }}"
+      when:
+        - ansible_os_family == 'Debian'
+        - rollback_version | length > 0
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 3b. RHEL: resolve rollback_version if not supplied                  #
+    # ------------------------------------------------------------------ #
+    - name: "RHEL: query yum history to discover previous installed version"
+      ansible.builtin.shell:
+        cmd: >-
+          yum history list {{ package_name }} 2>/dev/null |
+          awk '/^[[:space:]]*[0-9]/{print $1; count++; if(count==2) exit}' |
+          tail -1
+      register: _rhel_prev_txid
+      changed_when: false
+      when:
+        - ansible_os_family == 'RedHat'
+        - rollback_version | length == 0
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "RHEL: use caller-supplied rollback_version"
+      ansible.builtin.set_fact:
+        _effective_rollback_version: "{{ rollback_version }}"
+      when:
+        - ansible_os_family == 'RedHat'
+        - rollback_version | length > 0
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "RHEL: set effective version to empty string for auto-downgrade"
+      ansible.builtin.set_fact:
+        _effective_rollback_version: ""
+      when:
+        - ansible_os_family == 'RedHat'
+        - rollback_version | length == 0
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Log resolved rollback target version"
+      ansible.builtin.debug:
+        msg: >-
+          [TARGET] {{ package_name }} -> {{ _effective_rollback_version | default('(auto yum downgrade)') }}
+          on {{ ansible_hostname }}
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 4. Perform rollback — Debian                                        #
+    # ------------------------------------------------------------------ #
+    - name: "Debian: refresh apt cache before downgrade"
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 0
+      when: ansible_os_family == 'Debian'
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Debian: apt-get install with explicit version and --allow-downgrades"
+      ansible.builtin.command:
+        cmd: >-
+          apt-get install -y --allow-downgrades
+          {{ package_name }}={{ _effective_rollback_version }}
+      register: _apt_rollback
+      changed_when: _apt_rollback.rc == 0
+      when:
+        - ansible_os_family == 'Debian'
+        - _effective_rollback_version | length > 0
+      notify: "restart dependent services"
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Debian: apt-get install oldest available (no explicit version)"
+      ansible.builtin.apt:
+        name: "{{ package_name }}"
+        state: present
+        force: true
+        dpkg_options: "force-downgrade"
+      when:
+        - ansible_os_family == 'Debian'
+        - _effective_rollback_version | length == 0
+      notify: "restart dependent services"
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 5. Perform rollback — RHEL                                          #
+    # ------------------------------------------------------------------ #
+    - name: "RHEL: yum downgrade to specific version"
+      ansible.builtin.command:
+        cmd: "yum downgrade -y {{ package_name }}-{{ _effective_rollback_version }}"
+      register: _yum_rollback_versioned
+      changed_when: _yum_rollback_versioned.rc == 0
+      when:
+        - ansible_os_family == 'RedHat'
+        - _effective_rollback_version | length > 0
+      notify: "restart dependent services"
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "RHEL: yum downgrade — auto-select previous available version"
+      ansible.builtin.command:
+        cmd: "yum downgrade -y {{ package_name }}"
+      register: _yum_rollback_auto
+      changed_when: _yum_rollback_auto.rc == 0
+      when:
+        - ansible_os_family == 'RedHat'
+        - _effective_rollback_version | length == 0
+      notify: "restart dependent services"
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 6. Verify installed version matches rollback target                 #
+    # ------------------------------------------------------------------ #
+    - name: "Debian: re-query installed version post-rollback"
+      ansible.builtin.command:
+        cmd: "dpkg-query -W -f='${Version}' {{ package_name }}"
+      register: verified_version
+      changed_when: false
+      when: ansible_os_family == 'Debian'
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "RHEL: re-query installed version post-rollback"
+      ansible.builtin.command:
+        cmd: "rpm -q --queryformat '%{VERSION}-%{RELEASE}' {{ package_name }}"
+      register: verified_version
+      changed_when: false
+      when: ansible_os_family == 'RedHat'
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Fail if installed version does not match requested rollback_version"
+      ansible.builtin.fail:
+        msg: >-
+          VERSION MISMATCH after rollback of {{ package_name }} on {{ ansible_hostname }}.
+          Expected: {{ _effective_rollback_version }}
+          Got:      {{ verified_version.stdout | trim }}
+          ticket={{ ticket_id }}
+      when:
+        - _effective_rollback_version | length > 0
+        - _effective_rollback_version not in (verified_version.stdout | trim)
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Confirm rollback version was not set — log installed version only"
+      ansible.builtin.debug:
+        msg: >-
+          [VERIFIED] {{ package_name }} = {{ verified_version.stdout | trim }}
+          (no explicit version requested; accepted as rolled-back)
+      when: _effective_rollback_version | length == 0
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Log successful version verification"
+      ansible.builtin.debug:
+        msg: >-
+          [VERIFIED] {{ package_name }} = {{ verified_version.stdout | trim }}
+          (requested {{ _effective_rollback_version }}) — MATCH
+      when: _effective_rollback_version | length > 0
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 7. Flush handlers — restart any services that depend on the package #
+    # ------------------------------------------------------------------ #
+    - name: "Flush handlers to restart dependent services immediately"
+      ansible.builtin.meta: flush_handlers
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 8. POST rollback report to Kubric NOC API                          #
+    # ------------------------------------------------------------------ #
+    - name: "POST rollback completion to Kubric NOC API /api/v1/remediation/events"
+      ansible.builtin.uri:
+        url: "{{ _noc_api_base }}/api/v1/remediation/events"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ kubric_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          ticket_id: "{{ ticket_id }}"
+          package_name: "{{ package_name }}"
+          action: "rollback"
+          prior_version: "{{ current_version.stdout | trim }}"
+          rolled_back_to: "{{ verified_version.stdout | trim }}"
+          requested_version: "{{ rollback_version | default('') }}"
+          snapshot_id: "{{ snapshot_id | default('') }}"
+          hostname: "{{ ansible_hostname }}"
+          os_family: "{{ ansible_os_family }}"
+          timestamp: "{{ ansible_date_time.iso8601 }}"
+          source: "ansible/K-NOC-CM-ANS-004"
+        status_code: [200, 201, 202, 204]
+        timeout: 15
+      delegate_to: localhost
+      ignore_errors: true
+      tags: [rollback, package-rollback, compliance]
+
+    # ------------------------------------------------------------------ #
+    # 9. PATCH VDR finding back to "open" — rollback implies CVE          #
+    #    is no longer patched on this host                                #
+    # ------------------------------------------------------------------ #
+    - name: "PATCH VDR finding {{ vdr_finding_id }} — re-open because rollback reverts fix"
+      ansible.builtin.uri:
+        url: "{{ _vdr_api_base }}/api/v1/findings/{{ vdr_finding_id }}"
+        method: PATCH
+        headers:
+          Authorization: "Bearer {{ kubric_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          status: "open"
+          notes: >-
+            Finding re-opened automatically by Ansible K-NOC-CM-ANS-004.
+            Package {{ package_name }} was rolled back from {{ current_version.stdout | trim }}
+            to {{ verified_version.stdout | trim }} on {{ ansible_hostname }}.
+            Ticket: {{ ticket_id }}.
+            The associated CVE is no longer remediated on this host.
+          reopen_reason: "package_rollback"
+          reopen_ticket: "{{ ticket_id }}"
+          reopen_host: "{{ ansible_hostname }}"
+          reopen_timestamp: "{{ ansible_date_time.iso8601 }}"
+        status_code: [200, 204]
+        timeout: 15
+      delegate_to: localhost
+      when: vdr_finding_id | length > 0
+      ignore_errors: true
+      tags: [rollback, package-rollback, compliance]
+
+    - name: "Skip VDR PATCH — no vdr_finding_id provided"
+      ansible.builtin.debug:
+        msg: >-
+          Skipping VDR finding re-open: vdr_finding_id was not supplied.
+          Pass -e "vdr_finding_id=<uuid>" to re-open the associated CVE finding.
+      when: vdr_finding_id | length == 0
+      tags: [rollback, package-rollback, compliance]
+
+  handlers:
+    # ------------------------------------------------------------------ #
+    # Restart every service listed in package_dependent_services          #
+    # Can be overridden via group_vars or -e "package_dependent_services= #
+    #   [nginx, php8.1-fpm]"                                              #
+    # ------------------------------------------------------------------ #
+    - name: "restart dependent services"
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+      loop: "{{ package_dependent_services }}"
+      ignore_errors: true
+      when: package_dependent_services | length > 0

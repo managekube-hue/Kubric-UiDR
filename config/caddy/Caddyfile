@@ -39,6 +39,134 @@ portal.kubric.io {
   }
 }
 
+# NOC - Cluster & agent heartbeat API
+noc.kubric.io {
+  reverse_proxy localhost:8083
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# KIC - Compliance assessments API
+kic.kubric.io {
+  reverse_proxy localhost:8082
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# VDR - Vulnerability findings API
+vdr.kubric.io {
+  reverse_proxy localhost:8081
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# KAI - AI orchestration API
+kai.kubric.io {
+  reverse_proxy localhost:8100
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# Correlation engine
+correlation.kubric.io {
+  reverse_proxy localhost:9099
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# Grafana dashboards
+grafana.kubric.io {
+  reverse_proxy localhost:3000
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# Temporal UI
+temporal.kubric.io {
+  reverse_proxy localhost:8233
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
+# MinIO console
+minio.kubric.io {
+  reverse_proxy localhost:9051
+
+  encode zstd gzip
+
+  log {
+    format json
+  }
+
+  tls {
+    protocols tls1.2 tls1.3
+    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+  }
+}
+
 # ClickHouse endpoint (internal only)
 clickhouse.internal {
   reverse_proxy localhost:8123 {

@@ -238,6 +238,29 @@ func (s *NOCStore) GetAgent(ctx context.Context, id string) (Agent, error) {
 	return scanAgent(s.pool.QueryRow(ctx, q, id))
 }
 
+// UpdateAgent updates the mutable fields of an agent (status).
+// Only non-empty values are applied; the caller is responsible for validation.
+func (s *NOCStore) UpdateAgent(ctx context.Context, id, status string) (Agent, error) {
+	// Look up tenant_id so RunWithTenant can activate RLS for the correct tenant.
+	var tenantID string
+	_ = s.pool.QueryRow(ctx, `SELECT tenant_id FROM noc_agents WHERE id = $1`, id).Scan(&tenantID)
+
+	const q = `
+		UPDATE noc_agents
+		SET status = COALESCE(NULLIF($2,''), status)
+		WHERE id = $1
+		RETURNING id, tenant_id, cluster_id, hostname, agent_type, version, status, last_heartbeat, created_at
+	`
+	var result Agent
+	err := kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
+		row := tx.QueryRow(ctx, q, id, status)
+		var e error
+		result, e = scanAgent(row)
+		return e
+	})
+	return result, err
+}
+
 // ListAgents returns agents for a tenant, optionally filtered by cluster_id.
 func (s *NOCStore) ListAgents(ctx context.Context, tenantID, clusterID string, limit int) ([]Agent, error) {
 	const q = `

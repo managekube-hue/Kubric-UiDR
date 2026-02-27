@@ -201,25 +201,26 @@ func (s *Server) buildRouter() *chi.Mux {
 		r.Post("/webhooks/falco", s.falcoReceiver.ServeHTTP)
 	})
 
-	// All other routes require a valid JWT.
+	// Health probes — no auth, must be reachable by Kubernetes kubelet.
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	})
+	r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+		defer cancel()
+		if err := s.store.Ping(ctx); err != nil {
+			writeJSON(w, http.StatusServiceUnavailable, map[string]string{
+				"status": "postgres unavailable", "error": err.Error(),
+			})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	})
+
+	// All authenticated routes require a valid JWT.
 	r.Group(func(r chi.Router) {
 		r.Use(kubricmw.JWTAuth())
 		r.Use(kubricmw.TenantContext)
-
-		r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
-			writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
-		})
-		r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
-			ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
-			defer cancel()
-			if err := s.store.Ping(ctx); err != nil {
-				writeJSON(w, http.StatusServiceUnavailable, map[string]string{
-					"status": "postgres unavailable", "error": err.Error(),
-				})
-				return
-			}
-			writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
-		})
 
 		ch := newClusterHandler(s.store, s.pub)
 		r.Route("/clusters", func(r chi.Router) {
@@ -247,6 +248,11 @@ func (s *Server) buildRouter() *chi.Mux {
 				r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
 				r.Get("/", ah.list)
 				r.Get("/{agentID}", ah.get)
+			})
+			// Write: admin and analyst (status updates, tag mutations)
+			r.Group(func(r chi.Router) {
+				r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
+				r.Patch("/{agentID}", ah.update)
 			})
 		})
 

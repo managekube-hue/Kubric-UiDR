@@ -491,6 +491,33 @@ services:
       start_period: 30s
     networks: [kubric]
 
+  # ── KAI-Python: Python AI orchestration sidecar (:8101) ──────────────────
+  kai-python:
+    build:
+      context: 03_K-KAI-03_ORCHESTRATION
+      dockerfile: Dockerfile
+    image: kubric/kai-python:latest
+    profiles: [app]
+    ports:
+      - "8101:8101"
+    environment:
+      - NATS_URL=nats://nats:4222
+      - DATABASE_URL=postgresql://kubric:${KUBRIC_DB_PASSWORD:-kubric}@postgres:5432/kubric
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    depends_on:
+      nats:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8101/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: ["python", "-m", "uvicorn", "K-KAI-API.K-KAI-API-001_fastapi_server:app", "--host", "0.0.0.0", "--port", "8101"]
+    networks: [kubric]
+
 # ─── Volumes ─────────────────────────────────────────────────────────────────
 volumes:
   nats-data:

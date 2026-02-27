@@ -1,0 +1,262 @@
+---
+# ConfigMap: Grafana Tempo configuration.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tempo-config
+  namespace: monitoring
+  labels:
+    app: tempo
+    app.kubernetes.io/part-of: kubric-observability
+data:
+  tempo.yaml: |
+    server:
+      http_listen_port: 3200
+      grpc_listen_port: 9096
+      log_level: warn
+      log_format: json
+
+    distributor:
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+
+    ingester:
+      max_block_duration: 5m
+      trace_idle_period: 10s
+      max_block_bytes: 1073741824
+      lifecycler:
+        address: 127.0.0.1
+        ring:
+          kvstore:
+            store: inmemory
+          replication_factor: 1
+        final_sleep: 0s
+
+    metrics_generator:
+      registry:
+        external_labels:
+          cluster: kubric
+          namespace: monitoring
+      storage:
+        path: /var/tempo/generator/wal
+        remote_write:
+          - url: http://prometheus:9090/api/v1/write
+            send_exemplars: true
+      traces_storage:
+        path: /var/tempo/generator/traces
+      processor:
+        service_graphs:
+          histogram_buckets: [0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8]
+          max_items: 10000
+          wait: 10s
+          workers: 10
+        span_metrics:
+          histogram_buckets: [0.002, 0.004, 0.008, 0.016, 0.032, 0.064, 0.128, 0.256, 0.512, 1.024, 2.048]
+          dimensions:
+            - http.method
+            - http.status_code
+            - http.route
+            - service.name
+
+    storage:
+      trace:
+        backend: local
+        local:
+          path: /var/tempo
+        wal:
+          path: /var/tempo/wal
+          v2_encoding: snappy
+        block:
+          v2_encoding: zstd
+          bloom_filter_false_positive: 0.05
+        pool:
+          max_workers: 100
+          queue_depth: 10000
+
+    compactor:
+      compaction:
+        block_retention: 336h
+        compacted_block_retention: 1h
+        compaction_window: 1h
+        max_block_bytes: 107374182400
+        max_compaction_objects: 6000000
+        retention_concurrency: 10
+
+    querier:
+      max_concurrent_queries: 20
+      frontend_worker:
+        frontend_address: 127.0.0.1:9095
+
+    query_frontend:
+      max_retries: 2
+      search:
+        default_result_limit: 20
+        max_result_limit: 500
+        concurrent_jobs: 1000
+        target_bytes_per_job: 104857600
+
+    overrides:
+      defaults:
+        metrics_generator:
+          processors:
+            - service-graphs
+            - span-metrics
+        ingestion:
+          rate_limit_bytes: 15000000
+          burst_size_bytes: 20000000
+          max_traces_per_user: 10000
+
+---
+# PVC: Tempo trace block storage.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tempo-data
+  namespace: monitoring
+  labels:
+    app: tempo
+    app.kubernetes.io/part-of: kubric-observability
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tempo
+  namespace: monitoring
+  labels:
+    app: tempo
+    app.kubernetes.io/component: tracing
+    app.kubernetes.io/part-of: kubric-observability
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tempo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tempo
+        app.kubernetes.io/component: tracing
+        app.kubernetes.io/part-of: kubric-observability
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3200"
+        prometheus.io/path: "/metrics"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+      volumes:
+        - name: config
+          configMap:
+            name: tempo-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: tempo-data
+      containers:
+        - name: tempo
+          image: grafana/tempo:2.7.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config.file=/etc/tempo/tempo.yaml
+          ports:
+            - name: http
+              containerPort: 3200
+              protocol: TCP
+            - name: otlp-grpc
+              containerPort: 4317
+              protocol: TCP
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+            - name: grpc-internal
+              containerPort: 9096
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/tempo
+              readOnly: true
+            - name: data
+              mountPath: /var/tempo
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 5
+
+---
+# Service: exposes Tempo's HTTP UI/API, OTLP gRPC, and OTLP HTTP endpoints.
+apiVersion: v1
+kind: Service
+metadata:
+  name: tempo
+  namespace: monitoring
+  labels:
+    app: tempo
+    app.kubernetes.io/part-of: kubric-observability
+spec:
+  selector:
+    app: tempo
+  ports:
+    - name: http
+      port: 3200
+      targetPort: 3200
+      protocol: TCP
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      protocol: TCP
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+      protocol: TCP
+  type: ClusterIP
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tempo
+  namespace: monitoring
+  labels:
+    app: tempo
+    app.kubernetes.io/part-of: kubric-observability
+spec:
+  selector:
+    matchLabels:
+      app: tempo
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+      scrapeTimeout: 10s

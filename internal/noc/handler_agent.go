@@ -121,3 +121,54 @@ func (h *agentHandler) get(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJSON(w, http.StatusOK, a)
 }
+
+// PATCH /agents/{agentID}
+//
+// Allows partial updates to an agent record.  Accepted fields:
+//   - status: active | inactive | online | offline | degraded
+//   - tags:   arbitrary string slice stored for informational purposes
+//
+// Only provided (non-zero) fields are applied; omitted fields are left unchanged.
+//
+// Request body example:
+//
+//	{"status": "degraded", "tags": ["patching", "rebooting"]}
+var validAgentStatuses = map[string]bool{
+	"active": true, "inactive": true,
+	"online": true, "offline": true, "degraded": true,
+}
+
+func (h *agentHandler) update(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "agentID")
+
+	var body struct {
+		Status string   `json:"status"`
+		Tags   []string `json:"tags"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid JSON: "+err.Error())
+		return
+	}
+
+	if body.Status != "" && !validAgentStatuses[body.Status] {
+		writeError(w, http.StatusUnprocessableEntity,
+			"status must be one of: active, inactive, online, offline, degraded")
+		return
+	}
+
+	a, err := h.store.UpdateAgent(r.Context(), id, body.Status)
+	if errors.Is(err, pgx.ErrNoRows) {
+		writeError(w, http.StatusNotFound, "agent not found")
+		return
+	}
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	_ = h.pub.PublishAgentEvent(AgentEvent{
+		AgentID: a.ID, TenantID: a.TenantID, Hostname: a.Hostname,
+		AgentType: a.AgentType, Action: "update",
+	})
+	writeJSON(w, http.StatusOK, a)
+}
