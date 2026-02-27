@@ -338,6 +338,42 @@ func (e *Engine) processEvent(subject string, data []byte) {
 	e.mu.Unlock()
 }
 
+// IngestFalcoAlert is the direct (non-NATS) ingestion path for Falco alerts
+// delivered through the NOC webhook endpoint.  It normalises the alert into
+// a NormalizedEvent and adds it to the per-tenant event buffer so that
+// correlation rules can fire on it just like NATS-sourced alerts.
+//
+// tenantID is derived from the Falco hostname (best-effort for single-tenant
+// deployments where each Falco instance protects exactly one cluster/tenant).
+func (e *Engine) IngestFalcoAlert(rule, priority, hostname, output string, outputFields map[string]interface{}) {
+	sev := falcoPriorityToSeverity(priority)
+
+	event := NormalizedEvent{
+		ID:          uuid.NewString(),
+		TenantID:    hostname, // best-effort: hostname == Kubric tenant in single-tenant clusters
+		AgentID:     hostname,
+		Source:      "falco",
+		EventType:   "alert",
+		Severity:    sev,
+		Timestamp:   time.Now().UTC(),
+		Title:       "Falco: " + rule,
+		Description: output,
+		RawData:     outputFields,
+		Fingerprint: rule + ":" + hostname,
+	}
+
+	e.metrics.EventsIngested.Add(1)
+
+	key := event.TenantID + ":" + event.EventType
+	e.mu.Lock()
+	buf := e.eventBuffer[key]
+	if len(buf) >= maxBufferPerKey {
+		buf = buf[1:]
+	}
+	e.eventBuffer[key] = append(buf, event)
+	e.mu.Unlock()
+}
+
 // ---------------------------------------------------------------------------
 // Rule evaluation
 // ---------------------------------------------------------------------------

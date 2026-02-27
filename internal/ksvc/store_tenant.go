@@ -13,12 +13,13 @@ import (
 // Tenant is the canonical tenant record stored in PostgreSQL.
 // tenant_id follows the Kubernetes namespace naming convention enforced by schema.ValidateTenantID.
 type Tenant struct {
-	TenantID  string    `json:"tenant_id"`
-	Name      string    `json:"name"`
-	Plan      string    `json:"plan"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	TenantID         string    `json:"tenant_id"`
+	Name             string    `json:"name"`
+	Plan             string    `json:"plan"`
+	Status           string    `json:"status"`
+	StripeCustomerID string    `json:"stripe_customer_id,omitempty"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
 }
 
 // TenantStore provides CRUD access to the kubric_tenants table via pgxpool.
@@ -60,16 +61,25 @@ func (s *TenantStore) Ping(ctx context.Context) error {
 func (s *TenantStore) migrate(ctx context.Context) error {
 	_, err := s.pool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS kubric_tenants (
-			tenant_id   TEXT        PRIMARY KEY,
-			name        TEXT        NOT NULL,
-			plan        TEXT        NOT NULL DEFAULT 'starter',
-			status      TEXT        NOT NULL DEFAULT 'active',
-			created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-			updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+			tenant_id          TEXT        PRIMARY KEY,
+			name               TEXT        NOT NULL,
+			plan               TEXT        NOT NULL DEFAULT 'starter',
+			status             TEXT        NOT NULL DEFAULT 'active',
+			stripe_customer_id TEXT        NOT NULL DEFAULT '',
+			created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+			updated_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 		)
 	`)
 	if err != nil {
 		return fmt.Errorf("migrate kubric_tenants: %w", err)
+	}
+	// Idempotently add stripe_customer_id for schemas created before this column existed.
+	_, err = s.pool.Exec(ctx, `
+		ALTER TABLE kubric_tenants
+			ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT NOT NULL DEFAULT ''
+	`)
+	if err != nil {
+		return fmt.Errorf("migrate kubric_tenants add stripe_customer_id: %w", err)
 	}
 	return nil
 }
@@ -77,13 +87,13 @@ func (s *TenantStore) migrate(ctx context.Context) error {
 // Create inserts a new tenant row. Returns an error if tenant_id already exists.
 func (s *TenantStore) Create(ctx context.Context, t Tenant) (Tenant, error) {
 	const q = `
-		INSERT INTO kubric_tenants (tenant_id, name, plan, status)
-		VALUES ($1, $2, $3, $4)
-		RETURNING tenant_id, name, plan, status, created_at, updated_at
+		INSERT INTO kubric_tenants (tenant_id, name, plan, status, stripe_customer_id)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING tenant_id, name, plan, status, stripe_customer_id, created_at, updated_at
 	`
 	var result Tenant
 	err := kubricdb.RunWithTenant(ctx, s.pool, t.TenantID, func(tx pgx.Tx) error {
-		row := tx.QueryRow(ctx, q, t.TenantID, t.Name, t.Plan, t.Status)
+		row := tx.QueryRow(ctx, q, t.TenantID, t.Name, t.Plan, t.Status, t.StripeCustomerID)
 		var e error
 		result, e = scanTenant(row)
 		return e
@@ -94,7 +104,7 @@ func (s *TenantStore) Create(ctx context.Context, t Tenant) (Tenant, error) {
 // Get returns a tenant by tenant_id. Returns pgx.ErrNoRows if not found.
 func (s *TenantStore) Get(ctx context.Context, tenantID string) (Tenant, error) {
 	const q = `
-		SELECT tenant_id, name, plan, status, created_at, updated_at
+		SELECT tenant_id, name, plan, status, stripe_customer_id, created_at, updated_at
 		FROM kubric_tenants
 		WHERE tenant_id = $1
 	`
@@ -105,7 +115,7 @@ func (s *TenantStore) Get(ctx context.Context, tenantID string) (Tenant, error) 
 // List returns up to limit tenants ordered by created_at descending.
 func (s *TenantStore) List(ctx context.Context, limit int) ([]Tenant, error) {
 	const q = `
-		SELECT tenant_id, name, plan, status, created_at, updated_at
+		SELECT tenant_id, name, plan, status, stripe_customer_id, created_at, updated_at
 		FROM kubric_tenants
 		ORDER BY created_at DESC
 		LIMIT $1
@@ -139,7 +149,7 @@ func (s *TenantStore) Update(ctx context.Context, tenantID, name, plan, status s
 			status     = COALESCE(NULLIF($4, ''), status),
 			updated_at = now()
 		WHERE tenant_id = $1
-		RETURNING tenant_id, name, plan, status, created_at, updated_at
+		RETURNING tenant_id, name, plan, status, stripe_customer_id, created_at, updated_at
 	`
 	var result Tenant
 	err := kubricdb.RunWithTenant(ctx, s.pool, tenantID, func(tx pgx.Tx) error {
@@ -168,6 +178,6 @@ func (s *TenantStore) Delete(ctx context.Context, tenantID string) error {
 // scanTenant scans a single pgx.Row into a Tenant struct.
 func scanTenant(row pgx.Row) (Tenant, error) {
 	var t Tenant
-	err := row.Scan(&t.TenantID, &t.Name, &t.Plan, &t.Status, &t.CreatedAt, &t.UpdatedAt)
+	err := row.Scan(&t.TenantID, &t.Name, &t.Plan, &t.Status, &t.StripeCustomerID, &t.CreatedAt, &t.UpdatedAt)
 	return t, err
 }

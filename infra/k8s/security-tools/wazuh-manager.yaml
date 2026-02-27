@@ -7,22 +7,15 @@
 
 ---
 # Secret: wazuh-credentials
-# Values are base64 of "admin" and "changeme-placeholder".
-# IMPORTANT: rotate before any production deployment.
-apiVersion: v1
-kind: Secret
-metadata:
-  name: wazuh-credentials
-  namespace: kubric-security
-  labels:
-    app.kubernetes.io/name: wazuh-manager
-    app.kubernetes.io/component: security
-type: Opaque
-data:
-  # echo -n "admin" | base64
-  api-user: YWRtaW4=
-  # echo -n "changeme-placeholder" | base64
-  api-password: Y2hhbmdlbWUtcGxhY2Vob2xkZXI=
+# DO NOT commit real credentials here. Create this secret out-of-band:
+#
+#   kubectl create secret generic wazuh-credentials \
+#     --from-literal=api-user=admin \
+#     --from-literal=api-password="$(openssl rand -base64 32)" \
+#     -n kubric-security
+#
+# For GitOps pipelines use ExternalSecret + Vault/AWS SSM instead.
+# Managed by: infra/k8s/policy/sealedsecrets-controller.yaml (kubeseal)
 
 ---
 # ConfigMap: wazuh-ossec-conf

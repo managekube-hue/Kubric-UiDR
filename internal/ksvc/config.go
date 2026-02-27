@@ -21,6 +21,14 @@ type Config struct {
 
 	// NATSUrl is the NATS server URL for publishing tenant lifecycle events.
 	NATSUrl string
+
+	// StripeAPIKey is the Stripe secret key used to authenticate Stripe API calls.
+	// Read from STRIPE_SECRET_KEY; loaded from Vault in production.
+	StripeAPIKey string
+
+	// BillingReturnURL is the URL Stripe redirects customers to after leaving
+	// the billing portal.  Defaults to "https://app.kubric.io/billing" when empty.
+	BillingReturnURL string
 }
 
 // LoadConfig reads K-SVC configuration. When running in Kubernetes, credentials
@@ -29,9 +37,11 @@ type Config struct {
 func LoadConfig() Config {
 	creds := security.LoadServiceCreds(context.Background(), "ksvc")
 	return Config{
-		ListenAddr:  getenv("KSVC_LISTEN_ADDR", ":8080"),
-		DatabaseURL: creds.DatabaseURL,
-		NATSUrl:     creds.NATSUrl,
+		ListenAddr:       getenv("KSVC_LISTEN_ADDR", ":8080"),
+		DatabaseURL:      creds.DatabaseURL,
+		NATSUrl:          creds.NATSUrl,
+		StripeAPIKey:     getenv("STRIPE_SECRET_KEY", ""),
+		BillingReturnURL: getenv("BILLING_RETURN_URL", ""),
 	}
 }
 

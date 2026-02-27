@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: kubric
-      POSTGRES_PASSWORD: kubric
+      POSTGRES_PASSWORD: ${KUBRIC_DB_PASSWORD:-kubric}
       POSTGRES_DB: kubric
     ports:
       - "5432:5432"
@@ -152,7 +152,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: temporal
-      POSTGRES_PASSWORD: temporal
+      POSTGRES_PASSWORD: ${TEMPORAL_DB_PASSWORD:-temporal}
       POSTGRES_DB: temporal
     volumes:
       - temporal-pg-data:/var/lib/postgresql/data
@@ -171,7 +171,7 @@ services:
       DB: postgres12
       DB_PORT: "5432"
       POSTGRES_USER: temporal
-      POSTGRES_PWD: temporal
+      POSTGRES_PWD: ${TEMPORAL_DB_PASSWORD:-temporal}
       POSTGRES_SEEDS: temporal-postgres
       DYNAMIC_CONFIG_FILE_PATH: config/dynamicconfig/development-sql.yaml
     ports:

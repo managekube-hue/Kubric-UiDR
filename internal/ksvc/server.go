@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
+	"github.com/managekube-hue/Kubric-UiDR/services/k-svc/billing"
 )
 
 // Server wires together the Chi router, TenantStore (pgx → Postgres),
@@ -38,6 +39,10 @@ func NewServer(cfg Config) (*Server, error) {
 	if err != nil {
 		fmt.Printf("ksvc: warn — NATS unavailable (%v); tenant lifecycle events will not be published\n", err)
 		pub = nil
+	}
+
+	if cfg.StripeAPIKey != "" {
+		billing.Init(cfg.StripeAPIKey)
 	}
 
 	s := &Server{cfg: cfg, store: store, pub: pub}
@@ -126,6 +131,15 @@ func (s *Server) buildRouter() *chi.Mux {
 			r.Patch("/{tenantID}", th.update)
 			r.Delete("/{tenantID}", th.delete)
 		})
+	})
+
+	// Billing sub-routes — mounted under /tenants/{tenantID} as a separate
+	// route prefix so Chi's trie correctly distinguishes /tenants/{id} (tenant
+	// read) from /tenants/{id}/subscription and /tenants/{id}/billing/portal.
+	bh := newBillingHandler(s.store, s.cfg)
+	r.Route("/tenants/{tenantID}", func(r chi.Router) {
+		r.With(kubricmw.RequireRole("kubric:admin")).Post("/subscription", bh.createSubscription)
+		r.With(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst")).Get("/billing/portal", bh.getBillingPortal)
 	})
 
 	return r

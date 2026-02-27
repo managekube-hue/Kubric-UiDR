@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -30,6 +31,7 @@ type Server struct {
 	router            *chi.Mux
 	integrations      *integrationHandler
 	correlationEngine *correlation.Engine
+	falcoReceiver     *falco.WebhookReceiver
 }
 
 // NewServer initialises all NOC dependencies and returns a ready-to-run Server.
@@ -60,7 +62,21 @@ func NewServer(cfg Config) (*Server, error) {
 		go corrEngine.Start(context.Background())
 	}
 
-	s := &Server{cfg: cfg, store: store, pub: pub, integrations: ih, correlationEngine: corrEngine}
+	falcoReceiver := falco.NewWebhookReceiver()
+	if corrEngine != nil {
+		falcoReceiver.OnAlert(func(a falco.Alert) {
+			corrEngine.IngestFalcoAlert(a.Rule, a.Priority, a.Hostname, a.Output, a.OutputFields)
+		})
+	}
+
+	s := &Server{
+		cfg:               cfg,
+		store:             store,
+		pub:               pub,
+		integrations:      ih,
+		correlationEngine: corrEngine,
+		falcoReceiver:     falcoReceiver,
+	}
 	s.router = s.buildRouter()
 	return s, nil
 }
@@ -177,64 +193,75 @@ func (s *Server) buildRouter() *chi.Mux {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(25 * time.Second))
 	r.Use(kubricmw.RateLimit)
-	r.Use(kubricmw.JWTAuth())
-	r.Use(kubricmw.TenantContext)
 
-	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
-	})
-	r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
-		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
-		defer cancel()
-		if err := s.store.Ping(ctx); err != nil {
-			writeJSON(w, http.StatusServiceUnavailable, map[string]string{
-				"status": "postgres unavailable", "error": err.Error(),
-			})
-			return
-		}
-		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
-	})
-
-	ch := newClusterHandler(s.store, s.pub)
-	r.Route("/clusters", func(r chi.Router) {
-		// Read: admin, analyst, readonly
-		r.Group(func(r chi.Router) {
-			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
-			r.Get("/", ch.list)
-			r.Get("/{clusterID}", ch.get)
-		})
-		// Write: admin only (cluster lifecycle)
-		r.Group(func(r chi.Router) {
-			r.Use(kubricmw.RequireRole("kubric:admin"))
-			r.Post("/", ch.create)
-			r.Patch("/{clusterID}", ch.update)
-			r.Delete("/{clusterID}", ch.delete)
-		})
-	})
-
-	ah := newAgentHandler(s.store, s.pub)
-	r.Route("/agents", func(r chi.Router) {
-		// Heartbeat: agent role (CoreSec/NetGuard agents call this)
-		r.With(kubricmw.RequireRole("kubric:agent")).Post("/heartbeat", ah.heartbeat)
-		// Read: admin, analyst, readonly
-		r.Group(func(r chi.Router) {
-			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
-			r.Get("/", ah.list)
-			r.Get("/{agentID}", ah.get)
-		})
-	})
-
-	// Integration routes: admin and analyst can read and write
+	// Webhook routes bypass JWT — authenticated by shared secret header instead.
+	webhookSecret := os.Getenv("KUBRIC_WEBHOOK_SECRET")
 	r.Group(func(r chi.Router) {
-		r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
-		s.integrations.RegisterRoutes(r)
+		r.Use(webhookSecretAuth(webhookSecret))
+		r.Post("/webhooks/falco", s.falcoReceiver.ServeHTTP)
 	})
 
-	// Detection routes: backed by the correlation engine.
-	// Only mounted when the engine initialised successfully.
-	if s.correlationEngine != nil {
-		r.Mount("/detection", s.detectionRoutes())
-	}
+	// All other routes require a valid JWT.
+	r.Group(func(r chi.Router) {
+		r.Use(kubricmw.JWTAuth())
+		r.Use(kubricmw.TenantContext)
+
+		r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+			writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+		})
+		r.Get("/readyz", func(w http.ResponseWriter, r *http.Request) {
+			ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+			defer cancel()
+			if err := s.store.Ping(ctx); err != nil {
+				writeJSON(w, http.StatusServiceUnavailable, map[string]string{
+					"status": "postgres unavailable", "error": err.Error(),
+				})
+				return
+			}
+			writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+		})
+
+		ch := newClusterHandler(s.store, s.pub)
+		r.Route("/clusters", func(r chi.Router) {
+			// Read: admin, analyst, readonly
+			r.Group(func(r chi.Router) {
+				r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+				r.Get("/", ch.list)
+				r.Get("/{clusterID}", ch.get)
+			})
+			// Write: admin only (cluster lifecycle)
+			r.Group(func(r chi.Router) {
+				r.Use(kubricmw.RequireRole("kubric:admin"))
+				r.Post("/", ch.create)
+				r.Patch("/{clusterID}", ch.update)
+				r.Delete("/{clusterID}", ch.delete)
+			})
+		})
+
+		ah := newAgentHandler(s.store, s.pub)
+		r.Route("/agents", func(r chi.Router) {
+			// Heartbeat: agent role (CoreSec/NetGuard agents call this)
+			r.With(kubricmw.RequireRole("kubric:agent")).Post("/heartbeat", ah.heartbeat)
+			// Read: admin, analyst, readonly
+			r.Group(func(r chi.Router) {
+				r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+				r.Get("/", ah.list)
+				r.Get("/{agentID}", ah.get)
+			})
+		})
+
+		// Integration routes: admin and analyst can read and write
+		r.Group(func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
+			s.integrations.RegisterRoutes(r)
+		})
+
+		// Detection routes: backed by the correlation engine.
+		// Only mounted when the engine initialised successfully.
+		if s.correlationEngine != nil {
+			r.Mount("/detection", s.detectionRoutes())
+		}
+	})
 
 	return r
 }
@@ -248,6 +275,20 @@ func writeJSON(w http.ResponseWriter, status int, v any) {
 
 func writeError(w http.ResponseWriter, status int, msg string) {
 	writeJSON(w, status, map[string]string{"error": msg})
+}
+
+// webhookSecretAuth returns a middleware that validates the X-Kubric-Webhook-Secret header.
+// When secret is empty the middleware is a no-op (useful in local dev without a secret configured).
+func webhookSecretAuth(secret string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if secret != "" && r.Header.Get("X-Kubric-Webhook-Secret") != secret {
+				http.Error(w, `{"error":"invalid webhook secret"}`, http.StatusUnauthorized)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 // detectionRoutes builds a chi.Router for the /detection sub-tree.

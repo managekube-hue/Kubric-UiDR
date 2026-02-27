@@ -1,0 +1,513 @@
+﻿# =============================================================================
+# K-MB-001  NATS 2.10 JetStream Cluster
+# Kubernetes manifests for a 3-replica NATS cluster in the kubric namespace.
+#
+# Contents (in order):
+#   1. Namespace
+#   2. ConfigMap  nats-config (nats.conf)
+#   3. Service  nats (ClusterIP  ports 4222 8222 7422)
+#   4. Service  nats-cluster-headless (headless  port 6222)
+#   5. StatefulSet  nats (3 replicas)
+#   6. PodDisruptionBudget  nats-pdb
+#
+# Prerequisites: Secret nats-tls with keys tls.crt tls.key ca.crt operator.jwt
+# See K-MB-003_mTLS_Cert_Rotation.md for cert creation runbook.
+#
+# Apply:   kubectl apply -f K-MB-001_NATS_Cluster.yaml
+# Verify:  kubectl -n kubric exec nats-0 -- nats-server --signal ldm
+# =============================================================================
+
+---
+# 1. Namespace -----------------------------------------------------------------
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubric
+  labels:
+    app.kubernetes.io/part-of: kubric-platform
+    kubric.io/component: message-bus
+
+---
+# 2. ConfigMap  nats.conf -------------------------------------------------------
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nats-config
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/component: message-bus
+    app.kubernetes.io/part-of: kubric-platform
+    app.kubernetes.io/managed-by: kubectl
+data:
+  nats.conf: |
+    # SERVER_NAME env var injected by StatefulSet via fieldRef metadata.name
+    # giving each pod a unique identity: nats-0  nats-1  nats-2.
+    server_name: 
+    host: "0.0.0.0"
+    port: 4222
+
+    # Maximum message payload  8 MiB (aligns with K-KAI max publish size)
+    max_payload: 8388608
+
+    # Plain HTTP monitoring: /healthz /varz /connz /routez /subz /jsz
+    # No TLS on this port so liveness/readiness probes work without client certs.
+    http_port: 8222
+
+    # --- TLS (client port  mTLS) ---------------------------------------------
+    tls {
+      cert_file:  /etc/nats-tls/tls.crt
+      key_file:   /etc/nats-tls/tls.key
+      ca_file:    /etc/nats-tls/ca.crt
+      # verify: true  every client must present a cert signed by ca.crt
+      verify:  true
+      timeout: 5
+    }
+
+    # --- JetStream file + memory stores --------------------------------------
+    jetstream {
+      store_dir: /data/jetstream
+      # In-memory stream ceiling  2 GiB
+      max_memory_store: 2147483648
+      # File-backed stream ceiling  100 GiB
+      max_file_store: 107374182400
+    }
+
+    # --- Cluster (3-node Raft) -----------------------------------------------
+    cluster {
+      name: kubric-nats-cluster
+      host: "0.0.0.0"
+      port: 6222
+
+      tls {
+        cert_file: /etc/nats-tls/tls.crt
+        key_file:  /etc/nats-tls/tls.key
+        ca_file:   /etc/nats-tls/ca.crt
+        verify:    true
+        timeout:   5
+      }
+
+      # Seed routes via headless Service DNS A records.
+      # publishNotReadyAddresses: true means pods appear in DNS during startup.
+      routes: [
+        "nats://nats-cluster-headless.kubric.svc.cluster.local:6222"
+      ]
+    }
+
+    # --- Leafnode (edge agents  port 7422) -----------------------------------
+    # coresec Rust sensors on endpoints connect via leafnode rather than 4222.
+    # Isolates high-volume endpoint telemetry from core service traffic.
+    leafnodes {
+      host: "0.0.0.0"
+      port: 7422
+
+      tls {
+        cert_file: /etc/nats-tls/tls.crt
+        key_file:  /etc/nats-tls/tls.key
+        ca_file:   /etc/nats-tls/ca.crt
+        verify:    true
+        timeout:   5
+      }
+    }
+
+    # --- Operator JWT + full account resolver --------------------------------
+    # Operator JWT from Secret nats-tls at /etc/nats-tls/operator.jwt.
+    # Full resolver stores account JWTs under /data/jetstream/accounts.
+    operator: /etc/nats-tls/operator.jwt
+
+    resolver: {
+      type:         full
+      dir:          /data/jetstream/accounts
+      allow_delete: false
+      interval:     2m
+    }
+
+    # \ reserved system account for JetStream advisories (\.EVENT.ADVISORY.>)
+    # server statistics and cluster health events.
+    system_account: SYS
+
+    log_time: true
+    log_pid:  true
+    log_file: /dev/stderr
+    debug:    false
+    trace:    false
+    pid_file: /data/nats-server.pid
+---
+# 3. Service  client + monitoring (ClusterIP) ---------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/component: message-bus
+    app.kubernetes.io/part-of: kubric-platform
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port:   "7777"
+    prometheus.io/path:   "/metrics"
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: nats
+  ports:
+    # Client port  all KAI Python/Go services connect here with mTLS
+    - name: client
+      port: 4222
+      targetPort: client
+      protocol: TCP
+    # Monitoring port  plain HTTP  /healthz /varz /connz etc.
+    - name: monitor
+      port: 8222
+      targetPort: monitor
+      protocol: TCP
+    # Leafnode port  edge agent connections (coresec  branch netguard probes)
+    - name: leafnode
+      port: 7422
+      targetPort: leafnode
+      protocol: TCP
+
+---
+# 4. Service  headless (cluster route discovery) ------------------------------
+# A headless Service (clusterIP: None) causes kube-dns to return individual
+# pod A records for each StatefulSet pod so NATS can discover cluster peers.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-cluster-headless
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/component: message-bus
+    app.kubernetes.io/part-of: kubric-platform
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: nats
+  # Include pods not yet Ready so the cluster can form during initial startup.
+  publishNotReadyAddresses: true
+  ports:
+    - name: cluster
+      port: 6222
+      targetPort: cluster
+      protocol: TCP
+---
+# 5. StatefulSet ---------------------------------------------------------------
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/component: message-bus
+    app.kubernetes.io/part-of: kubric-platform
+    app.kubernetes.io/version: "2.10"
+spec:
+  serviceName: nats-cluster-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+  # OrderedReady ensures pods start/terminate serially  preserving JetStream quorum.
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nats
+        app.kubernetes.io/component: message-bus
+        app.kubernetes.io/part-of: kubric-platform
+      annotations:
+        # Replace with SHA-256 of nats-config + nats-tls in Helm/Kustomize
+        # to trigger pod rollouts when config or certs change.
+        checksum/config: "replace-with-sha256-of-nats-config-and-nats-tls"
+    spec:
+      # --- Pod-level security context ---------------------------------------
+      securityContext:
+        runAsNonRoot: true
+        runAsUser:    1000
+        runAsGroup:   1000
+        # fsGroup: 1000 ensures the PVC mount is group-owned by GID 1000.
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      # Allow JetStream to flush pending writes and drain client connections.
+      terminationGracePeriodSeconds: 120
+
+      serviceAccountName: default
+
+      # --- Init container: fix PVC ownership --------------------------------
+      # Dynamic provisioners create PVCs owned by root. This init container
+      # chowns /data to UID/GID 1000 before the main container starts.
+      initContainers:
+        - name: fix-data-perms
+          image: busybox:1.36
+          command: ["sh", "-c", "chown -R 1000:1000 /data"]
+          securityContext:
+            runAsUser:                0
+            runAsNonRoot:             false
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: data
+              mountPath: /data
+
+      containers:
+        # --- Primary: nats-server 2.10-alpine --------------------------------
+        - name: nats-server
+          image: nats:2.10-alpine
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            runAsNonRoot:             true
+            runAsUser:                1000
+            runAsGroup:               1000
+            allowPrivilegeEscalation: false
+            # Root FS is read-only. Writable paths: /data (PVC) and /tmp (emptyDir).
+            readOnlyRootFilesystem:   true
+            capabilities:
+              drop: ["ALL"]
+
+          ports:
+            - name: client
+              containerPort: 4222
+              protocol: TCP
+            - name: cluster
+              containerPort: 6222
+              protocol: TCP
+            - name: monitor
+              containerPort: 8222
+              protocol: TCP
+            - name: leafnode
+              containerPort: 7422
+              protocol: TCP
+
+          env:
+            # SERVER_NAME injected for  in nats.conf
+            # giving each pod: nats-0  nats-1  nats-2
+            - name: SERVER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+          command:
+            - nats-server
+            - -c
+            - /etc/nats-config/nats.conf
+
+          resources:
+            requests:
+              cpu:    "200m"
+              memory: "512Mi"
+            limits:
+              cpu:    "1000m"
+              memory: "2Gi"
+
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /etc/nats-config
+              readOnly: true
+            - name: tls
+              mountPath: /etc/nats-tls
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          # -----------------------------------------------------------------
+          # Liveness probe: nats-server --signal ldm (no curl needed)
+          #
+          # Sends SIGUSR2 to the running nats-server process found via
+          # /data/nats-server.pid. Returns exit 0 when alive and responsive.
+          # Reference: https://docs.nats.io/running-a-nats-service/nats_admin/signals
+          # -----------------------------------------------------------------
+          livenessProbe:
+            exec:
+              command:
+                - nats-server
+                - --signal
+                - ldm
+            initialDelaySeconds: 30
+            periodSeconds:       20
+            timeoutSeconds:      5
+            failureThreshold:    3
+            successThreshold:    1
+
+          # Readiness: HTTP GET /healthz on plain-HTTP monitoring port.
+          # Returns 200 when server has joined the cluster and JetStream is ready.
+          readinessProbe:
+            httpGet:
+              path:   /healthz
+              port:   8222
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds:       10
+            timeoutSeconds:      3
+            failureThreshold:    3
+            successThreshold:    1
+
+          # Startup: allow up to 120 s for JetStream stream/consumer recovery.
+          # 24 attempts x 5 s = 120 s maximum startup grace period.
+          startupProbe:
+            httpGet:
+              path:   /healthz
+              port:   8222
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds:       5
+            timeoutSeconds:      3
+            failureThreshold:    24
+            successThreshold:    1
+
+          lifecycle:
+            preStop:
+              # Enter lame-duck mode before SIGTERM; server drains client
+              # connections gracefully within terminationGracePeriodSeconds.
+              exec:
+                command:
+                  - nats-server
+                  - --signal
+                  - ldm
+
+        # --- Sidecar: prometheus-nats-exporter  metrics on :7777/metrics ----
+        # Scrapes varz  connz  routez  subz  and the full JetStream jsz endpoint.
+        - name: nats-exporter
+          image: natsio/prometheus-nats-exporter:0.14.0
+          imagePullPolicy: IfNotPresent
+
+          securityContext:
+            runAsNonRoot:             true
+            runAsUser:                1000
+            runAsGroup:               1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem:   true
+            capabilities:
+              drop: ["ALL"]
+
+          args:
+            - -varz
+            - -connz
+            - -routez
+            - -subz
+            - -jsz=all
+            - http://localhost:8222
+
+          ports:
+            - name: metrics
+              containerPort: 7777
+              protocol: TCP
+
+          resources:
+            requests:
+              cpu:    "50m"
+              memory: "32Mi"
+            limits:
+              cpu:    "200m"
+              memory: "128Mi"
+
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 7777
+            initialDelaySeconds: 15
+            periodSeconds:       30
+
+      # --- Volumes -----------------------------------------------------------
+      volumes:
+        - name: config
+          configMap:
+            name: nats-config
+        - name: tls
+          secret:
+            # Required keys in Secret nats-tls:
+            #   tls.crt     Server TLS certificate with SANs:
+            #               nats.kubric.svc.cluster.local
+            #               *.nats-cluster-headless.kubric.svc.cluster.local
+            #               nats-{0,1,2}.nats-cluster-headless.kubric.svc.cluster.local
+            #   tls.key     RSA-2048 or ECDSA P-256 private key
+            #   ca.crt      Root/intermediate CA bundle for client cert verification
+            #   operator.jwt  NATS operator JWT (from: nsc describe operator)
+            secretName:  nats-tls
+            defaultMode: 0400
+        - name: tmp
+          emptyDir: {}
+
+      # --- Pod anti-affinity: spread across nodes and zones -----------------
+      affinity:
+        podAntiAffinity:
+          # Hard rule: never co-locate two nats pods on the same node.
+          # Prevents a single node failure from removing JetStream quorum.
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: nats
+              topologyKey: kubernetes.io/hostname
+          # Soft preference: spread across availability zones.
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: nats
+                topologyKey: topology.kubernetes.io/zone
+
+      tolerations:
+        - key:      "kubric.io/infra"
+          operator: "Exists"
+          effect:   "NoSchedule"
+
+  # --- Persistent volume claim template -------------------------------------
+  # Each of the 3 pods gets its own 20 GiB PVC for JetStream file store.
+  # Replace storageClassName with your cluster high-throughput StorageClass:
+  #   AWS EKS:   gp3
+  #   Azure AKS: managed-premium  premium-ssd-lrs
+  #   GKE:       premium-rwo  pd-ssd
+  #   On-prem:   fast-ssd (as defined by your storage admin)
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: nats
+          app.kubernetes.io/component: message-bus
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 20Gi
+
+---
+# 6. PodDisruptionBudget -------------------------------------------------------
+# minAvailable: 2 ensures at least 2 of the 3 NATS pods remain running during
+# any single voluntary disruption (node drain  cluster upgrade  rolling restart).
+#
+# A 3-replica JetStream cluster requires quorum (2 of 3 nodes) for writes.
+# This PDB prevents maintenance from dropping below quorum so stream publish
+# operations remain available throughout.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nats-pdb
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/component: message-bus
+    app.kubernetes.io/part-of: kubric-platform
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
