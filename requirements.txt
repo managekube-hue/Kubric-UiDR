@@ -134,6 +134,19 @@ asgiref>=3.8.1
 celery[redis]>=5.4.0
 flower>=2.0.1
 dramatiq[redis,watch]>=1.17.0
+huey[redis]>=0.11.0
+
+# ─── Graph analysis (K-KAI-INVEST lateral movement) ─────────────────────────
+networkx>=3.4.0
+
+# ─── Secrets management (K-KAI-KEEPER — Vault secret fetcher) ────────────────
+hvac>=2.3.0
+
+# ─── Async email (K-KAI-COMM — aiosmtplib SMTP) ─────────────────────────────
+aiosmtplib>=3.0.0
+
+# ─── SMS gateway (K-KAI-COMM — Twilio) ──────────────────────────────────────
+twilio>=9.3.0
 
 # ─── Testing (§52 — Layer 4) ─────────────────────────────────────────────────
 pytest>=8.3.4
