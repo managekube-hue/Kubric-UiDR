@@ -61,4 +61,7 @@ USER kubric
 
 EXPOSE 8101
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD wget -q -O /dev/null http://localhost:8101/healthz || exit 1
+
 CMD ["uvicorn", "kai.api.main:app", "--host", "0.0.0.0", "--port", "8101", "--workers", "2"]

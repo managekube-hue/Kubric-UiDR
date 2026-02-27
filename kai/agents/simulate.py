@@ -50,7 +50,7 @@ class SimulateAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.simulate.results",
+            f"kubric.{tenant_id}.kai.simulate.results.v1",
             orjson.dumps(sim_result),
         )
 

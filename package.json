@@ -1,0 +1,24 @@
+{
+  "name": "kubric-uidr",
+  "version": "1.0.0",
+  "description": "**Unified Detection and Response (UiDR) Platform**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/managekube-hue/Kubric-UiDR.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/managekube-hue/Kubric-UiDR/issues"
+  },
+  "homepage": "https://github.com/managekube-hue/Kubric-UiDR#readme"
+}

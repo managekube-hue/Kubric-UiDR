@@ -43,7 +43,7 @@ class HouseAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.house.summary",
+            f"kubric.{tenant_id}.kai.house.summary.v1",
             orjson.dumps(summary),
         )
 

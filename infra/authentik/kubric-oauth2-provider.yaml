@@ -74,3 +74,37 @@ entries:
     attrs:
       name: kubric:readonly
       is_superuser: false
+
+  # Custom scope mapping — injects tenant_id + groups into the OIDC token.
+  # NextAuth callback reads: profile.tenant_id and profile.groups.
+  # Authentik users must have an attribute named "kubric_tenant_id" set.
+  - model: authentik_providers_oauth2.scopemapping
+    id: kubric-tenant-scope
+    attrs:
+      name: Kubric Tenant Claims
+      scope_name: kubric
+      description: Adds kubric-specific claims (tenant_id, groups) to the OIDC token
+      expression: |
+        # Return kubric-specific claims for injection into the access/ID token.
+        # Admins set the 'kubric_tenant_id' attribute on each Authentik user.
+        tenant_id = request.user.attributes.get("kubric_tenant_id", "")
+        # Group membership: returns list of Authentik group names prefixed 'kubric:'
+        groups = [g.name for g in request.user.ak_groups.filter(name__startswith="kubric:")]
+        return {
+            "tenant_id": tenant_id,
+            "groups": groups,
+        }
+
+  # Add the kubric scope to the OIDC provider
+  # (Must be added to property_mappings above — but blueprints don't allow
+  # self-referential !KeyOf in property_mappings list, so apply separately.)
+  - model: authentik_providers_oauth2.oauth2provider
+    id: kubric-oidc-provider-scope-patch
+    identifiers:
+      name: Kubric Platform OIDC
+    attrs:
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
+        - !KeyOf kubric-tenant-scope

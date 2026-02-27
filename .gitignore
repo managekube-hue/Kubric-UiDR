@@ -6,10 +6,10 @@ K-DEV-08_DEVELOPMENT/**/build/
 K-DEV-08_DEVELOPMENT/**/dist/
 
 # Dependencies
-K-*/node_modules/
+node_modules/
+.next/
 K-*/.venv/
 K-*/env/
-K-PSA-06_BUSINESS/*/node_modules/
 
 # Python
 __pycache__/
@@ -115,3 +115,8 @@ CURRENT-NESTED-TREE.md
 00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-FALCO/falco-rules/
 00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OSQUERY/osquery-packs/
 00_K-VENDOR-00_DETECTION_ASSETS/K-VENDOR-OPENSCAP/scap-content/
+
+# Detection rule vendor repos (fetched by scripts/fetch-detection-rules.sh)
+vendor/sigma/rules/
+vendor/yara-rules/
+vendor/nuclei-templates/

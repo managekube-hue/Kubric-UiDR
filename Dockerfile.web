@@ -18,9 +18,11 @@ COPY frontend/ .
 
 # Build arguments for compile-time env injection
 ARG NEXT_PUBLIC_API_BASE=http://k-svc:8080
+ARG NEXT_PUBLIC_KAI_URL=http://kai:8101
 ARG NEXT_PUBLIC_NATS_WS_URL=ws://nats:9222
 
 ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
+ENV NEXT_PUBLIC_KAI_URL=$NEXT_PUBLIC_KAI_URL
 ENV NEXT_PUBLIC_NATS_WS_URL=$NEXT_PUBLIC_NATS_WS_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -47,5 +49,8 @@ EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD wget -q -O /dev/null http://localhost:3000/api/auth/session 2>/dev/null || exit 1
 
 CMD ["node", "server.js"]

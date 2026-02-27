@@ -6,7 +6,7 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS contract_rate_tables (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES kubric_tenants(id),
+    tenant_id       TEXT NOT NULL REFERENCES kubric_tenants(tenant_id),
     contract_id     UUID NOT NULL,
     effective_from  DATE NOT NULL,
     effective_to    DATE,                          -- NULL = currently active
@@ -45,7 +45,7 @@ CREATE POLICY tenant_isolation ON contract_rate_tables
     USING (
         current_setting('app.current_tenant_id', true) IS NULL
         OR current_setting('app.current_tenant_id', true) = ''
-        OR tenant_id = current_setting('app.current_tenant_id')::uuid
+        OR tenant_id = current_setting('app.current_tenant_id', true)
     );
 
 -- Index for active rate lookup

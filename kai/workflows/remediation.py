@@ -25,6 +25,7 @@ import structlog
 log = structlog.get_logger(__name__)
 
 _TEMPORAL_URL    = os.getenv("KUBRIC_TEMPORAL_URL", "temporal:7233")
+_VDR_URL         = os.getenv("KUBRIC_VDR_URL", "http://vdr:8081")
 _TASK_QUEUE      = "kubric-remediation"
 
 
@@ -36,7 +37,7 @@ async def validate_finding(finding_id: str, tenant_id: str) -> dict[str, Any]:
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             resp = await client.get(
-                f"http://localhost:8081/v1/vdr/findings/{finding_id}",
+                f"{_VDR_URL}/v1/vdr/findings/{finding_id}",
                 headers={"X-Tenant-ID": tenant_id},
             )
             if resp.status_code == 200:
@@ -70,10 +71,43 @@ async def run_ansible(playbook: str, target: str, tenant_id: str) -> dict[str, A
 
 
 async def verify_remediation(finding_id: str, tenant_id: str) -> bool:
-    """Re-check asset after remediation. Returns True if finding is resolved."""
-    # Placeholder — in Layer 3 this triggers a targeted Nuclei scan
-    log.info("remediation.verify", finding_id=finding_id)
-    return True
+    """Re-check asset after remediation. Returns True if finding is resolved.
+
+    Calls the VDR service to confirm the finding status is 'remediated' or
+    'accepted'. Returns False if VDR is unreachable so unresolved findings do
+    not get auto-closed. Layer 3 will extend this with a targeted Nuclei
+    re-scan.
+    """
+    import httpx  # noqa: PLC0415
+    vdr_url = os.getenv("KUBRIC_VDR_URL", "http://vdr:8081")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.get(
+                f"{vdr_url}/v1/vdr/findings/{finding_id}",
+                headers={"X-Tenant-ID": tenant_id},
+            )
+            if resp.status_code == 404:
+                log.info("remediation.verify.not_found", finding_id=finding_id)
+                return True
+            if resp.status_code == 200:
+                data = resp.json()
+                status = data.get("status", "")
+                resolved = status in ("remediated", "accepted", "false_positive")
+                log.info(
+                    "remediation.verify.result",
+                    finding_id=finding_id,
+                    status=status,
+                    resolved=resolved,
+                )
+                return resolved
+    except Exception as exc:
+        log.warning(
+            "remediation.verify.vdr_unreachable",
+            finding_id=finding_id,
+            error=str(exc),
+        )
+        return False
+    return False
 
 
 async def close_finding(finding_id: str, tenant_id: str, plan_id: str) -> bool:
@@ -82,7 +116,7 @@ async def close_finding(finding_id: str, tenant_id: str, plan_id: str) -> bool:
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             resp = await client.patch(
-                f"http://localhost:8081/v1/vdr/findings/{finding_id}",
+                f"{_VDR_URL}/v1/vdr/findings/{finding_id}",
                 json={"status": "remediated", "remediation_plan_id": plan_id},
                 headers={"X-Tenant-ID": tenant_id},
             )

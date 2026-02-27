@@ -66,7 +66,7 @@ END $$;
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS kai_alerts (
     id              UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id       UUID        NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    tenant_id       TEXT        NOT NULL REFERENCES kubric_tenants(tenant_id) ON DELETE CASCADE,
     alert_source    TEXT        NOT NULL,                        -- sigma_match|yara_match|behavioral|anomaly|threat_intel
     severity        TEXT        NOT NULL CHECK (severity IN ('critical','high','medium','low','info')),
     title           TEXT        NOT NULL,
@@ -107,7 +107,7 @@ CREATE INDEX IF NOT EXISTS idx_kai_alerts_tenant_open   ON kai_alerts (tenant_id
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS kai_patch_jobs (
     id                   UUID    DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id            UUID    NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    tenant_id            TEXT    NOT NULL REFERENCES kubric_tenants(tenant_id) ON DELETE CASCADE,
     asset_id             UUID    NOT NULL,
     cve_ids              TEXT[]  NOT NULL DEFAULT '{}',
     patch_ids            TEXT[]  NOT NULL DEFAULT '{}',
@@ -148,7 +148,7 @@ CREATE INDEX IF NOT EXISTS idx_kai_patch_jobs_cve_ids        ON kai_patch_jobs U
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS kai_drift_events (
     id             UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id      UUID        NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    tenant_id      TEXT        NOT NULL REFERENCES kubric_tenants(tenant_id) ON DELETE CASCADE,
     asset_id       UUID        NOT NULL,
     control_id     TEXT        NOT NULL,
     framework      TEXT        NOT NULL
@@ -187,7 +187,7 @@ CREATE INDEX IF NOT EXISTS idx_kai_drift_events_tenant_open ON kai_drift_events 
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS kai_baselines (
     id               UUID    DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id        UUID    NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+    tenant_id        TEXT    NOT NULL REFERENCES kubric_tenants(tenant_id) ON DELETE CASCADE,
     asset_id         UUID    NOT NULL,
     baseline_type    TEXT    NOT NULL
                      CHECK (baseline_type IN (

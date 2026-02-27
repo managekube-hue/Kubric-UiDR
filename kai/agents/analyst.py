@@ -55,7 +55,7 @@ class AnalystAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.analyst.report",
+            f"kubric.{tenant_id}.kai.analyst.report.v1",
             orjson.dumps(report),
         )
 

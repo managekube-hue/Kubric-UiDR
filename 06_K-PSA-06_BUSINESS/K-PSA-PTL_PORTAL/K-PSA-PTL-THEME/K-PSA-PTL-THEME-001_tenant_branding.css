@@ -1,0 +1,91 @@
+/**
+ * Kubric Portal — Tenant Branding CSS
+ *
+ * CSS custom properties set on [data-tenant] or overridden via Authentik
+ * OIDC claims at login time.  These cascade to every component using the
+ * standard Tailwind CSS variable pattern.
+ *
+ * Usage:
+ *   <body data-tenant="acme-corp">
+ *     or
+ *   document.documentElement.style.setProperty('--brand-primary', '#1d4ed8');
+ */
+
+/* ─── Default Kubric palette ────────────────────────────────────────────── */
+:root {
+  --brand-primary:        #1d4ed8;   /* blue-700 */
+  --brand-primary-light:  #3b82f6;   /* blue-500 */
+  --brand-primary-dark:   #1e40af;   /* blue-800 */
+  --brand-accent:         #7c3aed;   /* violet-600 */
+  --brand-danger:         #dc2626;   /* red-600 */
+  --brand-warning:        #d97706;   /* amber-600 */
+  --brand-success:        #16a34a;   /* green-600 */
+  --brand-logo-url:       url('/kubric-logo.svg');
+  --brand-favicon-url:    url('/favicon.ico');
+  --brand-company-name:   'Kubric';
+  --brand-portal-title:   'Security Operations Portal';
+  --brand-sidebar-bg:     #1e293b;   /* slate-800 */
+  --brand-sidebar-text:   #e2e8f0;   /* slate-200 */
+  --brand-nav-active-bg:  #1d4ed8;   /* matches primary */
+}
+
+/* ─── Utility classes using brand vars ───────────────────────────────────── */
+.brand-primary        { color: var(--brand-primary); }
+.brand-bg-primary     { background-color: var(--brand-primary); }
+.brand-border-primary { border-color: var(--brand-primary); }
+
+.brand-btn {
+  background-color: var(--brand-primary);
+  color: #ffffff;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.brand-btn:hover {
+  background-color: var(--brand-primary-dark);
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────────────────── */
+.sidebar {
+  background-color: var(--brand-sidebar-bg);
+  color: var(--brand-sidebar-text);
+}
+.sidebar-nav-item.active {
+  background-color: var(--brand-nav-active-bg);
+}
+
+/* ─── Severity chip colours (shared across all dashboard components) ─────── */
+.chip-critical { background: #fee2e2; color: #991b1b; }
+.chip-high     { background: #ffedd5; color: #9a3412; }
+.chip-medium   { background: #fef9c3; color: #854d0e; }
+.chip-low      { background: #f1f5f9; color: #475569; }
+.chip-info     { background: #dbeafe; color: #1e40af; }
+
+/* ─── Score ring colours ─────────────────────────────────────────────────── */
+.score-excellent { color: #16a34a; } /* 80–100 */
+.score-good      { color: #ca8a04; } /* 60–79  */
+.score-poor      { color: #dc2626; } /* 0–59   */
+
+/* ─── White-label logo override ─────────────────────────────────────────── */
+.portal-logo {
+  background-image: var(--brand-logo-url);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 120px;
+  height: 40px;
+}
+
+/* ─── White-label overrides per tenant (set by OIDC login handler) ──────── */
+/* Example injected at runtime:
+   <style>
+     :root {
+       --brand-primary: #0f766e;
+       --brand-logo-url: url('https://cdn.example.com/logo.svg');
+       --brand-company-name: 'Acme Corp';
+     }
+   </style>
+*/

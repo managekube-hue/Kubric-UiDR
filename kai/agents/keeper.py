@@ -4,7 +4,7 @@ KAI-KEEPER — Remediation plan generation and execution.
 Subscribes to:  kubric.{tenant}.vdr.vuln.*   (vulnerability findings from VDR)
                 kubric.{tenant}.grc.drift.*  (config drift from KIC)
 Triggers:       Temporal RemediationWorkflow (via trigger_remediation @tool)
-Publishes to:   kubric.kai.keeper.plan
+Publishes to:   kubric.{tenant}.kai.keeper.plan.v1
 
 Agent persona: DevSecOps Remediation Engineer
 CrewAI integration: make_keeper_crew() → Crew.kickoff() → JSON remediation plan
@@ -61,7 +61,7 @@ class KeeperAgent:
             await _trigger_temporal_workflow(tenant_id, result)
             result["status"] = "submitted"
 
-        await nats_client.publish("kubric.kai.keeper.plan", orjson.dumps(result))
+        await nats_client.publish(f"kubric.{tenant_id}.kai.keeper.plan.v1", orjson.dumps(result))
 
         log.info(
             "keeper.plan_published",

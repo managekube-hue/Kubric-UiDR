@@ -45,7 +45,7 @@ class BillAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.bill.reconciled",
+            f"kubric.{tenant_id}.kai.bill.reconciled.v1",
             orjson.dumps(billing_result),
         )
 

@@ -51,7 +51,7 @@ class DeployAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.deploy.validated",
+            f"kubric.{tenant_id}.kai.deploy.validated.v1",
             orjson.dumps(validation),
         )
 

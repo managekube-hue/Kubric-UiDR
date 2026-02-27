@@ -51,7 +51,7 @@ class RiskAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.risk.assessment",
+            f"kubric.{tenant_id}.kai.risk.assessment.v1",
             orjson.dumps(assessment),
         )
 

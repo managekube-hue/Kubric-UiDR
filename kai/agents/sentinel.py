@@ -49,7 +49,7 @@ class SentinelAgent:
         }
 
         # Publish to NATS for portal display
-        subject = f"kubric.health.score.{tenant_id}"
+        subject = f"kubric.{tenant_id}.kai.sentinel.score.v1"
         await nats_client.publish(subject, orjson.dumps(kiss_result))
 
         log.info(

@@ -99,7 +99,7 @@ class CommAgent:
             "timestamp":         int(time.time() * 1000),
         }
 
-        await nats_client.publish("kubric.kai.comm.dispatched", orjson.dumps(result))
+        await nats_client.publish(f"kubric.{tenant_id}.kai.comm.dispatched.v1", orjson.dumps(result))
         log.info("comm.dispatched", tenant_id=tenant_id, severity=severity, channels=dispatched)
         return result
 

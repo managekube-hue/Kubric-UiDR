@@ -29,11 +29,11 @@ from kai.config import settings
 
 log = structlog.get_logger(__name__)
 
-# ─── Internal ports (Docker Compose service names) ────────────────────────────
-_VDR_BASE  = "http://vdr:8081"
-_KIC_BASE  = "http://kic:8082"
-_NOC_BASE  = "http://noc:8083"
-_KSVC_BASE = "http://ksvc:8080"
+# ─── Internal service URLs — driven by config so env overrides work everywhere ─
+_VDR_BASE  = settings.vdr_url
+_KIC_BASE  = settings.kic_url
+_NOC_BASE  = settings.noc_url
+_KSVC_BASE = settings.ksvc_url
 
 
 # =============================================================================

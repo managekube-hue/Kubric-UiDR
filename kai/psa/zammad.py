@@ -1,18 +1,19 @@
 """
 Zammad PSA integration — creates and updates tickets via REST API.
 
-Credentials fetched from Vault: secret/kubric/psa/zammad
+Credentials read from KUBRIC_ZAMMAD_URL and KUBRIC_ZAMMAD_TOKEN env vars (injected by Vault in production).
 Idempotent: checks event_id → ticket_id mapping before creating duplicates.
 Uses in-memory cache (Redis optional) for event dedup.
 """
 
 from __future__ import annotations
 
-import os
 from typing import Any
 
 import httpx
 import structlog
+
+from kai.config import settings
 
 log = structlog.get_logger(__name__)
 
@@ -28,8 +29,9 @@ class ZammadClient:
         url: str | None = None,
         api_token: str | None = None,
     ) -> None:
-        self.url = (url or os.getenv("KUBRIC_ZAMMAD_URL", "")).rstrip("/")
-        self.api_token = api_token or os.getenv("KUBRIC_ZAMMAD_API_TOKEN", "")
+        # Prefer explicit args, then settings (Vault-injected), then empty
+        self.url = (url or settings.zammad_url).rstrip("/")
+        self.api_token = api_token or settings.zammad_token
         self._headers = {
             "Authorization": f"Token token={self.api_token}",
             "Content-Type": "application/json",

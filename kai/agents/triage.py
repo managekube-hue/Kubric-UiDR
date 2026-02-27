@@ -2,7 +2,7 @@
 KAI-TRIAGE — Alert enrichment and severity scoring.
 
 Subscribes to:  kubric.{tenant}.edr.*, kubric.{tenant}.ndr.*, kubric.{tenant}.itdr.*
-Publishes to:   kubric.kai.triage.enriched  (via CrewAI publish_nats_event tool)
+Publishes to:   kubric.{tenant}.kai.triage.enriched.v1
 
 Agent persona: Senior SOC Analyst
 CrewAI integration: make_triage_crew() → Crew.kickoff() → JSON output
@@ -52,9 +52,9 @@ class TriageAgent:
             "model_used":         "crewai/ollama/llama3.2",
         }
 
-        # Publish enriched result back to NATS
+        # Publish enriched result back to NATS — subject includes tenant_id for isolation
         await nats_client.publish(
-            "kubric.kai.triage.enriched",
+            f"kubric.{tenant_id}.kai.triage.enriched.v1",
             orjson.dumps(triage_result),
         )
 

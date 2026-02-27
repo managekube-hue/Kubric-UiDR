@@ -2,20 +2,20 @@
 KAI NATS subscriber loop.
 
 Runs as a background asyncio task (started in FastAPI lifespan).
-Subscribes to the full kubric.* subject tree and dispatches each message
-to the appropriate KAI agent based on the subject prefix.
+Subscribes to the full kubric.> subject tree and dispatches each message
+to the appropriate KAI agent based on the category segment.
 
-Subject taxonomy (mirrors KUBRIC Implementation doc §19):
+Subject format: kubric.{tenant_id}.{category}.{event}.v1
 
-  kubric.edr.*           → KAI-TRIAGE
-  kubric.ndr.*           → KAI-TRIAGE + KAI-FORESIGHT
-  kubric.itdr.*          → KAI-TRIAGE
-  kubric.vdr.*           → KAI-KEEPER
-  kubric.grc.*           → KAI-KEEPER
-  kubric.billing.*       → (future KAI-CLERK)
-  kubric.health.*        → publish only (KAI-SENTINEL pushes here)
-  kubric.ti.*            → (future SIDR TI ingestion)
-  kubric.comm.*          → KAI-COMM
+Category dispatch (all 13 KAI personas):
+
+  edr / ndr / itdr / cdr / sdr / adr / ddr  → KAI-TRIAGE
+  vdr / grc                                  → KAI-KEEPER
+  comm                                       → KAI-COMM
+  billing                                    → KAI-BILL
+  agent                                      → KAI-HOUSE
+  ti                                         → KAI-ANALYST
+  kai  (sub-route by segment 3)              → hunter / deploy / invest / risk / simulate
 """
 
 from __future__ import annotations
@@ -30,14 +30,42 @@ from kai.core.nats_client import nats_client
 
 log = structlog.get_logger(__name__)
 
-# Lazy imports of agents to avoid circular imports at module load time
-_SUBJECT_DISPATCH: dict[str, str] = {
-    "kubric.edr.":    "triage",
-    "kubric.itdr.":   "triage",
-    "kubric.ndr.":    "triage",   # triage handles NDR too; foresight runs separately
-    "kubric.vdr.":    "keeper",
-    "kubric.grc.":    "keeper",
-    "kubric.comm.":   "comm",
+# ─── Category-based dispatch (segment index 2 of subject) ─────────────────
+# Subject: kubric.{tenant_id}.{category}.{event}...
+_CATEGORY_DISPATCH: dict[str, str] = {
+    # Detection events → KAI-TRIAGE
+    "edr":  "triage",
+    "ndr":  "triage",
+    "itdr": "triage",
+    "cdr":  "triage",
+    "sdr":  "triage",
+    "adr":  "triage",
+    "ddr":  "triage",
+    # Vulnerability / compliance → KAI-KEEPER
+    "vdr":  "keeper",
+    "grc":  "keeper",
+    # Communication routing → KAI-COMM
+    "comm": "comm",
+    # Billing events → KAI-BILL
+    "billing": "bill",
+    # Agent lifecycle → KAI-HOUSE
+    "agent": "house",
+    # Threat-intel feeds → KAI-ANALYST
+    "ti": "analyst",
+    # KAI sub-namespace → secondary dispatch on segment 3
+    "kai": "_kai_sub",
+}
+
+# Secondary dispatch for kubric.{tenant_id}.kai.{persona}.* subjects
+_KAI_SUB_DISPATCH: dict[str, str] = {
+    "hunt":     "hunter",
+    "hunter":   "hunter",
+    "deploy":   "deploy",
+    "invest":   "invest",
+    "risk":     "risk",
+    "simulate": "simulate",
+    "analyst":  "analyst",
+    "foresight": "foresight",
 }
 
 
@@ -61,14 +89,22 @@ async def _route_message(msg: Msg) -> None:
 
 
 def _resolve_agent(subject: str) -> str | None:
-    for prefix, agent in _SUBJECT_DISPATCH.items():
-        if subject.startswith(prefix):
-            return agent
-    return None
+    """Extract category from segment index 2, look up dispatch table."""
+    parts = subject.split(".")
+    if len(parts) < 3:
+        return None
+    category = parts[2]  # kubric.{tenant_id}.{category}.*
+    agent = _CATEGORY_DISPATCH.get(category)
+    if agent == "_kai_sub":
+        # Secondary dispatch: kubric.{tenant_id}.kai.{persona}.*
+        if len(parts) < 4:
+            return None
+        return _KAI_SUB_DISPATCH.get(parts[3])
+    return agent
 
 
 async def _dispatch(agent_name: str, subject: str, event: dict) -> None:  # type: ignore[type-arg]
-    # Import agents lazily — avoids top-level import of crewai at startup
+    """Import agents lazily — avoids top-level import of crewai at startup."""
     if agent_name == "triage":
         from kai.agents.triage import TriageAgent  # noqa: PLC0415
         await TriageAgent().handle(subject=subject, event=event)
@@ -80,6 +116,42 @@ async def _dispatch(agent_name: str, subject: str, event: dict) -> None:  # type
     elif agent_name == "comm":
         from kai.agents.comm import CommAgent  # noqa: PLC0415
         await CommAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "bill":
+        from kai.agents.bill import BillAgent  # noqa: PLC0415
+        await BillAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "house":
+        from kai.agents.house import HouseAgent  # noqa: PLC0415
+        await HouseAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "analyst":
+        from kai.agents.analyst import AnalystAgent  # noqa: PLC0415
+        await AnalystAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "hunter":
+        from kai.agents.hunter import HunterAgent  # noqa: PLC0415
+        await HunterAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "deploy":
+        from kai.agents.deploy import DeployAgent  # noqa: PLC0415
+        await DeployAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "invest":
+        from kai.agents.invest import InvestAgent  # noqa: PLC0415
+        await InvestAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "risk":
+        from kai.agents.risk import RiskAgent  # noqa: PLC0415
+        await RiskAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "simulate":
+        from kai.agents.simulate import SimulateAgent  # noqa: PLC0415
+        await SimulateAgent().handle(subject=subject, event=event)
+
+    elif agent_name == "foresight":
+        from kai.agents.foresight import ForesightAgent  # noqa: PLC0415
+        await ForesightAgent().handle(subject=subject, event=event)
 
 
 async def start_subscriber() -> list[object]:

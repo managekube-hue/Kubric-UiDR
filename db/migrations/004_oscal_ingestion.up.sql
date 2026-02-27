@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS oscal_control_enhancements (
 -- Per-tenant control implementation status
 CREATE TABLE IF NOT EXISTS tenant_control_status (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES kubric_tenants(id),
+    tenant_id       TEXT NOT NULL REFERENCES kubric_tenants(tenant_id),
     control_id      UUID NOT NULL REFERENCES oscal_controls(id),
     status          TEXT NOT NULL CHECK (status IN (
         'not_implemented',
@@ -64,7 +64,7 @@ CREATE POLICY tenant_isolation ON tenant_control_status
     USING (
         current_setting('app.current_tenant_id', true) IS NULL
         OR current_setting('app.current_tenant_id', true) = ''
-        OR tenant_id = current_setting('app.current_tenant_id')::uuid
+        OR tenant_id = current_setting('app.current_tenant_id', true)
     );
 
 -- Indexes

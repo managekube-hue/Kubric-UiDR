@@ -50,7 +50,7 @@ class InvestAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.invest.case",
+            f"kubric.{tenant_id}.kai.invest.case.v1",
             orjson.dumps(case_report),
         )
 

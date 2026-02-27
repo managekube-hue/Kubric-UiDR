@@ -52,7 +52,7 @@ class ForesightAgent:
             "horizon_hours":     24,
         }
 
-        subject = f"kubric.kai.foresight.risk.{tenant_id}"
+        subject = f"kubric.{tenant_id}.kai.foresight.risk.v1"
         await nats_client.publish(subject, orjson.dumps(forecast))
         log.info("foresight.published", tenant_id=tenant_id, risk=forecast["risk_score"])
         return forecast

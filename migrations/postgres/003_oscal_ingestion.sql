@@ -2,6 +2,8 @@
 -- NIST 800-53 rev5 control storage for GRC compliance module
 -- Loaded from vendor/oscal/nist.gov/SP800-53/rev5/*.json
 
+BEGIN;
+
 CREATE TABLE IF NOT EXISTS oscal_controls (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     catalog_id      TEXT NOT NULL,                 -- e.g. 'NIST-SP-800-53-rev5'
@@ -37,7 +39,7 @@ CREATE TABLE IF NOT EXISTS oscal_control_enhancements (
 -- Per-tenant control implementation status
 CREATE TABLE IF NOT EXISTS tenant_control_status (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    tenant_id       UUID NOT NULL REFERENCES tenants(id),
+    tenant_id       TEXT NOT NULL REFERENCES kubric_tenants(tenant_id) ON DELETE CASCADE,
     control_id      UUID NOT NULL REFERENCES oscal_controls(id),
     status          TEXT NOT NULL CHECK (status IN (
         'not_implemented',
@@ -59,8 +61,14 @@ CREATE TABLE IF NOT EXISTS tenant_control_status (
 
 -- RLS: tenant isolation
 ALTER TABLE tenant_control_status ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tenant_control_status FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS tenant_isolation ON tenant_control_status;
 CREATE POLICY tenant_isolation ON tenant_control_status
-    USING (tenant_id = current_setting('app.tenant_id')::uuid);
+    USING (
+        current_setting('app.current_tenant_id', true) IS NULL
+        OR current_setting('app.current_tenant_id', true) = ''
+        OR tenant_id = current_setting('app.current_tenant_id', true)
+    );
 
 -- Indexes
 CREATE INDEX idx_oscal_family ON oscal_controls (family);
@@ -84,3 +92,5 @@ SELECT
 FROM tenant_control_status tcs
 JOIN oscal_controls oc ON oc.id = tcs.control_id
 GROUP BY tcs.tenant_id, oc.family;
+
+COMMIT;

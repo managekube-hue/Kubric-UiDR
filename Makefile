@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -15,6 +15,7 @@ help:
 	@echo "  make deploy-prod   Deploy to production (requires manual approval)"
 	@echo "  make clean         Clean build artifacts and caches"
 	@echo "  make check-gpl-boundary  Verify no GPL-3.0 RITA imports in services/"
+	@echo "  make enterprise-check  Run monorepo enterprise readiness gate"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -163,6 +164,10 @@ security-scan:
 check-gpl-boundary:
 	@echo "Checking GPL 3.0 boundary: scanning for activecm/rita imports in services/..."
 	@grep -r '"github.com/activecm/rita' services/ 2>/dev/null && (echo 'GPL VIOLATION DETECTED — remove activecm/rita imports from services/' && exit 1) || echo 'GPL boundary clean'
+
+enterprise-check:
+	@echo "Running enterprise readiness gate..."
+	@python3 scripts/validate_enterprise_readiness.py || python scripts/validate_enterprise_readiness.py || py -3 scripts/validate_enterprise_readiness.py
 
 # Building
 

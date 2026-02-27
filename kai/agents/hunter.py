@@ -50,7 +50,7 @@ class HunterAgent:
         }
 
         await nats_client.publish(
-            "kubric.kai.hunter.findings",
+            f"kubric.{tenant_id}.kai.hunter.findings.v1",
             orjson.dumps(findings),
         )
 
