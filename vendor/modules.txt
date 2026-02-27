@@ -973,8 +973,10 @@ github.com/stripe/stripe-go/v76/billingportal/session
 github.com/stripe/stripe-go/v76/checkout/session
 github.com/stripe/stripe-go/v76/customer
 github.com/stripe/stripe-go/v76/form
+github.com/stripe/stripe-go/v76/paymentintent
 github.com/stripe/stripe-go/v76/subscription
 github.com/stripe/stripe-go/v76/usagerecord
+github.com/stripe/stripe-go/v76/webhook
 # github.com/theupdateframework/go-tuf/v2 v2.4.1
 ## explicit; go 1.25.5
 github.com/theupdateframework/go-tuf/v2/metadata
