@@ -1,0 +1,115 @@
+###############################################################################
+# K-DL-MIG-002  Liquibase Database Migration Job
+# Image     : liquibase/liquibase:4.29
+# Target    : PostgreSQL kubric database
+###############################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: liquibase-changelogs
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: liquibase
+    app.kubernetes.io/part-of: kubric
+data:
+  master.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+      <include file="/changelogs/001-init-extensions.xml"/>
+      <include file="/changelogs/002-create-tables.xml"/>
+    </databaseChangeLog>
+
+  001-init-extensions.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+      <changeSet id="1" author="kubric">
+        <sql>CREATE EXTENSION IF NOT EXISTS "uuid-ossp";</sql>
+        <sql>CREATE EXTENSION IF NOT EXISTS "pgcrypto";</sql>
+        <sql>CREATE EXTENSION IF NOT EXISTS "vector";</sql>
+        <sql>CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";</sql>
+      </changeSet>
+    </databaseChangeLog>
+
+  002-create-tables.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+
+      <changeSet id="2" author="kubric">
+        <createTable tableName="tenants">
+          <column name="id" type="UUID" defaultValueComputed="uuid_generate_v4()">
+            <constraints primaryKey="true" nullable="false"/>
+          </column>
+          <column name="name" type="VARCHAR(255)">
+            <constraints nullable="false"/>
+          </column>
+          <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="NOW()"/>
+          <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="NOW()"/>
+        </createTable>
+      </changeSet>
+    </databaseChangeLog>
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: liquibase-migration
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: liquibase
+    app.kubernetes.io/part-of: kubric
+    app.kubernetes.io/component: migration
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: liquibase
+        app.kubernetes.io/part-of: kubric
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: liquibase
+          image: liquibase/liquibase:4.29
+          command:
+            - liquibase
+          args:
+            - --url=jdbc:postgresql://postgres.kubric.svc.cluster.local:5432/kubric
+            - --username=kubric
+            - --password=$(DB_PASSWORD)
+            - --changelog-file=/changelogs/master.xml
+            - update
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_PASSWORD
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: changelogs
+              mountPath: /changelogs
+              readOnly: true
+      volumes:
+        - name: changelogs
+          configMap:
+            name: liquibase-changelogs

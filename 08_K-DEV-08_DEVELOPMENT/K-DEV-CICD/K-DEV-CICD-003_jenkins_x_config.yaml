@@ -1,0 +1,56 @@
+buildPack: go
+pipelineConfig:
+  pipelines:
+    pullRequest:
+      pipeline:
+        agent:
+          image: golang:1.22
+        stages:
+          - name: build
+            steps:
+              - name: go-build
+                command: go
+                args:
+                  - build
+                  - -o
+                  - bin/ksvc
+                  - ./cmd/ksvc
+          - name: test
+            steps:
+              - name: go-test
+                command: go
+                args:
+                  - test
+                  - -race
+                  - ./...
+    release:
+      pipeline:
+        agent:
+          image: golang:1.22
+        stages:
+          - name: build
+            steps:
+              - name: go-build
+                command: go
+                args:
+                  - build
+                  - -o
+                  - bin/ksvc
+                  - ./cmd/ksvc
+          - name: test
+            steps:
+              - name: go-test
+                command: go
+                args:
+                  - test
+                  - -race
+                  - ./...
+          - name: container
+            steps:
+              - name: build-and-push
+                command: /kaniko/executor
+                args:
+                  - --dockerfile=Dockerfile
+                  - --context=.
+                  - --destination=ghcr.io/managekube-hue/kubric-ksvc:${VERSION}
+                  - --cache=true

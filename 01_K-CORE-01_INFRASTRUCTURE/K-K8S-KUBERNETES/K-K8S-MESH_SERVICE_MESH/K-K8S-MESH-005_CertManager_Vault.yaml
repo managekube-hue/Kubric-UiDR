@@ -1,0 +1,50 @@
+###############################################################################
+# K-K8S-MESH-005  cert-manager ClusterIssuer (Vault PKI) + Certificate
+# Vault     : https://vault.kubric.svc:8200
+# PKI path  : pki/sign/kubric-issuer
+###############################################################################
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: vault-issuer
+  labels:
+    app.kubernetes.io/name: vault-issuer
+    app.kubernetes.io/part-of: kubric
+spec:
+  vault:
+    path: pki/sign/kubric-issuer
+    server: https://vault.kubric.svc:8200
+    caBundle: ""
+    auth:
+      kubernetes:
+        role: kubric-cert-manager
+        mountPath: /v1/auth/kubernetes
+        serviceAccountRef:
+          name: cert-manager
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kubric-wildcard
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: kubric-wildcard
+    app.kubernetes.io/part-of: kubric
+spec:
+  secretName: kubric-tls
+  issuerRef:
+    name: vault-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+  commonName: kubric.io
+  dnsNames:
+    - kubric.io
+    - "*.kubric.io"
+  duration: 2160h      # 90 days
+  renewBefore: 360h    # 15 days
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  usages:
+    - server auth
+    - client auth

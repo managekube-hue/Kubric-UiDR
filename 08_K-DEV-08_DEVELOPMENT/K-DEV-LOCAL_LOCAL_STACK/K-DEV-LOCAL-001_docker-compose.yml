@@ -1,0 +1,178 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_DB: kubric
+      POSTGRES_USER: kubric
+      POSTGRES_PASSWORD: ${KUBRIC_DB_PASSWORD:-kubric}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kubric"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3
+    restart: unless-stopped
+    ports: ["8123:8123", "9000:9000"]
+    volumes: [chdata:/var/lib/clickhouse]
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    ports: ["4222:4222", "8222:8222"]
+    command: ["--jetstream", "--store_dir=/data", "--max_mem_store=1GB", "--max_file_store=10GB"]
+    volumes: [natsdata:/data]
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8222/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports: ["6379:6379"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  neo4j:
+    image: neo4j:5-community
+    restart: unless-stopped
+    ports: ["7474:7474", "7687:7687"]
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-kubric}
+    volumes: [neo4jdata:/data]
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  vault:
+    image: hashicorp/vault:1.17
+    restart: unless-stopped
+    ports: ["8200:8200"]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: kubric-dev-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    cap_add: [IPC_LOCK]
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.0
+    restart: unless-stopped
+    ports: ["6333:6333", "6334:6334"]
+    volumes: [qdrantdata:/qdrant/storage]
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:6333/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports: ["11434:11434"]
+    volumes: [ollamadata:/root/.ollama]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/api/tags || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  minio:
+    image: quay.io/minio/minio:latest
+    restart: unless-stopped
+    ports: ["9050:9000", "9051:9001"]
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes: [miniodata:/data]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:v2.54.0
+    restart: unless-stopped
+    ports: ["9090:9090"]
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9090/-/healthy || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  loki:
+    image: grafana/loki:3.4.0
+    restart: unless-stopped
+    ports: ["3100:3100"]
+    volumes: [lokidata:/loki]
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:3100/ready || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    restart: unless-stopped
+    ports: ["3000:3000"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    volumes:
+      - grafanadata:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  tempo:
+    image: grafana/tempo:2.7.0
+    restart: unless-stopped
+    ports: ["3200:3200", "4317:4317", "4318:4318"]
+    volumes: [tempodata:/var/tempo]
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:3200/ready || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata:
+  chdata:
+  natsdata:
+  redisdata:
+  neo4jdata:
+  qdrantdata:
+  ollamadata:
+  miniodata:
+  lokidata:
+  grafanadata:
+  tempodata:

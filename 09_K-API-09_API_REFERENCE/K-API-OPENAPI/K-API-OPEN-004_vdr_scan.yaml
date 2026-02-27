@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info:
+  title: Kubric VDR Vulnerability Findings API
+  description: >
+    CRUD API for normalized vulnerability findings ingested from Nuclei,
+    Trivy, Grype, and manual assessments. Served by the VDR Go service
+    (internal/vdr). Findings are enriched with EPSS scores when a CVE ID
+    is present and ClickHouse is configured.
+  version: 1.0.0
+  contact:
+    name: Kubric Platform Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8081
+    description: Local development (VDR default listen address)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: findings
+    description: Vulnerability finding management and triage
+
+paths:
+  /findings:
+    get:
+      operationId: listFindings
+      tags: [findings]
+      summary: List findings for a tenant
+      description: >
+        Returns findings filtered by tenant_id (required) and optionally
+        by severity and status. Results ordered by created_at descending.
+        Requires kubric:analyst or kubric:readonly role.
+      parameters:
+        - name: tenant_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Tenant identifier (required filter).
+        - name: severity
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [critical, high, medium, low, informational]
+          description: Filter by exact severity level.
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [open, acknowledged, resolved, false-positive]
+          description: Filter by triage status.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 50
+          description: Maximum number of findings to return.
+      responses:
+        "200":
+          description: Array of finding objects with optional EPSS enrichment.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FindingResponse"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      operationId: createFinding
+      tags: [findings]
+      summary: Create a new vulnerability finding
+      description: >
+        Ingests a normalized finding from any supported scanner.
+        A UUID is auto-generated. Status defaults to "open".
+        Requires kubric:admin or kubric:analyst role.
+        Publishes a finding.created NATS event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFindingRequest"
+      responses:
+        "201":
+          description: Finding created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Finding"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /findings/{findingID}:
+    parameters:
+      - $ref: "#/components/parameters/findingID"
+
+    get:
+      operationId: getFinding
+      tags: [findings]
+      summary: Get a single finding
+      description: >
+        Returns the finding by ID, enriched with EPSS score when a CVE ID
+        is present. Requires kubric:analyst or kubric:readonly role.
+      responses:
+        "200":
+          description: Finding object with optional EPSS enrichment.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FindingResponse"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateFindingStatus
+      tags: [findings]
+      summary: Update finding triage status
+      description: >
+        Updates the triage status of a finding. Requires kubric:admin or
+        kubric:analyst role. Publishes a finding.status_changed NATS event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFindingStatusRequest"
+      responses:
+        "200":
+          description: Updated finding object.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Finding"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    findingID:
+      name: findingID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Finding UUID.
+
+  schemas:
+    Finding:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - target
+        - scanner
+        - severity
+        - title
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        tenant_id:
+          type: string
+          example: acme-corp
+        target:
+          type: string
+          description: Hostname, container image, IP, or URL scanned.
+          example: nginx:1.19.0
+        scanner:
+          type: string
+          enum: [nuclei, trivy, grype, manual]
+          example: trivy
+        severity:
+          type: string
+          enum: [critical, high, medium, low, informational]
+          example: high
+        cve_id:
+          type: string
+          description: CVE identifier (empty string if not applicable).
+          example: CVE-2021-3618
+        title:
+          type: string
+          example: ALPACA Attack
+        description:
+          type: string
+          example: TLS implementation vulnerable to cross-protocol attack.
+        status:
+          type: string
+          enum: [open, acknowledged, resolved, false-positive]
+          example: open
+        raw_json:
+          type: string
+          description: Raw scanner output blob (JSON string).
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    FindingResponse:
+      description: Finding enriched with optional EPSS data.
+      allOf:
+        - $ref: "#/components/schemas/Finding"
+        - type: object
+          properties:
+            epss_score:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: EPSS probability score (0.0 to 1.0). Present only when CVE ID exists and ClickHouse is configured.
+              example: 0.943
+            epss_percentile:
+              type: number
+              format: float
+              minimum: 0
+              maximum: 1
+              description: EPSS percentile rank (0.0 to 1.0).
+              example: 0.991
+
+    CreateFindingRequest:
+      type: object
+      required:
+        - tenant_id
+        - target
+        - scanner
+        - severity
+        - title
+      properties:
+        tenant_id:
+          type: string
+          example: acme-corp
+        target:
+          type: string
+          example: nginx:1.19.0
+        scanner:
+          type: string
+          enum: [nuclei, trivy, grype, manual]
+        severity:
+          type: string
+          enum: [critical, high, medium, low, informational]
+        cve_id:
+          type: string
+          description: Optional CVE identifier.
+          example: CVE-2021-3618
+        title:
+          type: string
+          example: ALPACA Attack
+        description:
+          type: string
+          default: ""
+        raw_json:
+          type: string
+          description: Raw scanner output blob (JSON string).
+          default: ""
+
+    UpdateFindingStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [open, acknowledged, resolved, false-positive]
+          description: New triage status.
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid JSON in request body.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Finding not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

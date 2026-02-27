@@ -1,0 +1,135 @@
+###############################################################################
+# K-K8S-OBS-001  Prometheus Operator CRD + Service
+# Namespace : monitoring
+# Replicas  : 2
+# Retention : 30d
+# Storage   : 50Gi PVC
+###############################################################################
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    app.kubernetes.io/part-of: kubric
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: kubric
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: kubric
+spec:
+  replicas: 2
+  version: v2.54.0
+  retention: 30d
+  scrapeInterval: 30s
+  evaluationInterval: 30s
+
+  serviceAccountName: prometheus
+
+  serviceMonitorSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubric
+
+  ruleSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubric
+
+  alerting:
+    alertmanagers:
+      - namespace: monitoring
+        name: alertmanager
+        port: web
+
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+
+  enableAdminAPI: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: kubric
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: prometheus
+    prometheus: kubric
+  ports:
+    - name: web
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: kubric
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+  labels:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: kubric
+rules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+  labels:
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: kubric
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+    namespace: monitoring

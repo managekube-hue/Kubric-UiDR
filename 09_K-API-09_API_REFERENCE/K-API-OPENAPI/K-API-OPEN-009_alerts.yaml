@@ -1,0 +1,439 @@
+openapi: 3.0.3
+info:
+  title: Kubric NOC Detection & Alerts API
+  description: >
+    Correlated incident and alert management endpoints served by the NOC
+    service correlation engine (internal/noc/handler_detection.go).
+    Incidents are created by the correlation engine when NATS-sourced events
+    match correlation rules. Read endpoints require kubric:analyst or
+    kubric:readonly role. Write endpoints require kubric:admin or kubric:analyst.
+  version: 1.0.0
+  contact:
+    name: Kubric Platform Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8083
+    description: Local development (NOC default listen address)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: incidents
+    description: Correlated security incidents
+  - name: timeline
+    description: Unified event timeline
+  - name: dispatch
+    description: Incident dispatch to SOAR/SIRP
+
+paths:
+  /detection/incidents:
+    get:
+      operationId: listIncidents
+      tags: [incidents]
+      summary: List correlated incidents
+      description: >
+        Returns paginated, filtered list of correlated incidents from the
+        in-memory incident store. Results ordered by created_at descending.
+        Requires kubric:analyst or kubric:readonly role.
+      parameters:
+        - name: tenant_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Tenant identifier (required).
+        - name: severity
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5
+          description: Filter by exact severity (1=info, 5=critical).
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [new, investigating, resolved]
+          description: Filter by incident status.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 50
+          description: Maximum number of incidents to return.
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          description: Number of incidents to skip for pagination.
+      responses:
+        "200":
+          description: Paginated list of incidents.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentListResponse"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /detection/incidents/{id}:
+    parameters:
+      - $ref: "#/components/parameters/incidentID"
+
+    get:
+      operationId: getIncident
+      tags: [incidents]
+      summary: Get a single incident
+      description: >
+        Returns the incident by UUID, including all contributing events.
+        Requires kubric:analyst or kubric:readonly role.
+      responses:
+        "200":
+          description: Incident object with contributing events.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: patchIncident
+      tags: [incidents]
+      summary: Update incident status
+      description: >
+        Updates the status of an incident. Only transitions to
+        "investigating" or "resolved" are allowed. Setting status back
+        to "new" is explicitly rejected. Requires kubric:admin or
+        kubric:analyst role.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchIncidentRequest"
+      responses:
+        "200":
+          description: Updated incident object.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /detection/incidents/{id}/dispatch:
+    parameters:
+      - $ref: "#/components/parameters/incidentID"
+
+    post:
+      operationId: dispatchIncident
+      tags: [dispatch]
+      summary: Re-dispatch incident to TheHive and Shuffle
+      description: >
+        Manually re-dispatches an incident to TheHive (creates an alert)
+        and Shuffle (triggers a SOAR workflow). Useful for re-triggering
+        failed dispatches or testing playbooks. Requires kubric:admin or
+        kubric:analyst role.
+      responses:
+        "202":
+          description: Incident dispatched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DispatchResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          description: Dispatch failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /detection/timeline:
+    get:
+      operationId: listTimeline
+      tags: [timeline]
+      summary: Unified event timeline
+      description: >
+        Returns a chronological stream of NormalizedEvents across all
+        sources (CoreSec, NetGuard, Wazuh, Falco, Suricata) for the
+        requested tenant and time range. Requires kubric:analyst or
+        kubric:readonly role.
+      parameters:
+        - name: tenant_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Tenant identifier (required).
+        - name: since
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: Start of time range (RFC3339). Defaults to 5 minutes ago.
+        - name: until
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          description: End of time range (RFC3339). Defaults to now.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 2000
+            default: 200
+          description: Maximum number of events to return.
+      responses:
+        "200":
+          description: Chronological event stream.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimelineResponse"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    incidentID:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Incident UUID.
+
+  schemas:
+    Incident:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - title
+        - severity
+        - status
+        - events
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          example: acme-corp
+        title:
+          type: string
+          example: "Multi-stage attack: process execution + network beacon"
+        description:
+          type: string
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: "1=info, 2=low, 3=medium, 4=high, 5=critical"
+        status:
+          type: string
+          enum: [new, investigating, resolved]
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/NormalizedEvent"
+          description: Contributing events that triggered the correlation rule.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        fingerprint:
+          type: string
+          description: SHA-256 dedup key (32 hex characters).
+        thehive_id:
+          type: string
+          description: TheHive alert ID (set after dispatch).
+        mitre_tactic:
+          type: string
+          example: initial-access
+        mitre_technique:
+          type: string
+          example: T1190
+        rule_id:
+          type: string
+        rule_name:
+          type: string
+
+    NormalizedEvent:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - source
+        - event_type
+        - severity
+        - timestamp
+        - title
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+        agent_id:
+          type: string
+        source:
+          type: string
+          enum: [coresec, netguard, wazuh, falco, suricata]
+          description: Originating detection source.
+        event_type:
+          type: string
+          enum: [process, network, fim, alert]
+        severity:
+          type: integer
+          minimum: 1
+          maximum: 5
+        timestamp:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        indicators:
+          type: array
+          items:
+            type: string
+          description: IOCs (IPs, hashes, domains, filenames).
+        mitre_tactic:
+          type: string
+        mitre_technique:
+          type: string
+        raw_data:
+          type: object
+          additionalProperties: true
+          description: Raw event data from the source system.
+        fingerprint:
+          type: string
+          description: Event-level dedup key.
+
+    IncidentListResponse:
+      type: object
+      required: [data, count, offset, limit]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Incident"
+        count:
+          type: integer
+          description: Number of incidents in this response page.
+        offset:
+          type: integer
+        limit:
+          type: integer
+
+    TimelineResponse:
+      type: object
+      required: [data, count, since, until]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/NormalizedEvent"
+        count:
+          type: integer
+          description: Number of events in this response.
+        since:
+          type: string
+          format: date-time
+          description: Effective start of time range (RFC3339).
+        until:
+          type: string
+          format: date-time
+          description: Effective end of time range (RFC3339).
+
+    PatchIncidentRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [investigating, resolved]
+          description: >
+            New incident status. Only "investigating" and "resolved" are
+            accepted. "new" cannot be set via PATCH.
+
+    DispatchResponse:
+      type: object
+      required:
+        - status
+        - incident_id
+      properties:
+        status:
+          type: string
+          enum: [dispatched]
+        incident_id:
+          type: string
+          format: uuid
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request (missing ID or malformed JSON).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Incident not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

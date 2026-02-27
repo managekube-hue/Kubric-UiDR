@@ -1,0 +1,212 @@
+openapi: 3.0.3
+info:
+  title: Kubric Platform Health Endpoints
+  description: >
+    Health check endpoints served by all Kubric Go services.
+    /healthz is the Kubernetes liveness probe (always returns 200 when
+    the process is running). /readyz is the readiness probe (checks
+    downstream dependencies like Postgres and KAI Python).
+    /detection/health returns correlation engine runtime metrics.
+    These endpoints do NOT require JWT authentication.
+  version: 1.0.0
+  contact:
+    name: Kubric Platform Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8080
+    description: K-SVC
+  - url: http://localhost:8081
+    description: VDR
+  - url: http://localhost:8082
+    description: KIC
+  - url: http://localhost:8083
+    description: NOC
+  - url: http://localhost:8100
+    description: KAI gateway
+
+tags:
+  - name: health
+    description: Liveness, readiness, and engine health probes
+
+paths:
+  /healthz:
+    get:
+      operationId: liveness
+      tags: [health]
+      summary: Liveness probe
+      description: >
+        Returns HTTP 200 when the service process is running. Used by
+        Kubernetes kubelet for liveness checks. No authentication required.
+        No downstream dependency checks are performed.
+      security: []
+      responses:
+        "200":
+          description: Service is alive.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthOK"
+              example:
+                status: ok
+
+  /readyz:
+    get:
+      operationId: readiness
+      tags: [health]
+      summary: Readiness probe
+      description: >
+        Checks downstream dependencies. For K-SVC, VDR, KIC, and NOC this
+        means a Postgres ping with a 2-second timeout. For the KAI gateway
+        this means an HTTP GET to the KAI Python /healthz endpoint with a
+        3-second timeout. Returns 503 when any dependency is unreachable.
+        No authentication required.
+      security: []
+      responses:
+        "200":
+          description: Service is ready to accept traffic.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthOK"
+              example:
+                status: ok
+        "503":
+          description: One or more dependencies are unreachable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthDegraded"
+              examples:
+                postgres:
+                  summary: Postgres unavailable
+                  value:
+                    status: postgres unavailable
+                    error: "dial tcp 127.0.0.1:5432: connect: connection refused"
+                kai-python:
+                  summary: KAI Python unreachable
+                  value:
+                    status: kai-python unreachable
+                    error: "Get http://localhost:8101/healthz: dial tcp: connection refused"
+
+  /detection/health:
+    get:
+      operationId: correlationEngineHealth
+      tags: [health]
+      summary: Correlation engine metrics
+      description: >
+        Returns runtime metrics for the NOC correlation engine. Only
+        available on the NOC service when the engine initialized
+        successfully (requires NATS). Requires kubric:analyst or
+        kubric:readonly role (JWT required).
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Engine is operational with runtime metrics.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EngineHealth"
+              example:
+                status: ok
+                metrics:
+                  events_ingested: 152847
+                  rules_evaluated: 4320
+                  incidents_created: 23
+                  dedup_hits: 147
+                  buffer_key_count: 12
+                  incident_total: 23
+                  rule_count: 8
+        "401":
+          description: Missing or invalid JWT.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthOK:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+
+    HealthDegraded:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          description: Human-readable degradation reason.
+          example: postgres unavailable
+        error:
+          type: string
+          description: Underlying error message.
+        code:
+          type: string
+          description: Optional HTTP status code from downstream (KAI only).
+
+    EngineHealth:
+      type: object
+      required: [status, metrics]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        metrics:
+          type: object
+          required:
+            - events_ingested
+            - rules_evaluated
+            - incidents_created
+            - dedup_hits
+            - buffer_key_count
+            - incident_total
+            - rule_count
+          properties:
+            events_ingested:
+              type: integer
+              format: int64
+              description: Total events ingested from NATS and webhooks.
+            rules_evaluated:
+              type: integer
+              format: int64
+              description: Total rule evaluations performed.
+            incidents_created:
+              type: integer
+              format: int64
+              description: Total incidents created by correlation rules.
+            dedup_hits:
+              type: integer
+              format: int64
+              description: Number of incidents suppressed by deduplication.
+            buffer_key_count:
+              type: integer
+              format: int64
+              description: Number of active tenant:eventType keys in the event buffer.
+            incident_total:
+              type: integer
+              format: int64
+              description: Total incidents in the in-memory incident store.
+            rule_count:
+              type: integer
+              format: int64
+              description: Number of active correlation rules.
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string

@@ -1,0 +1,155 @@
+###############################################################################
+# K-K8S-002  NATS StatefulSet (3 replicas) + Headless Service + PDB
+# Namespace : kubric
+# Image     : nats:2.10-alpine
+# JetStream : enabled via ConfigMap
+###############################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nats-config
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/part-of: kubric
+data:
+  nats.conf: |
+    listen: 0.0.0.0:4222
+    http: 0.0.0.0:8222
+
+    cluster {
+      name: kubric-nats
+      listen: 0.0.0.0:6222
+      routes [
+        nats-route://nats-0.nats.kubric.svc.cluster.local:6222
+        nats-route://nats-1.nats.kubric.svc.cluster.local:6222
+        nats-route://nats-2.nats.kubric.svc.cluster.local:6222
+      ]
+    }
+
+    jetstream {
+      max_mem: 1GB
+      max_file: 100GB
+      store_dir: /data/jetstream
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/part-of: kubric
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: nats
+  ports:
+    - name: client
+      port: 4222
+      targetPort: 4222
+      protocol: TCP
+    - name: cluster
+      port: 6222
+      targetPort: 6222
+      protocol: TCP
+    - name: monitor
+      port: 8222
+      targetPort: 8222
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/part-of: kubric
+spec:
+  serviceName: nats
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nats
+        app.kubernetes.io/part-of: kubric
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: nats
+          image: nats:2.10-alpine
+          command:
+            - nats-server
+            - --config
+            - /etc/nats/nats.conf
+          ports:
+            - name: client
+              containerPort: 4222
+              protocol: TCP
+            - name: cluster
+              containerPort: 6222
+              protocol: TCP
+            - name: monitor
+              containerPort: 8222
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8222
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8222
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 5
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          volumeMounts:
+            - name: nats-data
+              mountPath: /data
+            - name: nats-config
+              mountPath: /etc/nats
+              readOnly: true
+      volumes:
+        - name: nats-config
+          configMap:
+            name: nats-config
+  volumeClaimTemplates:
+    - metadata:
+        name: nats-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 100Gi
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: nats-pdb
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: nats
+    app.kubernetes.io/part-of: kubric
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats

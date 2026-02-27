@@ -1,0 +1,313 @@
+openapi: 3.0.3
+info:
+  title: Kubric KIC Compliance Assessment API
+  description: >
+    CRUD API for compliance control assessments. Records individual control
+    evaluation results from OSCAL, Lula, kube-bench, and OpenSCAP.
+    Served by the KIC Go service (internal/kic).
+  version: 1.0.0
+  contact:
+    name: Kubric Platform Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8082
+    description: Local development (KIC default listen address)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: assessments
+    description: Compliance control assessment results
+
+paths:
+  /assessments:
+    get:
+      operationId: listAssessments
+      tags: [assessments]
+      summary: List assessments for a tenant
+      description: >
+        Returns assessments filtered by tenant_id (required) and optionally
+        by framework and status. Results ordered by assessed_at descending.
+        Requires kubric:analyst or kubric:readonly role.
+      parameters:
+        - name: tenant_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Tenant identifier (required filter).
+        - name: framework
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [NIST-800-53, CIS-K8s-1.8, PCI-DSS-4.0, SOC2, ISO-27001]
+          description: Filter by compliance framework.
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [pass, fail, not-applicable, not-reviewed]
+          description: Filter by assessment status.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 50
+          description: Maximum number of assessments to return.
+      responses:
+        "200":
+          description: Array of assessment objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assessment"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      operationId: createAssessment
+      tags: [assessments]
+      summary: Create a compliance assessment result
+      description: >
+        Records a single control assessment result. Status defaults to
+        "not-reviewed" and assessed_by defaults to "manual" if omitted.
+        assessed_at defaults to current time if omitted.
+        Requires kubric:admin or kubric:analyst role.
+        Publishes an assessment.created NATS event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssessmentRequest"
+      responses:
+        "201":
+          description: Assessment created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /assessments/{assessmentID}:
+    parameters:
+      - $ref: "#/components/parameters/assessmentID"
+
+    get:
+      operationId: getAssessment
+      tags: [assessments]
+      summary: Get a single assessment
+      description: >
+        Returns the assessment by ID. Requires kubric:analyst or
+        kubric:readonly role.
+      responses:
+        "200":
+          description: Assessment object.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateAssessmentStatus
+      tags: [assessments]
+      summary: Update assessment status and evidence
+      description: >
+        Updates the pass/fail status and optionally replaces the evidence
+        JSON blob. Requires kubric:admin or kubric:analyst role.
+        Publishes an assessment.status_changed NATS event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAssessmentRequest"
+      responses:
+        "200":
+          description: Updated assessment object.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    assessmentID:
+      name: assessmentID
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Assessment UUID.
+
+  schemas:
+    Assessment:
+      type: object
+      required:
+        - id
+        - tenant_id
+        - framework
+        - control_id
+        - title
+        - status
+        - assessed_by
+        - assessed_at
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        tenant_id:
+          type: string
+          example: acme-corp
+        framework:
+          type: string
+          enum: [NIST-800-53, CIS-K8s-1.8, PCI-DSS-4.0, SOC2, ISO-27001]
+          example: CIS-K8s-1.8
+        control_id:
+          type: string
+          description: Framework-specific control identifier.
+          example: CIS.5.1.1
+        title:
+          type: string
+          example: Ensure RBAC is enabled
+        status:
+          type: string
+          enum: [pass, fail, not-applicable, not-reviewed]
+          example: pass
+        evidence_json:
+          type: string
+          description: OSCAL assessment result evidence blob (JSON string).
+        assessed_by:
+          type: string
+          enum: [lula, kube-bench, openscap, manual]
+          example: kube-bench
+        assessed_at:
+          type: string
+          format: date-time
+          description: When the assessment was performed.
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateAssessmentRequest:
+      type: object
+      required:
+        - tenant_id
+        - framework
+        - control_id
+        - title
+      properties:
+        tenant_id:
+          type: string
+          example: acme-corp
+        framework:
+          type: string
+          enum: [NIST-800-53, CIS-K8s-1.8, PCI-DSS-4.0, SOC2, ISO-27001]
+        control_id:
+          type: string
+          example: CIS.5.1.1
+        title:
+          type: string
+          example: Ensure RBAC is enabled
+        status:
+          type: string
+          enum: [pass, fail, not-applicable, not-reviewed]
+          default: not-reviewed
+        assessed_by:
+          type: string
+          enum: [lula, kube-bench, openscap, manual]
+          default: manual
+        assessed_at:
+          type: string
+          format: date-time
+          description: RFC3339 timestamp. Defaults to current time if omitted.
+        evidence_json:
+          type: string
+          description: OSCAL assessment result evidence blob (JSON string).
+          default: ""
+
+    UpdateAssessmentRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [pass, fail, not-applicable, not-reviewed]
+          description: Updated assessment status.
+        evidence_json:
+          type: string
+          description: >
+            Replacement evidence JSON. If omitted or empty, existing
+            evidence is preserved.
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid JSON in request body.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Assessment not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

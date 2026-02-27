@@ -1,0 +1,49 @@
+name: API Integration Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: kubric
+          POSTGRES_USER: kubric
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U kubric"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      nats:
+        image: nats:2.10
+        ports:
+          - 4222:4222
+
+      clickhouse:
+        image: clickhouse/clickhouse-server:24.3
+        ports:
+          - 8123:8123
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgres://kubric:test@localhost:5432/kubric?sslmode=disable
+          NATS_URL: nats://localhost:4222
+          CLICKHOUSE_URL: http://localhost:8123
+        run: go test -tags=integration ./internal/...

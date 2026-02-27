@@ -1,0 +1,310 @@
+# Kubric Small / Single-Node Deployment
+# Minimal docker-compose for a 4-core / 16 GB machine.
+# No monitoring stack (Prometheus, Grafana, Loki).
+# All services on a single cubric-net bridge network.
+#
+# Usage:
+#   docker compose -f K-DEPLOY-SM-001_docker-compose.yml up -d
+#
+# Secrets: copy .env.example to .env and fill in values before first run.
+
+version: "3.9"
+
+x-kubric-env: &kubric-env
+  KUBRIC_DATABASE_URL: "postgresql://kubric:${KUBRIC_DB_PASSWORD:-kubric}@postgres:5432/kubric"
+  KUBRIC_NATS_URL: "nats://nats:4222"
+  KUBRIC_CLICKHOUSE_URL: "clickhouse://default:@clickhouse:9000/kubric"
+
+services:
+  # ---- Infrastructure ----
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kubric
+      POSTGRES_PASSWORD: ${KUBRIC_DB_PASSWORD:-kubric}
+      POSTGRES_DB: kubric
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kubric -d kubric"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [cubric-net]
+
+  nats:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    command: ["-js", "-m", "8222", "--name", "kubric"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    volumes:
+      - nats-data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [cubric-net]
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks: [cubric-net]
+
+  # ---- Application Services ----
+
+  ksvc:
+    build:
+      context: ../..
+      dockerfile: build/ksvc/Dockerfile
+      target: final
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [cubric-net]
+
+  vdr:
+    build:
+      context: ../..
+      dockerfile: build/vdr/Dockerfile
+      target: final
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8081"
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [cubric-net]
+
+  kic:
+    build:
+      context: ../..
+      dockerfile: build/kic/Dockerfile
+      target: final
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8082"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8082/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [cubric-net]
+
+  noc:
+    build:
+      context: ../..
+      dockerfile: build/noc/Dockerfile
+      target: final
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      LISTEN_ADDR: ":8083"
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.75"
+          memory: 512M
+        reservations:
+          cpus: "0.15"
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8083/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [cubric-net]
+
+  kai:
+    build:
+      context: ../../kai
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      KUBRIC_TENANT_ID: "${KUBRIC_DEFAULT_TENANT:-acme-corp}"
+      KUBRIC_NATS_URL: "nats://nats:4222"
+      KUBRIC_DATABASE_URL: "postgresql://kubric:${KUBRIC_DB_PASSWORD:-kubric}@postgres:5432/kubric"
+      KUBRIC_CLICKHOUSE_URL: "clickhouse://default:@clickhouse:9000/kubric"
+      KUBRIC_KSVC_URL: "http://ksvc:8080"
+      KUBRIC_VDR_URL: "http://vdr:8081"
+      KUBRIC_KIC_URL: "http://kic:8082"
+      KUBRIC_NOC_URL: "http://noc:8083"
+      KUBRIC_KAI_PYTHON_URL: "http://kai-python:8101"
+    ports:
+      - "8100:8100"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8100/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks: [cubric-net]
+
+  kai-python:
+    build:
+      context: ../../03_K-KAI-03_ORCHESTRATION
+      dockerfile: Dockerfile
+    image: kubric/kai-python:latest
+    restart: unless-stopped
+    environment:
+      NATS_URL: "nats://nats:4222"
+      DATABASE_URL: "postgresql://kubric:${KUBRIC_DB_PASSWORD:-kubric}@postgres:5432/kubric"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+    ports:
+      - "8101:8101"
+    depends_on:
+      nats:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8101/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: ["python", "-m", "uvicorn", "K-KAI-API.K-KAI-API-001_fastapi_server:app", "--host", "0.0.0.0", "--port", "8101"]
+    networks: [cubric-net]
+
+volumes:
+  postgres-data:
+  nats-data:
+  clickhouse-data:
+
+networks:
+  cubric-net:
+    driver: bridge

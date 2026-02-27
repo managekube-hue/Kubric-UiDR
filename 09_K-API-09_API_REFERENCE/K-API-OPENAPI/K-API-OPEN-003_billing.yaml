@@ -1,0 +1,191 @@
+openapi: 3.0.3
+info:
+  title: Kubric K-SVC Billing API
+  description: >
+    Stripe billing integration for tenant subscription management.
+    Routes are mounted under /tenants/{tenantID} on the K-SVC service.
+    Subscription creation requires kubric:admin role.
+    Portal access requires kubric:admin or kubric:analyst role.
+  version: 1.0.0
+  contact:
+    name: Kubric Platform Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8080
+    description: Local development (K-SVC default listen address)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: billing
+    description: Stripe subscription and billing portal management
+
+paths:
+  /tenants/{tenantID}/subscription:
+    post:
+      operationId: createSubscription
+      tags: [billing]
+      summary: Create a Stripe subscription
+      description: >
+        Creates a new Stripe subscription for the specified tenant using the
+        given price_id. The tenant must already have a stripe_customer_id
+        (set during tenant provisioning). Requires kubric:admin role.
+      parameters:
+        - $ref: "#/components/parameters/tenantID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubscriptionRequest"
+      responses:
+        "201":
+          description: Subscription created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Tenant has no Stripe customer ID configured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "502":
+          description: Stripe API error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /tenants/{tenantID}/billing/portal:
+    get:
+      operationId: getBillingPortal
+      tags: [billing]
+      summary: Get Stripe billing portal URL
+      description: >
+        Returns a Stripe Customer Portal URL where the tenant admin can
+        manage subscriptions, invoices, and payment methods. The portal
+        redirects back to the configured return URL after the session ends.
+        Requires kubric:admin or kubric:analyst role.
+      parameters:
+        - $ref: "#/components/parameters/tenantID"
+      responses:
+        "200":
+          description: Billing portal URL.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BillingPortalResponse"
+        "404":
+          description: Tenant not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Tenant has no Stripe customer ID configured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "502":
+          description: Stripe API error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    tenantID:
+      name: tenantID
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^[a-z0-9][a-z0-9\\-]{1,61}[a-z0-9]$"
+      description: Tenant identifier (Kubernetes namespace naming convention).
+
+  schemas:
+    CreateSubscriptionRequest:
+      type: object
+      required:
+        - price_id
+      properties:
+        price_id:
+          type: string
+          example: price_1PxAbCdEfGhIjK
+          description: >
+            Stripe Price ID for the desired subscription plan.
+            Must be a valid price object in the connected Stripe account.
+
+    SubscriptionResponse:
+      type: object
+      required:
+        - subscription_id
+        - status
+      properties:
+        subscription_id:
+          type: string
+          example: sub_1PxAbCdEfGhIjK
+          description: Stripe Subscription ID.
+        status:
+          type: string
+          enum: [active, incomplete, incomplete_expired, trialing, past_due, canceled, unpaid, paused]
+          example: active
+          description: Current Stripe subscription status.
+
+    BillingPortalResponse:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          example: https://billing.stripe.com/p/session/test_abc123
+          description: >
+            Stripe Customer Portal session URL. Valid for a single use.
+            Defaults return URL is https://app.kubric.io/billing unless
+            configured otherwise via BILLING_RETURN_URL.
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid JSON in request body.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: Validation error (e.g. missing price_id).
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

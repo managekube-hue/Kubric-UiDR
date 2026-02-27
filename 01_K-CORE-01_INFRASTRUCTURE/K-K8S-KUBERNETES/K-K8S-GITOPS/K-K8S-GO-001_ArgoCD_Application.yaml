@@ -1,0 +1,36 @@
+###############################################################################
+# K-K8S-GO-001  ArgoCD Application CRD
+# Deploys the kubric-platform from Git
+###############################################################################
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubric-platform
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: kubric-platform
+    app.kubernetes.io/part-of: kubric
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/managekube-hue/Kubric-UiDR.git
+    path: deployments/k8s
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubric
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

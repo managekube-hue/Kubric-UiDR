@@ -1,0 +1,49 @@
+###############################################################################
+# K-K8S-GO-002  Flux GitRepository + Kustomization CRDs
+# Source     : https://github.com/managekube-hue/Kubric-UiDR.git
+###############################################################################
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kubric-platform
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/name: kubric-platform
+    app.kubernetes.io/part-of: kubric
+spec:
+  interval: 5m
+  url: https://github.com/managekube-hue/Kubric-UiDR.git
+  ref:
+    branch: main
+  secretRef:
+    name: kubric-git-credentials
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kubric-platform
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/name: kubric-platform
+    app.kubernetes.io/part-of: kubric
+spec:
+  interval: 10m
+  sourceRef:
+    kind: GitRepository
+    name: kubric-platform
+  path: ./deployments/k8s
+  prune: true
+  targetNamespace: kubric
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: ksvc
+      namespace: kubric
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      name: postgres
+      namespace: kubric
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      name: nats
+      namespace: kubric

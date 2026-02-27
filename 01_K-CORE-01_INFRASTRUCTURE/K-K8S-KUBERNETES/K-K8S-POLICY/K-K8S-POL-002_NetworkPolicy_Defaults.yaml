@@ -1,0 +1,116 @@
+###############################################################################
+# K-K8S-POL-002  NetworkPolicy Defaults for namespace kubric
+# 1. deny-all           — default deny ingress + egress
+# 2. allow-kubric-internal — pods with part-of: kubric can talk to each other
+# 3. allow-dns           — allow UDP 53 to kube-dns
+# 4. allow-monitoring    — allow Prometheus scrapes from monitoring namespace
+###############################################################################
+
+# --- 1. Default deny all ingress and egress ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: deny-all
+    app.kubernetes.io/part-of: kubric
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+
+---
+# --- 2. Allow internal communication within kubric ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-kubric-internal
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: allow-kubric-internal
+    app.kubernetes.io/part-of: kubric
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubric
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: kubric
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: kubric
+
+---
+# --- 3. Allow DNS resolution (UDP 53 to kube-dns) ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: allow-dns
+    app.kubernetes.io/part-of: kubric
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
+# --- 4. Allow Prometheus scrapes from monitoring namespace ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-monitoring
+  namespace: kubric
+  labels:
+    app.kubernetes.io/name: allow-monitoring
+    app.kubernetes.io/part-of: kubric
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubric
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 8081
+        - protocol: TCP
+          port: 8082
+        - protocol: TCP
+          port: 8083
+        - protocol: TCP
+          port: 8100
+        - protocol: TCP
+          port: 9090

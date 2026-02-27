@@ -1,0 +1,278 @@
+openapi: 3.0.3
+info:
+  title: Kubric K-SVC Tenant Provisioning API
+  description: >
+    CRUD API for tenant lifecycle management.
+    Served by the K-SVC Go service (internal/ksvc).
+    All mutating routes require the kubric:admin role.
+    Read routes require kubric:analyst or kubric:readonly.
+  version: 1.0.0
+  contact:
+    name: Kubric Platform Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost:8080
+    description: Local development (K-SVC default listen address)
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: tenants
+    description: Tenant provisioning and lifecycle
+
+paths:
+  /tenants:
+    get:
+      operationId: listTenants
+      tags: [tenants]
+      summary: List tenants
+      description: >
+        Returns up to `limit` tenants ordered by created_at descending.
+        Requires kubric:analyst or kubric:readonly role.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 50
+          description: Maximum number of tenants to return.
+      responses:
+        "200":
+          description: Array of tenant objects.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tenant"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      operationId: createTenant
+      tags: [tenants]
+      summary: Create a new tenant
+      description: >
+        Provisions a new tenant. The tenant_id must follow Kubernetes namespace
+        naming conventions. Plan defaults to "starter" if omitted.
+        Requires kubric:admin role. Publishes a tenant.created NATS event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantRequest"
+      responses:
+        "201":
+          description: Tenant created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: Conflict -- tenant_id already exists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /tenants/{tenantID}:
+    parameters:
+      - $ref: "#/components/parameters/tenantID"
+
+    get:
+      operationId: getTenant
+      tags: [tenants]
+      summary: Get a single tenant
+      description: >
+        Returns the tenant identified by tenantID.
+        Requires kubric:analyst or kubric:readonly role.
+      responses:
+        "200":
+          description: Tenant object.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      operationId: updateTenant
+      tags: [tenants]
+      summary: Partially update a tenant
+      description: >
+        Updates name, plan, and/or status. Empty strings leave existing values
+        unchanged. Requires kubric:admin role.
+        Publishes a tenant.updated NATS event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTenantRequest"
+      responses:
+        "200":
+          description: Updated tenant object.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      operationId: deleteTenant
+      tags: [tenants]
+      summary: Delete a tenant
+      description: >
+        Permanently removes the tenant. Requires kubric:admin role.
+        Publishes a tenant.deleted NATS event.
+      responses:
+        "204":
+          description: Tenant deleted successfully. No content returned.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    tenantID:
+      name: tenantID
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: "^[a-z0-9][a-z0-9\\-]{1,61}[a-z0-9]$"
+      description: >
+        Tenant identifier. Must conform to Kubernetes namespace naming rules
+        (lowercase alphanumeric and hyphens, 3-63 characters).
+
+  schemas:
+    Tenant:
+      type: object
+      required:
+        - tenant_id
+        - name
+        - plan
+        - status
+        - created_at
+        - updated_at
+      properties:
+        tenant_id:
+          type: string
+          example: acme-corp
+        name:
+          type: string
+          example: Acme Corp
+        plan:
+          type: string
+          enum: [starter, pro, enterprise]
+          example: starter
+        status:
+          type: string
+          enum: [active, suspended]
+          example: active
+        stripe_customer_id:
+          type: string
+          description: Stripe customer ID. Omitted when empty.
+          example: cus_abc123
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateTenantRequest:
+      type: object
+      required:
+        - tenant_id
+        - name
+      properties:
+        tenant_id:
+          type: string
+          example: acme-corp
+          description: Must follow Kubernetes namespace naming convention.
+        name:
+          type: string
+          example: Acme Corp
+          description: Human-readable tenant display name.
+        plan:
+          type: string
+          enum: [starter, pro, enterprise]
+          default: starter
+          description: Subscription plan tier. Defaults to "starter".
+
+    UpdateTenantRequest:
+      type: object
+      description: All fields are optional. Empty strings leave existing values unchanged.
+      properties:
+        name:
+          type: string
+          example: New Acme Name
+        plan:
+          type: string
+          enum: [starter, pro, enterprise]
+        status:
+          type: string
+          enum: [active, suspended]
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          example: tenant not found
+
+  responses:
+    BadRequest:
+      description: Invalid JSON in request body.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Missing or invalid JWT.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

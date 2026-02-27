@@ -1,0 +1,73 @@
+###############################################################################
+# K-K8S-MESH-003  Cilium CNI Helm Values
+# For use with: helm install cilium cilium/cilium
+###############################################################################
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+    replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  ui:
+    enabled: true
+    replicas: 1
+    ingress:
+      enabled: false
+  metrics:
+    enabled:
+      - dns
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
+    dashboards:
+      enabled: true
+
+ipam:
+  mode: kubernetes
+
+kubeProxyReplacement: strict
+
+encryption:
+  enabled: true
+  type: wireguard
+  nodeEncryption: false
+
+operator:
+  replicas: 2
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+bpf:
+  masquerade: true
+  tproxy: true
+
+rollOutCiliumPods: true
+
+monitor:
+  enabled: true
+
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true

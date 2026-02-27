@@ -1,0 +1,31 @@
+when:
+  branch: main
+
+steps:
+  - name: lint
+    image: golangci/golangci-lint:v1.59
+    commands:
+      - golangci-lint run
+
+  - name: test
+    image: golang:1.22
+    commands:
+      - go test -race ./...
+
+  - name: build
+    image: golang:1.22
+    commands:
+      - go build -o bin/ksvc ./cmd/ksvc
+      - go build -o bin/noc ./cmd/noc
+
+  - name: docker
+    image: plugins/docker
+    settings:
+      repo: ghcr.io/managekube-hue/kubric-ksvc
+      tags:
+        - ${CI_COMMIT_SHA}
+      registry: ghcr.io
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password

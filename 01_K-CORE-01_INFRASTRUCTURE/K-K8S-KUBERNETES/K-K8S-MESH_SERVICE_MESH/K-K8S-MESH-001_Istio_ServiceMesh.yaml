@@ -1,0 +1,71 @@
+###############################################################################
+# K-K8S-MESH-001  Istio IstioOperator
+# Profile   : default
+# mTLS      : auto-enabled
+# Tracing   : Tempo via Zipkin protocol
+###############################################################################
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+metadata:
+  name: kubric-istio
+  namespace: istio-system
+  labels:
+    app.kubernetes.io/name: istio
+    app.kubernetes.io/part-of: kubric
+spec:
+  profile: default
+
+  meshConfig:
+    accessLogFile: /dev/stdout
+    enableAutoMtls: true
+    defaultConfig:
+      tracing:
+        zipkin:
+          address: tempo.monitoring:9411
+        sampling: 100.0
+      holdApplicationUntilProxyStarts: true
+
+  components:
+    ingressGateways:
+      - name: istio-ingressgateway
+        enabled: true
+        k8s:
+          service:
+            type: LoadBalancer
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          hpaSpec:
+            minReplicas: 2
+            maxReplicas: 5
+
+    pilot:
+      enabled: true
+      k8s:
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+        hpaSpec:
+          minReplicas: 2
+          maxReplicas: 5
+
+  values:
+    global:
+      proxy:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+    pilot:
+      traceSampling: 100.0

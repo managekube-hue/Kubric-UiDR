@@ -1,0 +1,157 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubric-platform-alerts
+  namespace: kubric
+  labels:
+    app.kubernetes.io/part-of: kubric
+    prometheus: kubric
+    role: alert-rules
+spec:
+  groups:
+    - name: kubric-service-health
+      interval: 30s
+      rules:
+        - alert: KubricServiceDown
+          expr: |
+            probe_success{job="kubric-healthz"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "Kubric service {{ $labels.instance }} is down"
+            description: >
+              The /healthz endpoint for {{ $labels.instance }} has returned
+              non-200 for more than 2 minutes. The service is likely crashed
+              or unresponsive.
+            runbook_url: https://docs.kubric.io/runbooks/service-down
+
+        - alert: KubricHighErrorRate
+          expr: |
+            (
+              sum by (service) (rate(http_requests_total{status=~"5.."}[5m]))
+              /
+              sum by (service) (rate(http_requests_total[5m]))
+            ) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "High 5xx error rate on {{ $labels.service }}"
+            description: >
+              Service {{ $labels.service }} is returning 5xx errors at a rate
+              above 5% over the last 5 minutes. Current rate:
+              {{ $value | humanizePercentage }}.
+            runbook_url: https://docs.kubric.io/runbooks/high-error-rate
+
+    - name: kubric-agent-health
+      interval: 60s
+      rules:
+        - alert: KubricAgentStale
+          expr: |
+            time() - kubric_agent_last_heartbeat_timestamp_seconds > 300
+          for: 5m
+          labels:
+            severity: warning
+            team: noc
+          annotations:
+            summary: "Agent {{ $labels.agent_id }} heartbeat stale"
+            description: >
+              Agent {{ $labels.agent_id }} (tenant {{ $labels.tenant_id }})
+              has not sent a heartbeat in over 5 minutes. The agent may be
+              offline, network-partitioned, or the NATS connection is broken.
+              Last heartbeat was {{ $value | humanizeDuration }} ago.
+            runbook_url: https://docs.kubric.io/runbooks/agent-stale
+
+    - name: kubric-vulnerability
+      interval: 60s
+      rules:
+        - alert: KubricCriticalVulnOpen
+          expr: |
+            kubric_vdr_findings_open_total{severity="critical"} > 0
+            and
+            (time() - kubric_vdr_finding_oldest_open_seconds{severity="critical"}) > 86400
+          for: 1h
+          labels:
+            severity: critical
+            team: vdr
+          annotations:
+            summary: "Critical vulnerability open for >24h (tenant {{ $labels.tenant_id }})"
+            description: >
+              Tenant {{ $labels.tenant_id }} has {{ $value }} critical
+              vulnerability findings that have been in "open" status for
+              more than 24 hours. Immediate triage and remediation is required.
+            runbook_url: https://docs.kubric.io/runbooks/critical-vuln-open
+
+    - name: kubric-infrastructure
+      interval: 30s
+      rules:
+        - alert: KubricNATSConsumerLag
+          expr: |
+            nats_consumer_num_pending > 10000
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "NATS consumer {{ $labels.consumer_name }} has high pending count"
+            description: >
+              NATS consumer {{ $labels.consumer_name }} on stream
+              {{ $labels.stream_name }} has {{ $value }} pending messages.
+              This indicates the consumer is falling behind and events may
+              be delayed. Check consumer throughput and processing errors.
+            runbook_url: https://docs.kubric.io/runbooks/nats-consumer-lag
+
+        - alert: KubricDiskPressure
+          expr: |
+            (
+              1 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})
+            ) * 100 > 85
+          for: 10m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "Disk usage above 85% on {{ $labels.instance }}"
+            description: >
+              Node {{ $labels.instance }} root filesystem is at
+              {{ $value | humanize }}% capacity. If this continues,
+              services may fail due to insufficient disk space.
+              Consider expanding volumes or cleaning up old data.
+            runbook_url: https://docs.kubric.io/runbooks/disk-pressure
+
+        - alert: KubricPostgresConnExhausted
+          expr: |
+            (
+              pg_stat_activity_count / pg_settings_max_connections
+            ) > 0.8
+          for: 5m
+          labels:
+            severity: critical
+            team: platform
+          annotations:
+            summary: "PostgreSQL connection pool above 80% capacity"
+            description: >
+              PostgreSQL instance {{ $labels.instance }} is using
+              {{ $value | humanizePercentage }} of max_connections.
+              Active connections: {{ with printf "pg_stat_activity_count{instance='%s'}" $labels.instance | query }}{{ . | first | value }}{{ end }}.
+              New connections may be rejected if this continues.
+            runbook_url: https://docs.kubric.io/runbooks/postgres-conn-exhausted
+
+        - alert: KubricClickHouseInsertErrors
+          expr: |
+            rate(ClickHouseProfileEvents_FailedInsertQuery[5m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+            team: platform
+          annotations:
+            summary: "ClickHouse insert errors detected"
+            description: >
+              ClickHouse instance {{ $labels.instance }} has a non-zero
+              insert error rate over the last 5 minutes. Event telemetry
+              data may be lost. Check ClickHouse logs for schema or
+              resource issues.
+            runbook_url: https://docs.kubric.io/runbooks/clickhouse-insert-errors

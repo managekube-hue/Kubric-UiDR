@@ -1,0 +1,17 @@
+linters:
+  enable:
+    - gosec
+    - staticcheck
+    - errcheck
+    - govet
+    - ineffassign
+    - unused
+    - bodyclose
+    - noctx
+
+run:
+  timeout: 5m
+  go: "1.22"
+
+issues:
+  max-issues-per-linter: 50
