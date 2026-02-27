@@ -453,8 +453,41 @@ services:
       start_period: 15s
     networks: [kubric]
 
-  # ── KAI: Python AI orchestration (:8100) ─────────────────────────────────
+  # ── KAI Gateway: Go reverse proxy + JWT auth (:8100) ─────────────────────
+  # Validates JWT, enforces tenant context, proxies /kai/* to kai-python:8101.
   kai:
+    build:
+      context: .
+      dockerfile: build/kai/Dockerfile
+      target: final
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+      KAI_LISTEN_ADDR: ":8100"
+      KAI_SERVICE_URL: "http://kai-python:8101"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+    ports:
+      - "8100:8100"
+    depends_on:
+      kai-python:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      nats:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8100/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks: [kubric]
+
+  # ── KAI Python: FastAPI AI orchestration backend (:8101) ─────────────────
+  # CrewAI personas, NATS subscribers, Temporal workflows, Ollama LLM.
+  kai-python:
     build:
       context: kai
       dockerfile: Dockerfile
@@ -463,7 +496,7 @@ services:
     environment:
       KUBRIC_TENANT_ID: "${KUBRIC_DEFAULT_TENANT:-acme-corp}"
       KUBRIC_NATS_URL: "nats://nats:4222"
-      KUBRIC_DATABASE_URL: "postgresql://kubric:kubric@postgres:5432/kubric"
+      KUBRIC_DATABASE_URL: "postgresql://kubric:${KUBRIC_DB_PASSWORD:-kubric}@postgres:5432/kubric"
       KUBRIC_CLICKHOUSE_URL: "clickhouse://default:@clickhouse:9000/kubric"
       KUBRIC_OLLAMA_URL: "http://ollama:11434"
       KUBRIC_N8N_BASE_URL: "http://n8n:5678"
@@ -472,8 +505,10 @@ services:
       KUBRIC_KIC_URL: "http://kic:8082"
       KUBRIC_NOC_URL: "http://noc:8083"
       KUBRIC_TEMPORAL_ADDRESS: "temporal:7233"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
     ports:
-      - "8100:8100"
+      - "8101:8101"
     depends_on:
       postgres:
         condition: service_healthy
@@ -484,38 +519,65 @@ services:
       temporal:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8100/healthz"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8101/healthz"]
       interval: 15s
       timeout: 10s
       retries: 5
       start_period: 30s
     networks: [kubric]
 
-  # ── KAI-Python: Python AI orchestration sidecar (:8101) ──────────────────
-  kai-python:
+  # ── Temporal Worker: Go workflow engine ──────────────────────────────────
+  # Runs PatchWorkflow (kubric-patch) and RemediationWorkflow (kubric-remediation).
+  temporal-worker:
     build:
-      context: 03_K-KAI-03_ORCHESTRATION
-      dockerfile: Dockerfile
-    image: kubric/kai-python:latest
+      context: .
+      dockerfile: build/temporal-worker/Dockerfile
+      target: final
     profiles: [app]
-    ports:
-      - "8101:8101"
+    restart: unless-stopped
     environment:
-      - NATS_URL=nats://nats:4222
-      - DATABASE_URL=postgresql://kubric:${KUBRIC_DB_PASSWORD:-kubric}@postgres:5432/kubric
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      <<: *kubric-env
+      TEMPORAL_ADDRESS: "temporal:7233"
     depends_on:
-      nats:
+      temporal:
         condition: service_healthy
       postgres:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8101/health')"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    command: ["python", "-m", "uvicorn", "K-KAI-API.K-KAI-API-001_fastapi_server:app", "--host", "0.0.0.0", "--port", "8101"]
+      nats:
+        condition: service_healthy
+    networks: [kubric]
+
+  # ── NATS-ClickHouse Bridge: Event stream to TSDB ────────────────────────
+  # Consumes process events from NATS JetStream and batches into ClickHouse.
+  nats-clickhouse-bridge:
+    build:
+      context: .
+      dockerfile: build/nats-clickhouse-bridge/Dockerfile
+      target: final
+    profiles: [app]
+    restart: unless-stopped
+    environment:
+      <<: *kubric-env
+    depends_on:
+      nats:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    networks: [kubric]
+
+  # ── Caddy: Reverse proxy / TLS termination ──────────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    profiles: [app]
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [ksvc, vdr, kic, noc, kai]
     networks: [kubric]
 
 # ─── Volumes ─────────────────────────────────────────────────────────────────
@@ -534,6 +596,8 @@ volumes:
   prometheus-data:
   loki-data:
   grafana-data:
+  caddy-data:
+  caddy-config:
 
 # ─── Networks ─────────────────────────────────────────────────────────────────
 networks:

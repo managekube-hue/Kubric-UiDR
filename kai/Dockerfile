@@ -59,6 +59,6 @@ COPY --from=builder /app /app
 RUN useradd -m -u 1000 kubric && chown -R kubric:kubric /app
 USER kubric
 
-EXPOSE 8100
+EXPOSE 8101
 
-CMD ["uvicorn", "kai.api.main:app", "--host", "0.0.0.0", "--port", "8100", "--workers", "2"]
+CMD ["uvicorn", "kai.api.main:app", "--host", "0.0.0.0", "--port", "8101", "--workers", "2"]

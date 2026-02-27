@@ -1,177 +1,109 @@
-# Global options
+# =============================================================================
+# Kubric Caddyfile — Unified reverse proxy for all platform services.
+#
+# In docker-compose the Caddy container routes by path prefix on :80.
+# Production: swap :80 for domain blocks and enable auto-TLS.
+# =============================================================================
 {
-  admin = false
-  api_password = "changeme"
+	admin off
 }
 
-# Kubric API endpoint
-api.kubric.io {
-  reverse_proxy localhost:8080
-  
-  encode zstd gzip
-  
-  log {
-    format json
-  }
-  
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
+# Single-host dev config — all services under localhost:80
+:80 {
+	encode zstd gzip
 
-# Portal endpoint
-portal.kubric.io {
-  reverse_proxy localhost:3000
-  
-  encode zstd gzip
-  
-  log {
-    format json
-  }
-  
-  # Security headers
-  header / {
-    X-Content-Type-Options "nosniff"
-    X-Frame-Options "DENY"
-    X-XSS-Protection "1; mode=block"
-    Strict-Transport-Security "max-age=31536000; includeSubDomains"
-  }
-}
+	log {
+		format json
+	}
 
-# NOC - Cluster & agent heartbeat API
-noc.kubric.io {
-  reverse_proxy localhost:8083
+	# Security headers on every response
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
 
-  encode zstd gzip
+	# ── K-SVC: Tenant management API ────────────────────────────────────
+	handle_path /api/v1/tenants* {
+		reverse_proxy ksvc:8080
+	}
 
-  log {
-    format json
-  }
+	# ── VDR: Vulnerability findings ─────────────────────────────────────
+	handle_path /api/v1/findings* {
+		reverse_proxy vdr:8081
+	}
+	handle_path /api/v1/scans* {
+		reverse_proxy vdr:8081
+	}
 
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
+	# ── KIC: Compliance assessments ─────────────────────────────────────
+	handle_path /api/v1/assessments* {
+		reverse_proxy kic:8082
+	}
+	handle_path /api/v1/frameworks* {
+		reverse_proxy kic:8082
+	}
 
-# KIC - Compliance assessments API
-kic.kubric.io {
-  reverse_proxy localhost:8082
+	# ── NOC: Cluster & agent heartbeat ──────────────────────────────────
+	handle_path /api/v1/clusters* {
+		reverse_proxy noc:8083
+	}
+	handle_path /api/v1/agents* {
+		reverse_proxy noc:8083
+	}
+	handle_path /api/v1/detection* {
+		reverse_proxy noc:8083
+	}
+	handle /webhooks/falco* {
+		reverse_proxy noc:8083
+	}
 
-  encode zstd gzip
+	# ── KAI: AI orchestration (Go gateway → Python backend) ────────────
+	handle /kai/* {
+		reverse_proxy kai:8100
+	}
+	handle /v1/triage* {
+		reverse_proxy kai:8100
+	}
+	handle /v1/score/* {
+		reverse_proxy kai:8100
+	}
+	handle /v1/insights/* {
+		reverse_proxy kai:8100
+	}
+	handle /v1/remediate* {
+		reverse_proxy kai:8100
+	}
 
-  log {
-    format json
-  }
+	# ── Grafana dashboards ──────────────────────────────────────────────
+	handle /grafana/* {
+		reverse_proxy grafana:3000
+	}
 
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
+	# ── Temporal UI ─────────────────────────────────────────────────────
+	handle /temporal/* {
+		reverse_proxy temporal-ui:8080
+	}
 
-# VDR - Vulnerability findings API
-vdr.kubric.io {
-  reverse_proxy localhost:8081
+	# ── n8n workflow automation ─────────────────────────────────────────
+	handle /n8n/* {
+		reverse_proxy n8n:5678
+	}
 
-  encode zstd gzip
+	# ── MinIO console ──────────────────────────────────────────────────
+	handle /minio/* {
+		reverse_proxy minio:9001
+	}
 
-  log {
-    format json
-  }
+	# ── Health probe for Caddy itself ──────────────────────────────────
+	handle /healthz {
+		respond "ok" 200
+	}
 
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
-
-# KAI - AI orchestration API
-kai.kubric.io {
-  reverse_proxy localhost:8100
-
-  encode zstd gzip
-
-  log {
-    format json
-  }
-
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
-
-# Correlation engine
-correlation.kubric.io {
-  reverse_proxy localhost:9099
-
-  encode zstd gzip
-
-  log {
-    format json
-  }
-
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
-
-# Grafana dashboards
-grafana.kubric.io {
-  reverse_proxy localhost:3000
-
-  encode zstd gzip
-
-  log {
-    format json
-  }
-
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
-
-# Temporal UI
-temporal.kubric.io {
-  reverse_proxy localhost:8233
-
-  encode zstd gzip
-
-  log {
-    format json
-  }
-
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
-
-# MinIO console
-minio.kubric.io {
-  reverse_proxy localhost:9051
-
-  encode zstd gzip
-
-  log {
-    format json
-  }
-
-  tls {
-    protocols tls1.2 tls1.3
-    ciphers TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-  }
-}
-
-# ClickHouse endpoint (internal only)
-clickhouse.internal {
-  reverse_proxy localhost:8123 {
-    health_uri /ping
-    health_interval 10s
-    health_timeout 5s
-  }
+	# ── Default: 404 for unmatched routes ──────────────────────────────
+	handle {
+		respond "Not Found" 404
+	}
 }

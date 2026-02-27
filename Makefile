@@ -179,16 +179,22 @@ build-go:
 	go build ./cmd/vdr/...
 	go build ./cmd/kic/...
 	go build ./cmd/noc/...
+	go build ./cmd/kai/...
+	go build ./cmd/temporal/...
+	go build ./cmd/correlation/...
 	go build ./cmd/nats-clickhouse-bridge/...
 	go build ./cmd/nuclei-bridge/...
 
 build-docker:
 	@echo "Building Docker images..."
-	docker build -t kubric/k-svc:latest --target k-svc -f Dockerfile.api .
-	docker build -t kubric/vdr:latest --target vdr -f Dockerfile.api .
-	docker build -t kubric/kic:latest --target kic -f Dockerfile.api .
-	docker build -t kubric/noc:latest --target noc -f Dockerfile.api .
-	docker build -t kubric/kai:latest -f kai/Dockerfile kai/
+	docker build -t kubric/k-svc:latest -f build/ksvc/Dockerfile .
+	docker build -t kubric/vdr:latest -f build/vdr/Dockerfile .
+	docker build -t kubric/kic:latest -f build/kic/Dockerfile .
+	docker build -t kubric/noc:latest -f build/noc/Dockerfile .
+	docker build -t kubric/kai-gateway:latest -f build/kai/Dockerfile .
+	docker build -t kubric/kai-python:latest -f kai/Dockerfile kai/
+	docker build -t kubric/temporal-worker:latest -f build/temporal-worker/Dockerfile .
+	docker build -t kubric/nats-clickhouse-bridge:latest -f build/nats-clickhouse-bridge/Dockerfile .
 	docker build -t kubric/web:latest -f Dockerfile.web .
 	docker build -t kubric/coresec:latest --target coresec -f Dockerfile.agents .
 	@echo "All Docker images built"
