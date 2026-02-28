@@ -130,7 +130,45 @@ Assert-True "VENDOR doc covers Nuclei"                        ($vendorDoc -match
 Assert-True "VENDOR doc covers OSCAL"                         ($vendorDoc -match "OSCAL")
 Assert-True "VENDOR doc covers Zeek"                          ($vendorDoc -match "Zeek")
 Assert-True "VENDOR doc covers Falco"                         ($vendorDoc -match "Falco")
-Assert-True "VENDOR doc covers license boundaries"          ($vendorDoc -match "[Ll]icense")
+
+# ── 8. GRC Framework validation ──────────────────────────────────────────
+Write-Host "`n--- GRC Framework Coverage ---" -ForegroundColor Yellow
+Assert-True "07_K-GRC-07_COMPLIANCE exists"                   (Test-Path "07_K-GRC-07_COMPLIANCE")
+Assert-True "GRC framework index exists"                      (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-000_framework_index.md")
+Assert-True "NIST 800-53 OSCAL exists"                        (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-001_nist_800_53_oscal.md")
+Assert-True "PCI-DSS OSCAL exists"                            (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-002_pci_dss_oscal.md")
+Assert-True "ISO 27001 OSCAL exists"                          (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-003_iso_27001_oscal.md")
+Assert-True "SOC 2 OSCAL exists"                              (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-004_soc2_oscal.md")
+
+$grcIndex = Get-Content "07_K-GRC-07_COMPLIANCE/K-GRC-FW-000_framework_index.md" -Raw
+Assert-True "GRC index mentions 200 frameworks"               ($grcIndex -match "200")
+Assert-True "GRC index covers NIST 800-53"                    ($grcIndex -match "NIST 800-53")
+Assert-True "GRC index covers PCI DSS"                        ($grcIndex -match "PCI DSS")
+
+# ── Summary ────────────────────────────────────────────────────────────────
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "  PASS: $pass / $total" -ForegroundColor Green
+Write-Host "  FAIL: $fail / $total" -ForegroundColor Red
+Write-Host "========================================`n" -ForegroundColor Cyan
+
+Pop-Location
+
+if ($fail -gt 0) {
+    exit 1
+}
+exit 0─────────────────────────────────────────
+Write-Host "`n--- GRC Framework Coverage ---" -ForegroundColor Yellow
+Assert-True "07_K-GRC-07_COMPLIANCE exists"                   (Test-Path "07_K-GRC-07_COMPLIANCE")
+Assert-True "GRC framework index exists"                      (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-000_framework_index.md")
+Assert-True "NIST 800-53 OSCAL exists"                        (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-001_nist_800_53_oscal.md")
+Assert-True "PCI-DSS OSCAL exists"                            (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-002_pci_dss_oscal.md")
+Assert-True "ISO 27001 OSCAL exists"                          (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-003_iso_27001_oscal.md")
+Assert-True "SOC 2 OSCAL exists"                              (Test-Path "07_K-GRC-07_COMPLIANCE/K-GRC-FW-004_soc2_oscal.md")
+
+$grcIndex = Get-Content "07_K-GRC-07_COMPLIANCE/K-GRC-FW-000_framework_index.md" -Raw
+Assert-True "GRC index mentions 200 frameworks"               ($grcIndex -match "200")
+Assert-True "GRC index covers NIST 800-53"                    ($grcIndex -match "NIST 800-53")
+Assert-True "GRC index covers PCI DSS"                        ($grcIndex -match "PCI DSS")e boundaries"          ($vendorDoc -match "[Ll]icense")
 
 # ── 8. ITIL/Compliance content ────────────────────────────────────────────
 Write-Host "`n--- ITIL/Compliance Doc Content ---" -ForegroundColor Yellow
