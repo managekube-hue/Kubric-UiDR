@@ -48,6 +48,7 @@ COPY agents/ agents/
 COPY vendor/ebpf/ vendor/ebpf/
 COPY vendor/sigma/ vendor/sigma/
 COPY vendor/yara-rules/ vendor/yara-rules/
+COPY vendor/ipsum/ vendor/ipsum/
 
 # Build eBPF programs used by CoreSec Linux hook provider
 RUN make -C vendor/ebpf
@@ -77,6 +78,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
     rm -rf /var/lib/apt/lists/* && \
     useradd -m -u 1000 kubric
 COPY --from=builder /src/target/release/netguard /usr/local/bin/netguard
+COPY --from=builder /src/vendor/yara-rules/ /opt/kubric/vendor/yara-rules/
+COPY --from=builder /src/vendor/ipsum/ /opt/kubric/vendor/ipsum/
+ENV KUBRIC_IPSUM_PATH=/opt/kubric/vendor/ipsum/ipsum.txt
 USER kubric
 ENTRYPOINT ["netguard"]
 

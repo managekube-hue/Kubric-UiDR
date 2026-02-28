@@ -205,6 +205,50 @@ impl DpiEngine {
             };
         }
 
+        // AMQP detection — protocol header "AMQP\x00" (AMQP 0-9-1) or port 5672
+        if payload.len() >= 4 && &payload[..4] == b"AMQP" {
+            return DpiResult {
+                protocol: "AMQP".into(),
+                category: "MessageBroker".into(),
+                confidence: 0.95,
+                method: DpiMethod::Heuristic,
+            };
+        }
+        if dst_port == 5672 || src_port == 5672 {
+            return DpiResult {
+                protocol: "AMQP".into(),
+                category: "MessageBroker".into(),
+                confidence: 0.65,
+                method: DpiMethod::Heuristic,
+            };
+        }
+
+        // Redis detection — RESP protocol patterns or port 6379
+        if (dst_port == 6379 || src_port == 6379)
+            || (payload.len() >= 5
+                && (payload.starts_with(b"+PONG")
+                    || payload.starts_with(b"*1\r\n$4\r\n")
+                    || payload.starts_with(b"+OK\r\n")
+                    || payload.starts_with(b"-ERR")))
+        {
+            return DpiResult {
+                protocol: "Redis".into(),
+                category: "Database".into(),
+                confidence: if dst_port == 6379 || src_port == 6379 { 0.70 } else { 0.90 },
+                method: DpiMethod::Heuristic,
+            };
+        }
+
+        // Kafka detection — common broker ports 9092/9093
+        if dst_port == 9092 || src_port == 9092 || dst_port == 9093 || src_port == 9093 {
+            return DpiResult {
+                protocol: "Kafka".into(),
+                category: "MessageBroker".into(),
+                confidence: 0.70,
+                method: DpiMethod::Heuristic,
+            };
+        }
+
         // Port-based fallback
         match dst_port {
             80 | 8080 | 8443 => DpiResult {
@@ -306,5 +350,36 @@ mod tests {
     #[test]
     fn engine_heuristic_has_no_ndpi() {
         assert!(!engine().has_ndpi());
+    }
+
+    #[test]
+    fn classify_amqp_header() {
+        let result = engine().classify(b"AMQP\x00\x00\x09\x01", 50000, 5672);
+        assert_eq!(result.protocol, "AMQP");
+        assert!(result.confidence >= 0.90);
+    }
+
+    #[test]
+    fn classify_amqp_port() {
+        let result = engine().classify(&[0xDE, 0xAD], 50000, 5672);
+        assert_eq!(result.protocol, "AMQP");
+    }
+
+    #[test]
+    fn classify_redis_port() {
+        let result = engine().classify(&[0x01, 0x02], 50000, 6379);
+        assert_eq!(result.protocol, "Redis");
+    }
+
+    #[test]
+    fn classify_redis_resp() {
+        let result = engine().classify(b"+PONG\r\n", 6379, 50000);
+        assert_eq!(result.protocol, "Redis");
+    }
+
+    #[test]
+    fn classify_kafka_port() {
+        let result = engine().classify(&[0x00, 0x03, 0x00, 0x09], 50000, 9092);
+        assert_eq!(result.protocol, "Kafka");
     }
 }

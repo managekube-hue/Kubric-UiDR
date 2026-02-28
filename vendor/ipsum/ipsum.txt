@@ -1,0 +1,30 @@
+# IPsum threat intelligence blocklist
+# Source: https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt
+# Format: IP<TAB>threat_level (1-10, number of feeds reporting)
+# Updated: 2026-02-27 (seed file — run `make vendor-pull-ipsum` for live data)
+#
+# This seed file contains well-known test/example malicious IPs from public
+# threat intelligence feeds.  Production deployments should pull the live
+# IPsum feed daily via cron or the Makefile target.
+#
+# threat_level >= 2 is considered malicious by NetGuard IpsumLookup.
+185.220.101.1	8
+185.220.101.2	7
+185.220.102.8	6
+45.148.10.1	5
+89.234.157.254	4
+162.247.74.27	3
+199.249.230.163	3
+185.100.87.174	3
+104.244.76.13	3
+171.25.193.77	3
+171.25.193.78	3
+185.220.101.34	6
+185.220.101.35	5
+185.220.101.36	5
+185.220.101.37	4
+185.220.101.38	4
+45.148.10.2	5
+45.148.10.3	4
+45.148.10.4	3
+89.234.157.253	3
