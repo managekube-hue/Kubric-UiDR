@@ -15,10 +15,15 @@ import (
 var validStatuses = map[string]bool{
 	"pass": true, "fail": true, "not-applicable": true, "not-reviewed": true,
 }
-var validFrameworks = map[string]bool{
-	"NIST-800-53": true, "CIS-K8s-1.8": true, "PCI-DSS-4.0": true,
-	"SOC2": true, "ISO-27001": true,
-}
+// validFrameworks is dynamically built from the 200-framework registry.
+// See framework_registry.go for the canonical list.
+var validFrameworks = func() map[string]bool {
+	m := make(map[string]bool, FrameworkCount())
+	for _, fw := range FrameworkRegistry {
+		m[fw.ID] = true
+	}
+	return m
+}()
 var validAssessors = map[string]bool{
 	"lula": true, "kube-bench": true, "openscap": true, "manual": true,
 }

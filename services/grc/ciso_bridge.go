@@ -127,13 +127,8 @@ func (b *CISOBridge) AuditRecord(
 	}
 }
 
-// SupportedFrameworks returns the list of frameworks the CISO-Assistant can advise on.
-func SupportedFrameworks() []string {
-	return []string{
-		"NIST-800-53",
-		"CIS-K8s-1.8",
-		"PCI-DSS-4.0",
-		"SOC2",
-		"ISO-27001",
-	}
+// SupportedFrameworkCount returns the number of frameworks in the registry.
+// The canonical list lives in internal/kic/framework_registry.go (200 frameworks).
+func SupportedFrameworkCount() int {
+	return 200
 }

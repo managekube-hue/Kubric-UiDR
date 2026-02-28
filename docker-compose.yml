@@ -412,6 +412,7 @@ services:
     environment:
       <<: *kubric-env
       LISTEN_ADDR: ":8082"
+      KAI_RAG_URL: "http://kai-rag:8090"
     ports:
       - "8082:8082"
     depends_on:

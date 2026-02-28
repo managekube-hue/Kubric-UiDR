@@ -138,16 +138,20 @@ func (h *cisoHandler) ask(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, answer)
 }
 
-// GET /ciso/frameworks — list available compliance frameworks
+// GET /ciso/frameworks — list all 200 compliance frameworks from registry
 func (h *cisoHandler) frameworks(w http.ResponseWriter, r *http.Request) {
+	// Optionally filter by category via ?category=federal
+	category := r.URL.Query().Get("category")
+	var fws []Framework
+	if category != "" {
+		fws = FrameworksByCategory(category)
+	} else {
+		fws = FrameworkRegistry
+	}
 	writeJSON(w, http.StatusOK, map[string]interface{}{
-		"frameworks": []map[string]string{
-			{"id": "NIST-800-53", "name": "NIST SP 800-53 Rev 5", "category": "Federal"},
-			{"id": "CIS-K8s-1.8", "name": "CIS Kubernetes Benchmark v1.8", "category": "Infrastructure"},
-			{"id": "PCI-DSS-4.0", "name": "PCI DSS v4.0", "category": "Payment"},
-			{"id": "SOC2", "name": "SOC 2 Type II", "category": "Trust Services"},
-			{"id": "ISO-27001", "name": "ISO/IEC 27001:2022", "category": "InfoSec Management"},
-		},
+		"total":      len(fws),
+		"categories": FrameworkCategories(),
+		"frameworks": fws,
 	})
 }
 
@@ -282,7 +286,11 @@ func isPostureQuestion(q string) bool {
 }
 
 func supportedFrameworks() []string {
-	return []string{"NIST-800-53", "CIS-K8s-1.8", "PCI-DSS-4.0", "SOC2", "ISO-27001"}
+	ids := make([]string, 0, FrameworkCount())
+	for _, fw := range FrameworkRegistry {
+		ids = append(ids, fw.ID)
+	}
+	return ids
 }
 
 func effectiveFrameworks(requested []string) []string {

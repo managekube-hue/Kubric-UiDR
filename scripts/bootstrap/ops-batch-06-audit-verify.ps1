@@ -154,4 +154,40 @@ Assert-True -Condition ($apiClient -match "askCISO") -Message "Frontend API clie
 Assert-True -Condition ($apiClient -match "getCompliancePosture") -Message "Frontend API client exports getCompliancePosture function"
 Assert-True -Condition ($apiClient -match "listComplianceFrameworks") -Message "Frontend API client exports listComplianceFrameworks function"
 
+# ── GRC 200-framework registry checks ─────────────────────────────────────
+
+$fwRegistry = Join-Path $RepoRoot "internal\kic\framework_registry.go"
+$fwIndex    = Join-Path $RepoRoot "07_K-GRC-07_COMPLIANCE\K-GRC-FW-000_framework_index.md"
+Assert-True -Condition (Test-Path $fwRegistry) -Message "Framework registry exists (internal/kic/framework_registry.go)"
+Assert-True -Condition (Test-Path $fwIndex) -Message "Framework index doc exists (K-GRC-FW-000_framework_index.md)"
+
+$fwContent = Get-Content $fwRegistry -Raw
+# Count framework entries (lines matching {ID: "...)
+$fwEntries = ([regex]::Matches($fwContent, '\{ID:\s+"[^"]+"')).Count
+Assert-True -Condition ($fwEntries -ge 200) -Message "Framework registry has $fwEntries frameworks (>= 200)"
+
+# Verify key framework categories are present
+Assert-True -Condition ($fwContent -match '"federal"') -Message "Framework registry includes federal category"
+Assert-True -Condition ($fwContent -match '"international"') -Message "Framework registry includes international category"
+Assert-True -Condition ($fwContent -match '"healthcare"') -Message "Framework registry includes healthcare category"
+Assert-True -Condition ($fwContent -match '"financial"') -Message "Framework registry includes financial category"
+Assert-True -Condition ($fwContent -match '"cloud"') -Message "Framework registry includes cloud category"
+Assert-True -Condition ($fwContent -match '"supply_chain"') -Message "Framework registry includes supply_chain category"
+Assert-True -Condition ($fwContent -match '"ai_ml"') -Message "Framework registry includes ai_ml category"
+Assert-True -Condition ($fwContent -match '"iot_ics"') -Message "Framework registry includes iot_ics category"
+Assert-True -Condition ($fwContent -match '"privacy"') -Message "Framework registry includes privacy category"
+Assert-True -Condition ($fwContent -match '"risk"') -Message "Framework registry includes risk category"
+
+# Verify assessment handler uses dynamic registry (not hardcoded 5 frameworks)
+$assessHandler = Get-Content (Join-Path $RepoRoot "internal\kic\handler_assessment.go") -Raw
+Assert-True -Condition ($assessHandler -match "FrameworkRegistry") -Message "Assessment handler uses dynamic 200-framework registry"
+
+# Verify KAI_RAG_URL is in docker-compose KIC service
+$dockerCompose = Get-Content (Join-Path $RepoRoot "docker-compose.yml") -Raw
+Assert-True -Condition ($dockerCompose -match "KAI_RAG_URL") -Message "docker-compose.yml wires KAI_RAG_URL to KIC service"
+
+# Verify KIC Docker image exists in Dockerfile.api
+$dockerApi = Get-Content (Join-Path $RepoRoot "Dockerfile.api") -Raw
+Assert-True -Condition ($dockerApi -match "AS kic") -Message "Dockerfile.api has KIC target image stage"
+
 Write-Host "[batch-06] Audit remediation verification PASSED" -ForegroundColor Green
