@@ -7,6 +7,7 @@
 package sigstore
 
 import (
+	"bytes"
 	"context"
 	"crypto"
 	"crypto/ecdsa"
@@ -78,9 +79,10 @@ func (v *Verifier) VerifyBlob(ctx context.Context, data, sig []byte) error {
 	if v == nil {
 		return fmt.Errorf("sigstore verifier not initialised")
 	}
+	_ = ctx
 	return v.verifier.VerifySignature(
-		bytes_reader(sig),
-		bytes_reader(data),
+		bytes.NewReader(sig),
+		bytes.NewReader(data),
 	)
 }
 
@@ -98,8 +100,8 @@ func (v *Verifier) VerifyImageSignature(_ context.Context, imageRef string, sigP
 		return result
 	}
 	err := v.verifier.VerifySignature(
-		bytes_reader(sigBytes),
-		bytes_reader(sigPayload),
+		bytes.NewReader(sigBytes),
+		bytes.NewReader(sigPayload),
 	)
 	if err != nil {
 		result.Error = err.Error()
@@ -112,23 +114,3 @@ func (v *Verifier) VerifyImageSignature(_ context.Context, imageRef string, sigP
 
 // Close is a no-op — satisfies the integration pattern.
 func (v *Verifier) Close() {}
-
-// bytes_reader wraps a byte slice into a signature.MessageReader.
-func bytes_reader(b []byte) signature.MessageReader {
-	return &bytesReader{data: b, pos: 0}
-}
-
-// bytesReader implements io.Reader for signature verification.
-type bytesReader struct {
-	data []byte
-	pos  int
-}
-
-func (r *bytesReader) Read(p []byte) (int, error) {
-	if r.pos >= len(r.data) {
-		return 0, fmt.Errorf("EOF")
-	}
-	n := copy(p, r.data[r.pos:])
-	r.pos += n
-	return n, nil
-}

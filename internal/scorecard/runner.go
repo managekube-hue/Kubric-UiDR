@@ -12,10 +12,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ossf/scorecard/v4/clients"
 	"github.com/ossf/scorecard/v4/checker"
 	"github.com/ossf/scorecard/v4/checks"
-	"github.com/ossf/scorecard/v4/clients"
-	"github.com/ossf/scorecard/v4/clients/githubrepo"
 	sclog "github.com/ossf/scorecard/v4/log"
 )
 
@@ -53,60 +52,73 @@ func NewRunner(ghToken string) *Runner {
 // Score runs all default scorecard checks against the given repo
 // (format: "github.com/owner/repo").
 func (r *Runner) Score(ctx context.Context, repoURI string) (*RepoScore, error) {
-	// Parse repo
-	repoClient, repoInfo, err := githubrepo.ParseAndMakeRepo(repoURI)
+	logger := sclog.NewLogger(sclog.WarnLevel)
+
+	repo, repoClient, ossFuzzClient, ciiClient, vulnsClient, err := checker.GetClients(ctx, repoURI, "", logger)
 	if err != nil {
-		return nil, fmt.Errorf("scorecard parse repo %q: %w", repoURI, err)
+		return nil, fmt.Errorf("scorecard init clients for %q: %w", repoURI, err)
+	}
+	defer repoClient.Close()
+	if ossFuzzClient != nil {
+		defer ossFuzzClient.Close()
 	}
 
-	ossFuzzClient, err := githubrepo.CreateOssFuzzRepoClient(ctx, r.ghToken)
-	if err != nil {
-		// OSS-Fuzz is optional; continue without it
-		ossFuzzClient = nil
+	if err := repoClient.InitRepo(repo, clients.HeadSHA, 0); err != nil {
+		return nil, fmt.Errorf("scorecard init repo %q: %w", repoURI, err)
 	}
 
-	vulnsClient := clients.DefaultVulnerabilitiesClient()
+	if r.ghToken != "" {
+		if err := os.Setenv("GITHUB_AUTH_TOKEN", r.ghToken); err != nil {
+			return nil, fmt.Errorf("scorecard set GITHUB_AUTH_TOKEN: %w", err)
+		}
+	}
 
-	logger := sclog.NewLogger(sclog.WarningLevel)
-
-	// Build the scorecard request
 	allChecks := checks.GetAll()
-	checkNames := make([]string, 0, len(allChecks))
-	for name := range allChecks {
-		checkNames = append(checkNames, name)
-	}
-
-	// Run scorecard
-	res, err := checker.Run(ctx, repoClient, ossFuzzClient, nil, vulnsClient,
-		repoInfo, checkNames, logger)
-	if err != nil {
-		return nil, fmt.Errorf("scorecard run: %w", err)
-	}
-
-	// Convert results
 	out := &RepoScore{
 		Repo:      repoURI,
-		CommitSHA: res.CommitSHA,
+		CommitSHA: clients.HeadSHA,
 		ScoredAt:  time.Now().UTC(),
 	}
 
 	var total float64
 	var count int
-	for _, cr := range res.Checks {
+	for name, checkDef := range allChecks {
+		req := &checker.CheckRequest{
+			Ctx:                   ctx,
+			RepoClient:            repoClient,
+			CIIClient:             ciiClient,
+			OssFuzzRepo:           ossFuzzClient,
+			Repo:                  repo,
+			VulnerabilitiesClient: vulnsClient,
+			RawResults:            &checker.RawResults{},
+		}
+		runner := checker.NewRunner(name, repo.String(), req)
+		cr := runner.Run(ctx, checkDef)
+
 		check := CheckResult{
 			Name:   cr.Name,
 			Score:  cr.Score,
 			Reason: cr.Reason,
 		}
-		for _, d := range cr.Details {
-			check.Details = append(check.Details, d.Msg.Text)
+		if cr.Error != nil {
+			check.Score = -1
+			if check.Reason == "" {
+				check.Reason = cr.Error.Error()
+			}
 		}
+		for _, d := range cr.Details {
+			if d.Msg.Text != "" {
+				check.Details = append(check.Details, d.Msg.Text)
+			}
+		}
+
 		out.Checks = append(out.Checks, check)
-		if cr.Score >= 0 {
-			total += float64(cr.Score)
+		if check.Score >= 0 {
+			total += float64(check.Score)
 			count++
 		}
 	}
+
 	if count > 0 {
 		out.Aggregate = total / float64(count)
 	}

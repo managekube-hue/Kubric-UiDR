@@ -77,7 +77,7 @@ func newCISOHandler(store *AssessmentStore, pub *Publisher, ragURL string) *ciso
 
 // POST /ciso/ask — answer a security/compliance question via RAG
 func (h *cisoHandler) ask(w http.ResponseWriter, r *http.Request) {
-	tenantID := kubricmw.TenantFromContext(r.Context())
+	tenantID := kubricmw.TenantID(r.Context())
 	if err := schema.ValidateTenantID(tenantID); err != nil {
 		writeError(w, http.StatusUnprocessableEntity, "invalid tenant: "+err.Error())
 		return
@@ -157,7 +157,7 @@ func (h *cisoHandler) frameworks(w http.ResponseWriter, r *http.Request) {
 
 // GET /ciso/posture — current compliance posture summary
 func (h *cisoHandler) posture(w http.ResponseWriter, r *http.Request) {
-	tenantID := kubricmw.TenantFromContext(r.Context())
+	tenantID := kubricmw.TenantID(r.Context())
 	if err := schema.ValidateTenantID(tenantID); err != nil {
 		writeError(w, http.StatusUnprocessableEntity, "invalid tenant: "+err.Error())
 		return

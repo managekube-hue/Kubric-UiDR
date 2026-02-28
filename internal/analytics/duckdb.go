@@ -1,3 +1,5 @@
+//go:build cgo
+
 // Package analytics provides an embedded DuckDB analytical engine for Kubric.
 // DuckDB runs in-process (no external server) and excels at OLAP-style queries
 // over event logs, metric summaries, and compliance timeseries — exactly the
