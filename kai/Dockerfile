@@ -15,9 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy and install Python package (kai/) in editable mode
+# Copy and install Python package (current directory is kai/)
 COPY pyproject.toml setup.cfg* setup.py* ./
-COPY kai/ ./kai/
+COPY . ./kai/
 
 # Install broad runtime feature set for sandbox (SOC/NOC/GRC/PSA + CrewAI stack)
 ARG KAI_PIP_EXTRAS="ai,workflows,security,psa,ti"

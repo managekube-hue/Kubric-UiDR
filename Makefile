@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod deploy-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06 ops-batch-07
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod deploy-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06 ops-batch-07 master-validation
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -25,6 +25,7 @@ help:
 	@echo "  make ops-batch-05  External closure Docker/library completeness"
 	@echo "  make ops-batch-06  External closure audit remediation verification"
 	@echo "  make ops-batch-07  Enterprise tree restructure verification"
+	@echo "  make master-validation  Run all validation checks (quick)"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -206,6 +207,10 @@ ops-batch-06:
 
 ops-batch-07:
 	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-07-tree-restructure.ps1
+
+master-validation:
+	@echo "Running master validation suite..."
+	powershell -ExecutionPolicy Bypass -File scripts/master-validation.ps1
 
 # Building
 

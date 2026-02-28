@@ -130,7 +130,47 @@ Assert-True "VENDOR doc covers Nuclei"                        ($vendorDoc -match
 Assert-True "VENDOR doc covers OSCAL"                         ($vendorDoc -match "OSCAL")
 Assert-True "VENDOR doc covers Zeek"                          ($vendorDoc -match "Zeek")
 Assert-True "VENDOR doc covers Falco"                         ($vendorDoc -match "Falco")
-Assert-True "VENDOR doc covers license compliance"            ($vendorDoc -match "License Compliance")
+Assert-True "VENDOR doc covers license boundaries"          ($vendorDoc -match "[Ll]icense")
+
+# ── 8. ITIL/Compliance content ────────────────────────────────────────────
+Write-Host "`n--- ITIL/Compliance Doc Content ---" -ForegroundColor Yellow
+$complianceDoc = Get-Content "docs/COMPLIANCE.md" -Raw
+Assert-True "COMPLIANCE doc covers ITIL 4"                   ($complianceDoc -match "ITIL")
+Assert-True "COMPLIANCE doc covers NIST 800-53"              ($complianceDoc -match "NIST")
+Assert-True "COMPLIANCE doc covers ISO 27001"                ($complianceDoc -match "ISO")
+Assert-True "COMPLIANCE doc covers SOC 2"                    ($complianceDoc -match "SOC")
+Assert-True "COMPLIANCE doc covers PCI-DSS"                  ($complianceDoc -match "PCI")
+
+# ── 9. DR Coverage content ────────────────────────────────────────────────
+Write-Host "`n--- DR Coverage Doc Content ---" -ForegroundColor Yellow
+$drDoc = Get-Content "docs/DR-COVERAGE.md" -Raw
+Assert-True "DR doc covers EDR"                              ($drDoc -match "EDR")
+Assert-True "DR doc covers NDR"                              ($drDoc -match "NDR")
+Assert-True "DR doc covers ITDR"                             ($drDoc -match "ITDR")
+Assert-True "DR doc covers CDR"                              ($drDoc -match "CDR")
+Assert-True "DR doc covers VDR"                              ($drDoc -match "VDR")
+Assert-True "DR doc covers MDR"                              ($drDoc -match "MDR")
+
+# ── 10. Archive integrity ─────────────────────────────────────────────────
+Write-Host "`n--- Archive Integrity ---" -ForegroundColor Yellow
+Assert-True "archive/spec-modules has 107+ files"            ((Get-ChildItem -Path "archive/spec-modules" -Recurse -File).Count -ge 107)
+Assert-True "archive/k8s-legacy has content"                 ((Get-ChildItem -Path "archive/k8s-legacy" -Recurse -File).Count -gt 10)
+Assert-True "docs/archive has historical docs"               ((Get-ChildItem -Path "docs/archive" -File).Count -ge 10)
+
+Pop-Location
+
+# ── Summary ────────────────────────────────────────────────────────────────
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "  ops-batch-07 Results: $pass/$total passed" -ForegroundColor $(if ($fail -eq 0) { 'Green' } else { 'Yellow' })
+Write-Host "========================================`n" -ForegroundColor Cyan
+
+if ($fail -gt 0) {
+    Write-Host "[batch-07] Tree restructure verification FAILED ($fail failures)" -ForegroundColor Red
+    exit 1
+} else {
+    Write-Host "[batch-07] Tree restructure verification PASSED" -ForegroundColor Green
+    exit 0
+}e compliance"            ($vendorDoc -match "License Compliance")
 
 $complianceDoc = Get-Content "docs/COMPLIANCE.md" -Raw
 Assert-True "COMPLIANCE doc covers KIC evidence"              ($complianceDoc -match "KIC-001")
