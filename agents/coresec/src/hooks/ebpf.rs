@@ -12,7 +12,8 @@
 
 #![cfg(all(target_os = "linux", feature = "ebpf"))]
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 use aya::programs::TracePoint;
 use aya::{Bpf, BpfLoader};
 use aya::maps::perf::AsyncPerfEventArray;
@@ -59,12 +60,52 @@ impl EbpfProvider {
         let openat_path = std::env::var("KUBRIC_EBPF_OPENAT")
             .unwrap_or_else(|_| "vendor/ebpf/openat2_hook.o".into());
 
-        // Validate that at least the execve program exists
+        Self::ensure_ebpf_object(&execve_path)?;
+        let _ = Self::ensure_ebpf_object(&openat_path);
+
         if !Path::new(&execve_path).exists() {
             anyhow::bail!("eBPF program not found: {}", execve_path);
         }
 
         Ok(Self { execve_path, openat_path })
+    }
+
+    fn ensure_ebpf_object(object_path: &str) -> anyhow::Result<()> {
+        if Path::new(object_path).exists() {
+            return Ok(());
+        }
+
+        let Some(file_name) = Path::new(object_path).file_name().and_then(|n| n.to_str()) else {
+            anyhow::bail!("invalid eBPF object path: {}", object_path);
+        };
+
+        let candidate_dir = PathBuf::from("vendor/ebpf");
+        if !candidate_dir.exists() {
+            anyhow::bail!("eBPF source directory not found: {}", candidate_dir.display());
+        }
+
+        let make_status = Command::new("make")
+            .arg("-C")
+            .arg(candidate_dir.as_os_str())
+            .arg(file_name)
+            .status();
+
+        match make_status {
+            Ok(status) if status.success() && Path::new(object_path).exists() => {
+                info!(path = %object_path, "built missing eBPF object via make");
+                Ok(())
+            }
+            Ok(status) => anyhow::bail!(
+                "failed to build eBPF object {} (make exit: {})",
+                object_path,
+                status
+            ),
+            Err(e) => anyhow::bail!(
+                "failed to invoke make for {}: {}",
+                object_path,
+                e
+            ),
+        }
     }
 
     fn cstr_to_string(buf: &[u8]) -> String {

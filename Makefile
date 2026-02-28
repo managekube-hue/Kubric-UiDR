@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -23,6 +23,7 @@ help:
 	@echo "  make ops-batch-03  External closure runtime deploy"
 	@echo "  make ops-batch-04  External closure runtime smoke"
 	@echo "  make ops-batch-05  External closure Docker/library completeness"
+	@echo "  make ops-batch-06  External closure audit remediation verification"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -198,6 +199,9 @@ ops-batch-04:
 
 ops-batch-05:
 	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-05-docker-libs.ps1
+
+ops-batch-06:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-06-audit-verify.ps1
 
 # Building
 

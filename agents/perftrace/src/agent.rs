@@ -1,6 +1,8 @@
 use crate::config::Config;
 use crate::metrics::HostMetric;
 use anyhow::{Context, Result};
+#[cfg(target_os = "linux")]
+use std::fs;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -152,6 +154,7 @@ fn collect_metric(
         cfg.tenant_id, ts, cpu_usage_pct, mem_used, disk_used, process_count
     );
     let blake3_hash = blake3::hash(raw.as_bytes()).to_hex().to_string();
+    let (disk_read_bytes, disk_write_bytes) = collect_disk_io_bytes();
 
     HostMetric {
         tenant_id: cfg.tenant_id.clone(),
@@ -173,8 +176,8 @@ fn collect_metric(
         swap_used_bytes: swap_used,
         disk_total_bytes: disk_total,
         disk_used_bytes: disk_used,
-        disk_read_bytes: 0,  // cumulative I/O counters added in next release
-        disk_write_bytes: 0,
+        disk_read_bytes,
+        disk_write_bytes,
         net_rx_bytes: net_rx,
         net_tx_bytes: net_tx,
         net_rx_packets: net_rx_pkt,
@@ -207,4 +210,38 @@ async fn publish_threshold_alert(
     if let Ok(payload) = serde_json::to_vec(&alert) {
         let _ = client.publish(subject, payload.into()).await;
     }
+}
+
+#[cfg(target_os = "linux")]
+fn collect_disk_io_bytes() -> (u64, u64) {
+    let Ok(contents) = fs::read_to_string("/proc/diskstats") else {
+        return (0, 0);
+    };
+
+    let mut sectors_read: u64 = 0;
+    let mut sectors_written: u64 = 0;
+
+    for line in contents.lines() {
+        let parts = line.split_whitespace().collect::<Vec<_>>();
+        if parts.len() < 14 {
+            continue;
+        }
+
+        let dev = parts[2];
+        if dev.starts_with("loop") || dev.starts_with("ram") || dev.starts_with("zram") {
+            continue;
+        }
+
+        let read = parts[5].parse::<u64>().unwrap_or(0);
+        let write = parts[9].parse::<u64>().unwrap_or(0);
+        sectors_read = sectors_read.saturating_add(read);
+        sectors_written = sectors_written.saturating_add(write);
+    }
+
+    (sectors_read.saturating_mul(512), sectors_written.saturating_mul(512))
+}
+
+#[cfg(not(target_os = "linux"))]
+fn collect_disk_io_bytes() -> (u64, u64) {
+    (0, 0)
 }
