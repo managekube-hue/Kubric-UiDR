@@ -4,6 +4,31 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Invoke-Strict {
+    param(
+        [Parameter(Mandatory = $true)][string]$FilePath,
+        [Parameter(ValueFromRemainingArguments = $true)]$Arguments
+    )
+
+    & $FilePath @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Command failed ($LASTEXITCODE): $FilePath $($Arguments -join ' ')"
+    }
+}
+
+function Test-ServiceHealthz {
+    param(
+        [Parameter(Mandatory = $true)][string]$Service,
+        [Parameter(Mandatory = $true)][int]$Port
+    )
+
+    $path = "/api/v1/namespaces/$Namespace/services/http:${Service}:${Port}/proxy/healthz"
+    & kubectl get --raw $path 1>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Health probe failed for $Service on port $Port"
+    }
+}
+
 Write-Host "[batch-04] Checking pod health..." -ForegroundColor Cyan
 $pods = kubectl get pods -n $Namespace --no-headers
 if (-not $pods) {
@@ -26,11 +51,14 @@ if ($bad.Count -gt 0) {
 Write-Host "[batch-04] Checking service endpoints..." -ForegroundColor Cyan
 $services = @("k-svc", "vdr", "kic", "noc", "kai-core", "web", "n8n", "postgresql", "nats", "clickhouse")
 foreach ($svc in $services) {
-    kubectl get svc $svc -n $Namespace | Out-Null
+    Invoke-Strict kubectl get svc $svc -n $Namespace
 }
 
-Write-Host "[batch-04] Running in-cluster health probes..." -ForegroundColor Cyan
-kubectl run curl-smoke --rm -i --restart=Never -n $Namespace --image=curlimages/curl:8.8.0 -- \
-  sh -c "curl -fsS http://k-svc:8080/healthz ; curl -fsS http://vdr:8081/healthz ; curl -fsS http://kic:8082/healthz ; curl -fsS http://noc:8083/healthz ; curl -fsS http://kai-core:8100/healthz" | Out-Null
+Write-Host "[batch-04] Running service health probes via Kubernetes API proxy..." -ForegroundColor Cyan
+Test-ServiceHealthz -Service "k-svc" -Port 8080
+Test-ServiceHealthz -Service "vdr" -Port 8081
+Test-ServiceHealthz -Service "kic" -Port 8082
+Test-ServiceHealthz -Service "noc" -Port 8083
+Test-ServiceHealthz -Service "kai-core" -Port 8100
 
 Write-Host "[batch-04] Runtime smoke PASSED" -ForegroundColor Green

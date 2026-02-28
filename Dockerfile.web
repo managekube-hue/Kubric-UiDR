@@ -7,7 +7,7 @@ FROM node:20-alpine AS deps
 WORKDIR /app
 
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci --omit=dev 2>/dev/null || npm install --omit=dev
+RUN npm ci 2>/dev/null || npm install
 
 # ── Stage 2: builder ─────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
@@ -18,7 +18,7 @@ COPY frontend/ .
 
 # Build arguments for compile-time env injection
 ARG NEXT_PUBLIC_API_BASE=http://k-svc:8080
-ARG NEXT_PUBLIC_KAI_URL=http://kai:8101
+ARG NEXT_PUBLIC_KAI_URL=http://kai-core:8100
 ARG NEXT_PUBLIC_NATS_WS_URL=ws://nats:9222
 
 ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
@@ -39,7 +39,6 @@ RUN addgroup --system --gid 1001 kubric && \
     adduser --system --uid 1001 kubric
 
 # Copy standalone output
-COPY --from=builder /app/public ./public
 COPY --from=builder --chown=kubric:kubric /app/.next/standalone ./
 COPY --from=builder --chown=kubric:kubric /app/.next/static ./.next/static
 

@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -17,10 +17,12 @@ help:
 	@echo "  make check-gpl-boundary  Verify no GPL-3.0 RITA imports in services/"
 	@echo "  make enterprise-check  Run monorepo enterprise readiness gate"
 	@echo "  make deploy-sandbox-no-vault  Deploy full stack without Vault/ESO"
+	@echo "  make deploy-live-prod  Deploy production overlay with rollout+smoke checks"
 	@echo "  make ops-batch-01  External closure preflight"
 	@echo "  make ops-batch-02  External closure detection assets"
 	@echo "  make ops-batch-03  External closure runtime deploy"
 	@echo "  make ops-batch-04  External closure runtime smoke"
+	@echo "  make ops-batch-05  External closure Docker/library completeness"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -178,6 +180,10 @@ deploy-sandbox-no-vault:
 	@echo "Deploying sandbox overlay without Vault..."
 	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/deploy-sandbox-no-vault.ps1
 
+deploy-live-prod:
+	@echo "Deploying production overlay with live checks..."
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/deploy-live-prod.ps1 -Namespace kubric
+
 ops-batch-01:
 	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-01-preflight.ps1 -Namespace kubric
 
@@ -189,6 +195,9 @@ ops-batch-03:
 
 ops-batch-04:
 	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-04-runtime-smoke.ps1 -Namespace kubric
+
+ops-batch-05:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-05-docker-libs.ps1
 
 # Building
 

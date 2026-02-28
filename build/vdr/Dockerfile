@@ -1,5 +1,6 @@
 # build/vdr/Dockerfile — VDR vulnerability findings service
 FROM golang:1.24-alpine AS builder
+ENV GOTOOLCHAIN=auto
 WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download

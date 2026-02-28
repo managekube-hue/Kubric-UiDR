@@ -1,5 +1,6 @@
 # build/kai/Dockerfile — KAI Go API gateway (reverse proxy to Python FastAPI)
 FROM golang:1.24-alpine AS builder
+ENV GOTOOLCHAIN=auto
 WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download

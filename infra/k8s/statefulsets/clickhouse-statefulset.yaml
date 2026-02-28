@@ -26,6 +26,15 @@ spec:
         fsGroup: 101
         runAsUser: 101
         runAsNonRoot: true
+      initContainers:
+        - name: copy-users-config
+          image: clickhouse/clickhouse-server:24.1
+          command: ["sh", "-c", "cp /etc/clickhouse-server/users.d-cm/* /etc/clickhouse-server/users.d/ 2>/dev/null || true"]
+          volumeMounts:
+            - name: users-cm
+              mountPath: /etc/clickhouse-server/users.d-cm
+            - name: users-writable
+              mountPath: /etc/clickhouse-server/users.d
       containers:
         - name: clickhouse
           image: clickhouse/clickhouse-server:24.1
@@ -44,7 +53,7 @@ spec:
               mountPath: /var/lib/clickhouse
             - name: config
               mountPath: /etc/clickhouse-server/config.d
-            - name: users
+            - name: users-writable
               mountPath: /etc/clickhouse-server/users.d
           resources:
             requests:
@@ -69,9 +78,11 @@ spec:
         - name: config
           configMap:
             name: clickhouse-config
-        - name: users
+        - name: users-cm
           configMap:
             name: clickhouse-users
+        - name: users-writable
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data

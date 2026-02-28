@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
     libffi-dev \
     libssl-dev \
+    ansible \
     git \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,27 +19,43 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml setup.cfg* setup.py* ./
 COPY kai/ ./kai/
 
+# Install broad runtime feature set for sandbox (SOC/NOC/GRC/PSA + CrewAI stack)
+ARG KAI_PIP_EXTRAS="ai,workflows,security,psa,ti"
+
 # Install KAI with all layer2 extras, excluding heavy GPU-only packages
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir \
-        ".[layer2]" \
+        ".[${KAI_PIP_EXTRAS}]" \
     || pip install --no-cache-dir \
         fastapi>=0.115.0 \
         uvicorn[standard]>=0.32.0 \
         nats-py>=2.9.0 \
         orjson>=3.10.0 \
+        msgpack>=1.1.0 \
         httpx>=0.28.0 \
         pydantic>=2.9.0 \
         pydantic-settings>=2.6.0 \
+        python-dotenv>=1.0.0 \
         structlog>=24.4.0 \
+        typer>=0.12.0 \
+        rich>=13.9.0 \
+        click>=8.1.0 \
         crewai>=0.80.0 \
+        composio-crewai>=0.5.0 \
         langchain>=0.3.7 \
         langchain-community>=0.3.7 \
+        langgraph>=0.2.0 \
         openai>=1.57.0 \
         anthropic>=0.40.0 \
+        cohere>=5.12.0 \
         temporalio>=1.7.0 \
         asyncpg>=0.30.0 \
-        clickhouse-connect>=0.8.0
+        clickhouse-connect>=0.8.0 \
+        ansible-runner>=2.4.0 \
+        checkov>=3.2.0 \
+        presidio-analyzer>=2.2.0 \
+        reportlab>=4.2.0 \
+        minio>=7.2.0
 
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────
 FROM python:3.12-slim AS final
@@ -59,9 +76,9 @@ COPY --from=builder /app /app
 RUN useradd -m -u 1000 kubric && chown -R kubric:kubric /app
 USER kubric
 
-EXPOSE 8101
+EXPOSE 8100
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-    CMD wget -q -O /dev/null http://localhost:8101/healthz || exit 1
+    CMD wget -q -O /dev/null http://localhost:8100/healthz || exit 1
 
-CMD ["uvicorn", "kai.api.main:app", "--host", "0.0.0.0", "--port", "8101", "--workers", "2"]
+CMD ["uvicorn", "kai.api.main:app", "--host", "0.0.0.0", "--port", "8100", "--workers", "2"]

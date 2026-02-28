@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: n8n
+  namespace: kubric
+spec:
+  template:
+    spec:
+      containers:
+        - name: n8n
+          env:
+            - name: VAULT_ADDR
+              value: http://vault:8200
+            - name: N8N_HOST
+              value: "0.0.0.0"
+            - name: N8N_PORT
+              value: "5678"
+            - name: N8N_PROTOCOL
+              value: "http"
+            - name: DB_TYPE
+              value: "postgresdb"
+            - name: DB_POSTGRESDB_HOST
+              value: "postgresql"
+            - name: DB_POSTGRESDB_PORT
+              value: "5432"
+            - name: DB_POSTGRESDB_DATABASE
+              value: "kubric"
+            - name: DB_POSTGRESDB_USER
+              value: "kubric"
+            - name: DB_POSTGRESDB_PASSWORD
+              value: "dev_password"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

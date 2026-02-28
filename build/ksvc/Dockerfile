@@ -3,6 +3,7 @@
 
 # ── Stage 1: builder ─────────────────────────────────────────────────────────
 FROM golang:1.24-alpine AS builder
+ENV GOTOOLCHAIN=auto
 WORKDIR /build
 
 # Cache module downloads before copying source

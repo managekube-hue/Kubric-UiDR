@@ -7,56 +7,230 @@ resources:
   - ../../base
   - secrets-and-config.yaml
 
+patchesStrategicMerge:
+  - patch-env-k-svc.yaml
+  - patch-env-kic.yaml
+  - patch-env-vdr.yaml
+  - patch-env-noc.yaml
+  - patch-env-n8n.yaml
+
 patches:
-  - patch: |-
-      apiVersion: apps/v1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: k-svc
-      spec:
-        replicas: 1
-  - patch: |-
-      apiVersion: apps/v1
+      name: k-svc
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: vdr
-      spec:
-        replicas: 1
-  - patch: |-
-      apiVersion: apps/v1
+      name: vdr
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: kic
-      spec:
-        replicas: 1
-  - patch: |-
-      apiVersion: apps/v1
+      name: kic
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: noc
-      spec:
-        replicas: 1
-  - patch: |-
-      apiVersion: apps/v1
+      name: noc
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: kai-core
-      spec:
-        replicas: 1
-  - patch: |-
-      apiVersion: apps/v1
+      name: kai-core
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: web
-      spec:
-        replicas: 1
-  - patch: |-
-      apiVersion: apps/v1
+      name: web
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+  - target:
+      group: apps
+      version: v1
       kind: Deployment
-      metadata:
-        name: n8n
-      spec:
-        replicas: 1
+      name: n8n
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/livenessProbe/initialDelaySeconds
+        value: 120
+      - op: replace
+        path: /spec/template/spec/containers/0/livenessProbe/failureThreshold
+        value: 10
+      - op: replace
+        path: /spec/template/spec/containers/0/readinessProbe/initialDelaySeconds
+        value: 30
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 256Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 768Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 500m
+  # --- Sandbox resource reductions (fit in kind ~3.7GB) ---
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: IfNotPresent
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 64Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 192Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 50m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 200m
+  # --- n8n needs more resources and startup time (after general reduction) ---
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: n8n
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 256Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 768Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 500m
+  - target:
+      group: apps
+      version: v1
+      kind: StatefulSet
+      name: clickhouse
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 256Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 100m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 500m
+  - target:
+      group: apps
+      version: v1
+      kind: StatefulSet
+      name: nats
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 64Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 256Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 50m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 200m
+  - target:
+      group: apps
+      version: v1
+      kind: StatefulSet
+      name: postgresql
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 128Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 100m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 500m
+  # --- Remove resource quota that's too restrictive for sandbox ---
+  - target:
+      version: v1
+      kind: ResourceQuota
+      name: kubric-resource-quota
+    patch: |-
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: "8Gi"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: "16Gi"
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "32"
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "16"
+  - target:
+      version: v1
+      kind: ResourceQuota
+      name: monitoring-resource-quota
+    patch: |-
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: "8Gi"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: "16Gi"
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "32"
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "16"
 
 images:
   - name: kubric/k-svc

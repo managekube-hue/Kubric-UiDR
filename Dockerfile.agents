@@ -54,7 +54,7 @@ RUN cargo build --workspace --release
 
 # --- CoreSec (EDR agent) ---
 FROM debian:bookworm-slim AS coresec
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libpcap0.8 && \
     rm -rf /var/lib/apt/lists/* && \
     useradd -m -u 1000 kubric
 COPY --from=builder /src/target/release/coresec /usr/local/bin/coresec
