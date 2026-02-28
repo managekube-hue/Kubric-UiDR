@@ -344,6 +344,47 @@ services:
       start_period: 20s
     networks: [kubric]
 
+  # ── ERPNext (ITSM + Customer Portal + Billing) ────────────────────────────
+  erpnext-db:
+    image: mariadb:10.6
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ERPNEXT_DB_PASSWORD:-erpnext}
+      MYSQL_DATABASE: erpnext
+      MYSQL_USER: erpnext
+      MYSQL_PASSWORD: ${ERPNEXT_DB_PASSWORD:-erpnext}
+    volumes:
+      - erpnext-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [kubric]
+
+  erpnext:
+    image: frappe/erpnext:v15.0.0
+    restart: unless-stopped
+    environment:
+      MARIADB_HOST: erpnext-db
+      MARIADB_ROOT_PASSWORD: ${ERPNEXT_DB_PASSWORD:-erpnext}
+      SITE_NAME: erpnext.kubric.local
+      ADMIN_PASSWORD: ${ERPNEXT_ADMIN_PASSWORD:-admin}
+    ports:
+      - "8000:8000"
+    volumes:
+      - erpnext-data:/home/frappe/frappe-bench/sites
+    depends_on:
+      erpnext-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks: [kubric]
+
   # =========================================================================
   # APPLICATION SERVICES — profile: app
   # Build locally: docker compose --profile app build
@@ -623,6 +664,8 @@ volumes:
   grafana-data:
   caddy-data:
   caddy-config:
+  erpnext-db-data:
+  erpnext-data:
 
 # ─── Networks ─────────────────────────────────────────────────────────────────
 networks:
