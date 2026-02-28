@@ -1,4 +1,8 @@
 # Kubric-UiDR Production Remediation Plan
+
+> Historical long-form plan.  
+> Canonical current state and active baseline live in `docs/PROJECT-STATUS.md`.
+
 **Generated:** 2026-02-27
 **Based on:** Full codebase audit — XRO, KAI, NOC, SOC, PSA, GRC, Supabase, Docker, K8s
 **Estimated timeline to production-ready:** 18 working days across 6 phases

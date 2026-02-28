@@ -1,5 +1,8 @@
 # Kubric-UiDR Thorough Audit (Evidence-Based)
 
+> Historical snapshot (2026-02-27).  
+> Canonical current state lives in `docs/PROJECT-STATUS.md`.
+
 **Date:** 2026-02-27  
 **Scope requested:** XRO, KAI, NOC, SOC, PSA, GRC, missing CISO-assistant libraries, OSS library import completeness, Kubernetes/Docker correctness, 120,000+ detection assets, multi-tenant orchestration, Supabase schema, Rust/Go development completeness.
 

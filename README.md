@@ -67,6 +67,7 @@ make lint         # Run linters
 
 ## Documentation
 
+- [`docs/PROJECT-STATUS.md`](docs/PROJECT-STATUS.md) — canonical current state (start here)
 - [`DEVELOPER-BOOTSTRAP.md`](DEVELOPER-BOOTSTRAP.md) — toolchain setup
 - [`08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/`](08_K-DEV-08_DEVELOPMENT/K-DEV-DOC_DOCUMENTATION/) — architecture and module docs
 - [`11_K-MAP-11_DR_MODULE_MAPPING/`](11_K-MAP-11_DR_MODULE_MAPPING/) — DR module master index

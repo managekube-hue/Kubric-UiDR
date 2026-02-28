@@ -1,5 +1,8 @@
 # Audit Remediation Checkpoint (2026-02-27)
 
+> Historical remediation record.  
+> Canonical current state lives in `docs/PROJECT-STATUS.md`.
+
 This checkpoint aligns implementation to the architecture foundations in `docs/KUBRIC Orchestration.docx.md`:
 
 - CoreSec eBPF programs must be available at runtime.
