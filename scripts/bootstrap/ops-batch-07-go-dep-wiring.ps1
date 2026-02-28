@@ -191,5 +191,39 @@ Assert-True -Condition (Test-Path $graphHandler) -Message "NOC graph handler exi
 $storageHandler = Join-Path $RepoRoot "internal\noc\handler_storage.go"
 Assert-True -Condition (Test-Path $storageHandler) -Message "NOC storage handler exists (internal/noc/handler_storage.go)"
 
+# ── Docker image checks ─────────────────────────────────────────────────────
+
+$dockerApi = Get-Content (Join-Path $RepoRoot "Dockerfile.api") -Raw
+$dockerCompose = Get-Content (Join-Path $RepoRoot "docker-compose.yml") -Raw
+$buildKicDockerfile = Get-Content (Join-Path $RepoRoot "build\kic\Dockerfile") -Raw
+
+# KIC Dockerfile enables CGO for go-duckdb
+Assert-True -Condition ($buildKicDockerfile -match 'CGO_ENABLED=1') -Message "build/kic/Dockerfile enables CGO (required for go-duckdb)"
+Assert-True -Condition ($buildKicDockerfile -match 'gcc') -Message "build/kic/Dockerfile installs gcc for CGO"
+
+# Dockerfile.api also enables CGO for KIC target only
+Assert-True -Condition ($dockerApi -match 'CGO_ENABLED=1.*kic') -Message "Dockerfile.api uses CGO_ENABLED=1 for KIC binary"
+
+# docker-compose: KIC env vars for new integrations
+Assert-True -Condition ($dockerCompose -match 'GITHUB_AUTH_TOKEN') -Message "docker-compose passes GITHUB_AUTH_TOKEN to KIC"
+Assert-True -Condition ($dockerCompose -match 'DUCKDB_PATH') -Message "docker-compose passes DUCKDB_PATH to KIC"
+Assert-True -Condition ($dockerCompose -match 'COSIGN_PUB_KEY') -Message "docker-compose passes COSIGN_PUB_KEY to KIC"
+
+# docker-compose: NOC env vars for new integrations
+Assert-True -Condition ($dockerCompose -match 'NEO4J_URI') -Message "docker-compose passes NEO4J_URI to NOC"
+Assert-True -Condition ($dockerCompose -match 'NEO4J_USER') -Message "docker-compose passes NEO4J_USER to NOC"
+Assert-True -Condition ($dockerCompose -match 'NEO4J_PASSWORD') -Message "docker-compose passes NEO4J_PASSWORD to NOC"
+Assert-True -Condition ($dockerCompose -match 'MINIO_ENDPOINT') -Message "docker-compose passes MINIO_ENDPOINT to NOC"
+Assert-True -Condition ($dockerCompose -match 'MINIO_ACCESS_KEY') -Message "docker-compose passes MINIO_ACCESS_KEY to NOC"
+Assert-True -Condition ($dockerCompose -match 'MINIO_SECRET_KEY') -Message "docker-compose passes MINIO_SECRET_KEY to NOC"
+Assert-True -Condition ($dockerCompose -match 'ZMQ_PUBLISH_ADDR') -Message "docker-compose passes ZMQ_PUBLISH_ADDR to NOC"
+Assert-True -Condition ($dockerCompose -match 'TWILIO_ACCOUNT_SID') -Message "docker-compose passes TWILIO_ACCOUNT_SID to NOC"
+Assert-True -Condition ($dockerCompose -match 'TWILIO_AUTH_TOKEN') -Message "docker-compose passes TWILIO_AUTH_TOKEN to NOC"
+Assert-True -Condition ($dockerCompose -match 'TWILIO_FROM_NUMBER') -Message "docker-compose passes TWILIO_FROM_NUMBER to NOC"
+
+# docker-compose: NOC depends_on neo4j + minio
+Assert-True -Condition ($dockerCompose -match 'neo4j:\s*\n\s*condition:') -Message "docker-compose NOC depends_on neo4j"
+Assert-True -Condition ($dockerCompose -match 'minio:\s*\n\s*condition:') -Message "docker-compose NOC depends_on minio"
+
 Write-Host ""
 Write-Host "[batch-07] Go dependency wiring verification PASSED - all 7 libraries wired" -ForegroundColor Green

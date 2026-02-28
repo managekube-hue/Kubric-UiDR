@@ -413,6 +413,12 @@ services:
       <<: *kubric-env
       LISTEN_ADDR: ":8082"
       KAI_RAG_URL: "http://kai-rag:8090"
+      # -- Supply-chain: OpenSSF Scorecard (optional) ------
+      GITHUB_AUTH_TOKEN: "${GITHUB_AUTH_TOKEN:-}"
+      # -- Analytics: DuckDB (embedded, :memory: default) --
+      DUCKDB_PATH: "${DUCKDB_PATH:-:memory:}"
+      # -- Sigstore image verification (optional) ----------
+      COSIGN_PUB_KEY: "${COSIGN_PUB_KEY:-}"
     ports:
       - "8082:8082"
     depends_on:
@@ -439,12 +445,30 @@ services:
     environment:
       <<: *kubric-env
       LISTEN_ADDR: ":8083"
+      # -- Neo4j graph topology --------------------------
+      NEO4J_URI: "bolt://neo4j:7687"
+      NEO4J_USER: "neo4j"
+      NEO4J_PASSWORD: "kubric-neo4j"
+      # -- MinIO object store ----------------------------
+      MINIO_ENDPOINT: "minio:9000"
+      MINIO_ACCESS_KEY: "kubric"
+      MINIO_SECRET_KEY: "kubric-minio-secret"
+      # -- ZMQ high-throughput fanout (optional) ---------
+      ZMQ_PUBLISH_ADDR: "${ZMQ_PUBLISH_ADDR:-}"
+      # -- Twilio escalation (optional) ------------------
+      TWILIO_ACCOUNT_SID: "${TWILIO_ACCOUNT_SID:-}"
+      TWILIO_AUTH_TOKEN: "${TWILIO_AUTH_TOKEN:-}"
+      TWILIO_FROM_NUMBER: "${TWILIO_FROM_NUMBER:-}"
     ports:
       - "8083:8083"
     depends_on:
       postgres:
         condition: service_healthy
       nats:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8083/healthz"]

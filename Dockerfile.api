@@ -10,6 +10,9 @@
 FROM golang:1.22-bookworm AS builder
 WORKDIR /src
 
+# build-essential already present in bookworm; needed for go-duckdb CGO
+RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && rm -rf /var/lib/apt/lists/*
+
 # Cache module downloads
 COPY go.mod go.sum ./
 RUN go mod download
@@ -19,10 +22,11 @@ COPY cmd/ cmd/
 COPY internal/ internal/
 COPY services/ services/
 
-# Build all binaries — static, no CGO for alpine compatibility
+# Build all binaries — static.
+# KIC uses CGO_ENABLED=1 for go-duckdb; all others remain pure-Go.
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/ksvc ./cmd/ksvc/...
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/vdr ./cmd/vdr/...
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/kic ./cmd/kic/...
+RUN CGO_ENABLED=1 GOOS=linux go build -ldflags="-s -w -extldflags '-static'" -o /out/kic ./cmd/kic/...
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/noc ./cmd/noc/...
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/nats-clickhouse-bridge ./cmd/nats-clickhouse-bridge/...
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/nuclei-bridge ./cmd/nuclei-bridge/...
