@@ -1,0 +1,408 @@
+// OCSF (Open Cybersecurity Schema Framework) Event Schema for Kubric UiDR
+// Aligned with OCSF v1.1 class IDs and field names.
+// Every normalized event flowing through the Kubric data pipeline is
+// represented as an OCSFEvent wrapper carrying one concrete activity message.
+
+syntax = "proto3";
+
+package kubric.ocsf.v1;
+
+option go_package = "github.com/managekube-hue/Kubric-UiDR/proto/ocsf/v1";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+// ──────────────────────────────────────────────────────────────────────
+// Enums
+// ──────────────────────────────────────────────────────────────────────
+
+// OCSF event class identifiers (subset used by Kubric).
+enum EventClass {
+  EVENT_CLASS_UNSPECIFIED          = 0;
+  EVENT_CLASS_THREAT_FINDING       = 1001;  // Detection / IOC match
+  EVENT_CLASS_VULNERABILITY        = 2002;  // Vulnerability finding
+  EVENT_CLASS_AUTHENTICATION       = 3002;  // AuthN activity
+  EVENT_CLASS_NETWORK_ACTIVITY     = 4001;  // Network connection / flow
+  EVENT_CLASS_PERFORMANCE_METRIC   = 4004;  // Host / process perf metric
+  EVENT_CLASS_PROCESS_ACTIVITY     = 4007;  // Process lifecycle
+  EVENT_CLASS_FILE_ACTIVITY        = 4008;  // File system activity
+  EVENT_CLASS_INVENTORY_INFO       = 5001;  // Asset inventory
+  EVENT_CLASS_COMPLIANCE_FINDING   = 6001;  // Compliance check result
+}
+
+// Severity per OCSF specification.
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  SEVERITY_INFO        = 1;
+  SEVERITY_LOW         = 2;
+  SEVERITY_MEDIUM      = 3;
+  SEVERITY_HIGH        = 4;
+  SEVERITY_CRITICAL    = 5;
+  SEVERITY_FATAL       = 6;
+}
+
+// Activity type for process events.
+enum ProcessAction {
+  PROCESS_ACTION_UNSPECIFIED = 0;
+  PROCESS_ACTION_CREATE      = 1;
+  PROCESS_ACTION_TERMINATE   = 2;
+  PROCESS_ACTION_OPEN        = 3;
+  PROCESS_ACTION_INJECT      = 4;
+  PROCESS_ACTION_SET_UID     = 5;
+}
+
+// Transport / application protocols.
+enum Protocol {
+  PROTOCOL_UNSPECIFIED = 0;
+  PROTOCOL_TCP         = 6;
+  PROTOCOL_UDP         = 17;
+  PROTOCOL_ICMP        = 1;
+  PROTOCOL_SCTP        = 132;
+}
+
+// File activity types.
+enum FileAction {
+  FILE_ACTION_UNSPECIFIED = 0;
+  FILE_ACTION_CREATE      = 1;
+  FILE_ACTION_READ        = 2;
+  FILE_ACTION_UPDATE      = 3;
+  FILE_ACTION_DELETE      = 4;
+  FILE_ACTION_RENAME      = 5;
+  FILE_ACTION_SET_ACL     = 6;
+}
+
+// Authentication activity types.
+enum AuthAction {
+  AUTH_ACTION_UNSPECIFIED = 0;
+  AUTH_ACTION_LOGON       = 1;
+  AUTH_ACTION_LOGOFF      = 2;
+  AUTH_ACTION_CHALLENGE   = 3;
+  AUTH_ACTION_TICKET      = 4;
+  AUTH_ACTION_MFA         = 5;
+}
+
+// Compliance check result status.
+enum ComplianceStatus {
+  COMPLIANCE_STATUS_UNSPECIFIED = 0;
+  COMPLIANCE_STATUS_PASS        = 1;
+  COMPLIANCE_STATUS_FAIL        = 2;
+  COMPLIANCE_STATUS_ERROR       = 3;
+  COMPLIANCE_STATUS_NOT_CHECKED = 4;
+  COMPLIANCE_STATUS_EXEMPT      = 5;
+}
+
+// Indicator of compromise type for threat findings.
+enum IndicatorType {
+  INDICATOR_TYPE_UNSPECIFIED  = 0;
+  INDICATOR_TYPE_IP           = 1;
+  INDICATOR_TYPE_DOMAIN       = 2;
+  INDICATOR_TYPE_URL          = 3;
+  INDICATOR_TYPE_FILE_HASH    = 4;
+  INDICATOR_TYPE_EMAIL        = 5;
+  INDICATOR_TYPE_CERTIFICATE  = 6;
+  INDICATOR_TYPE_JA3          = 7;
+  INDICATOR_TYPE_MUTEX        = 8;
+  INDICATOR_TYPE_REGISTRY_KEY = 9;
+}
+
+// Performance metric type.
+enum MetricType {
+  METRIC_TYPE_UNSPECIFIED    = 0;
+  METRIC_TYPE_CPU_PERCENT    = 1;
+  METRIC_TYPE_MEMORY_BYTES   = 2;
+  METRIC_TYPE_DISK_IO_BYTES  = 3;
+  METRIC_TYPE_NET_IO_BYTES   = 4;
+  METRIC_TYPE_HANDLE_COUNT   = 5;
+  METRIC_TYPE_THREAD_COUNT   = 6;
+  METRIC_TYPE_GPU_PERCENT    = 7;
+  METRIC_TYPE_LATENCY_MS     = 8;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Shared sub-messages
+// ──────────────────────────────────────────────────────────────────────
+
+// Universal metadata block present on every OCSF event.
+message Metadata {
+  string product_name    = 1;  // "Kubric UiDR"
+  string product_version = 2;
+  string product_vendor  = 3;  // "ManaKube-Hue"
+  string log_name        = 4;  // Source log / telemetry stream
+  string log_provider    = 5;  // e.g. "osquery", "suricata", "velociraptor"
+  string schema_version  = 6;  // OCSF schema version, e.g. "1.1.0"
+  google.protobuf.Timestamp processed_time = 7;
+}
+
+// Identifies the reporting device / agent.
+message Device {
+  string hostname   = 1;
+  string ip         = 2;
+  string mac        = 3;
+  string os_name    = 4;
+  string os_version = 5;
+  string agent_id   = 6;  // Kubric agent UUID
+  string domain     = 7;
+  string type       = 8;  // "server", "workstation", "container", "vm"
+}
+
+// User identity referenced in events.
+message User {
+  string uid       = 1;  // Unique user identifier
+  string name      = 2;
+  string email     = 3;
+  string domain    = 4;
+  string type      = 5;  // "user", "service", "admin"
+  repeated string groups = 6;
+}
+
+// Process descriptor used in multiple event classes.
+message Process {
+  int64  pid            = 1;
+  int64  ppid           = 2;
+  string name           = 3;
+  string cmd_line       = 4;
+  string path           = 5;
+  string sha256         = 6;
+  string md5            = 7;
+  User   user           = 8;
+  google.protobuf.Timestamp created_time = 9;
+  int32  integrity_level = 10;
+  string container_id   = 11;
+}
+
+// File descriptor.
+message File {
+  string name        = 1;
+  string path        = 2;
+  string sha256      = 3;
+  string md5         = 4;
+  int64  size        = 5;
+  string type        = 6;  // MIME type
+  string owner       = 7;
+  uint32 permissions = 8;  // POSIX mode bits
+  google.protobuf.Timestamp modified_time = 9;
+  google.protobuf.Timestamp accessed_time = 10;
+  google.protobuf.Timestamp created_time  = 11;
+}
+
+// Network endpoint (source or destination).
+message NetworkEndpoint {
+  string ip       = 1;
+  int32  port     = 2;
+  string mac      = 3;
+  string hostname = 4;
+  string domain   = 5;
+}
+
+// Observable / indicator container used in threat and vulnerability findings.
+message Observable {
+  string         name  = 1;
+  string         value = 2;
+  IndicatorType  type  = 3;
+  Reputation     reputation = 4;
+}
+
+// Threat intelligence reputation score.
+message Reputation {
+  string provider = 1;  // "MISP", "VirusTotal", "AbuseIPDB"
+  double score    = 2;  // 0.0 – 100.0
+  string base_score_source = 3;
+}
+
+// CVSS score container.
+message CVSS {
+  double base_score    = 1;
+  string vector_string = 2;
+  string version       = 3;  // "3.1"
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Concrete event classes
+// ──────────────────────────────────────────────────────────────────────
+
+// OCSF 4007 – Process Activity
+message ProcessActivity {
+  ProcessAction action  = 1;
+  Process       process = 2;
+  Process       parent  = 3;
+  Device        device  = 4;
+  User          actor   = 5;
+  string        status  = 6;  // "success", "failure"
+  int32         exit_code = 7;
+  google.protobuf.Struct  enrichments = 8;
+}
+
+// OCSF 4001 – Network Activity
+message NetworkActivity {
+  NetworkEndpoint src_endpoint  = 1;
+  NetworkEndpoint dst_endpoint  = 2;
+  Protocol        protocol      = 3;
+  string          l7_protocol   = 4;  // nDPI-classified app protocol
+  int64           bytes_in      = 5;
+  int64           bytes_out     = 6;
+  int64           packets_in    = 7;
+  int64           packets_out   = 8;
+  string          direction     = 9;  // "inbound", "outbound", "lateral"
+  string          action        = 10; // "allowed", "blocked", "dropped"
+  string          ja3_hash      = 11; // JA3 TLS fingerprint
+  string          ja3s_hash     = 12; // JA3S server fingerprint
+  string          sni           = 13; // TLS Server Name Indication
+  double          beacon_score  = 14; // RITA beacon detection score 0.0–1.0
+  string          community_id  = 15; // Zeek-style community ID
+  string          dns_query     = 16; // DNS query name if applicable
+  int32           dns_rcode     = 17; // DNS response code
+  Device          device        = 18;
+  google.protobuf.Timestamp start_time = 19;
+  google.protobuf.Timestamp end_time   = 20;
+  string          session_uid   = 21; // Flow / session correlation ID
+  google.protobuf.Struct enrichments  = 22;
+}
+
+// OCSF 4008 – File Activity
+message FileActivity {
+  FileAction action   = 1;
+  File       file     = 2;
+  File       prev_file = 3;  // For rename operations
+  Process    process  = 4;
+  Device     device   = 5;
+  User       actor    = 6;
+  string     status   = 7;
+  google.protobuf.Struct enrichments = 8;
+}
+
+// OCSF 3002 – Authentication Activity
+message AuthenticationActivity {
+  AuthAction action       = 1;
+  User       user         = 2;
+  Device     device       = 3;
+  string     service      = 4;  // "ssh", "kerberos", "ldap", "radius"
+  string     auth_protocol = 5; // "NTLM", "Kerberos", "SAML", "OIDC"
+  string     status       = 6;  // "success", "failure"
+  string     status_detail = 7; // failure reason text
+  NetworkEndpoint src_endpoint = 8;
+  NetworkEndpoint dst_endpoint = 9;
+  bool       is_mfa       = 10;
+  string     session_uid  = 11;
+  int32      logon_type   = 12; // Windows logon type code
+  google.protobuf.Struct enrichments = 13;
+}
+
+// OCSF 2002 – Vulnerability Finding
+message VulnerabilityFinding {
+  string     title           = 1;
+  string     description     = 2;
+  string     cve_uid         = 3;
+  CVSS       cvss            = 4;
+  Severity   severity        = 5;
+  string     status          = 6; // "new", "in_progress", "resolved", "suppressed"
+  Device     device          = 7;
+  string     resource_uid    = 8; // Container image, package, etc.
+  string     package_name    = 9;
+  string     package_version = 10;
+  string     fixed_version   = 11;
+  repeated string references = 12;
+  repeated string affected_packages = 13;
+  google.protobuf.Struct enrichments = 14;
+}
+
+// OCSF 1001 – Threat / Security Finding
+message ThreatFinding {
+  string     title       = 1;
+  string     description = 2;
+  Severity   severity    = 3;
+  string     confidence  = 4;  // "low", "medium", "high", "critical"
+  string     rule_uid    = 5;  // SIGMA / YARA / Suricata SID
+  string     rule_name   = 6;
+  string     rule_source = 7;  // "sigma", "yara", "suricata", "custom"
+  repeated string tactics    = 8;  // MITRE ATT&CK tactics
+  repeated string techniques = 9;  // MITRE ATT&CK technique IDs
+  repeated Observable observables = 10;
+  Device     device     = 11;
+  Process    process    = 12;
+  File       file       = 13;
+  NetworkEndpoint src_endpoint = 14;
+  NetworkEndpoint dst_endpoint = 15;
+  string     kill_chain_phase = 16;
+  string     campaign_uid     = 17;
+  google.protobuf.Struct enrichments = 18;
+}
+
+// OCSF 6001 – Compliance Finding
+message ComplianceFinding {
+  string           title       = 1;
+  string           description = 2;
+  ComplianceStatus status      = 3;
+  Severity         severity    = 4;
+  string           framework   = 5;  // "CIS", "NIST-800-53", "PCI-DSS", "HIPAA", "SOC2"
+  string           control_uid = 6;  // e.g. "CIS-1.1.1"
+  string           control_name = 7;
+  string           requirement = 8;
+  Device           device      = 9;
+  string           resource_uid = 10;
+  string           resource_type = 11;
+  string           remediation  = 12;
+  google.protobuf.Struct enrichments = 13;
+}
+
+// OCSF 5001 – Inventory / Asset Info
+message InventoryInfo {
+  Device   device          = 1;
+  string   asset_type      = 2;  // "server", "workstation", "container", "cloud_resource"
+  string   asset_uid       = 3;
+  string   owner           = 4;
+  string   business_unit   = 5;
+  string   environment     = 6;  // "production", "staging", "development"
+  string   criticality     = 7;  // "critical", "high", "medium", "low"
+  repeated string tags     = 8;
+  repeated string software = 9;  // Installed software list
+  repeated string services = 10; // Running services
+  google.protobuf.Timestamp first_seen = 11;
+  google.protobuf.Timestamp last_seen  = 12;
+  google.protobuf.Struct enrichments   = 13;
+}
+
+// OCSF 4004 – Performance Metric
+message PerformanceMetric {
+  MetricType metric_type = 1;
+  double     value       = 2;
+  string     unit        = 3;  // "percent", "bytes", "count", "ms"
+  Device     device      = 4;
+  Process    process     = 5;  // Optional: per-process metric
+  string     resource    = 6;  // disk name, NIC name, GPU id
+  google.protobuf.Timestamp sample_time = 7;
+  int32      interval_seconds = 8;  // Sampling interval
+  google.protobuf.Struct enrichments  = 9;
+}
+
+// ──────────────────────────────────────────────────────────────────────
+// Top-level wrapper
+// ──────────────────────────────────────────────────────────────────────
+
+// OCSFEvent is the canonical envelope for every normalized event in
+// Kubric UiDR. It carries shared header fields plus exactly one
+// concrete activity / finding payload via a oneof.
+message OCSFEvent {
+  // ── Header fields ──
+  string     uid         = 1;   // Unique event UUID (v7)
+  EventClass event_class = 2;
+  Severity   severity    = 3;
+  Metadata   metadata    = 4;
+  google.protobuf.Timestamp time = 5;  // Original event time
+  string     customer_id = 6;   // Multi-tenant partition key
+  string     tenant_id   = 7;   // Sub-tenant / business unit
+  bytes      blake3_hash = 8;   // BLAKE3 hash for immutable audit chain
+  string     correlation_uid = 9;  // Incident / alert correlation ID
+
+  // ── Concrete payload (exactly one per event) ──
+  oneof activity {
+    ProcessActivity        process_activity        = 20;
+    NetworkActivity        network_activity        = 21;
+    FileActivity           file_activity           = 22;
+    AuthenticationActivity authentication_activity = 23;
+    VulnerabilityFinding   vulnerability_finding   = 24;
+    ThreatFinding          threat_finding          = 25;
+    ComplianceFinding      compliance_finding      = 26;
+    InventoryInfo          inventory_info          = 27;
+    PerformanceMetric      performance_metric      = 28;
+  }
+}

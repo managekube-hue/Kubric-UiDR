@@ -1,0 +1,66 @@
+name: License Boundary Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  license-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+      
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+      
+      - name: Check GPL boundary (Make target)
+        run: make check-gpl-boundary
+      
+      - name: Install cargo-deny
+        run: cargo install cargo-deny
+      
+      - name: Check Rust licenses
+        run: cargo deny check licenses
+      
+      - name: Install go-licenses
+        run: go install github.com/google/go-licenses@latest
+      
+      - name: Check Go licenses
+        run: |
+          for dir in cmd/*; do
+            echo "Checking licenses for $dir"
+            go-licenses check ./$dir/...
+          done
+      
+      - name: Verify no GPL imports in services/
+        run: |
+          if grep -r 'github.com/activecm/rita' services/ 2>/dev/null; then
+            echo "ERROR: GPL violation detected - activecm/rita imported in services/"
+            exit 1
+          fi
+          echo "✓ GPL boundary clean"
+      
+      - name: Check Python licenses
+        run: |
+          pip install pip-licenses
+          cd kai && pip install -e .
+          pip-licenses --format=markdown --output-file=../LICENSES-PYTHON.md
+      
+      - name: Upload license reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-reports
+          path: |
+            LICENSES-PYTHON.md

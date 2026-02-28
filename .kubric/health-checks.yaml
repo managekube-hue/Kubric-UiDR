@@ -1,0 +1,243 @@
+# Kubric Health Checks
+# KAI HOUSE monitoring rules — maps to docker-compose healthchecks and Prometheus alerts.
+# Used by: ops-batch verification, `make deploy-prod` smoke tests, KAI Sentinel health scoring.
+
+version: "1.0"
+
+# ─── Service Health Checks ────────────────────────────────────────────────────
+checks:
+
+  # ── Infrastructure ──────────────────────────────────────────────────────────
+  - name: nats
+    type: http
+    url: http://nats:8222/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "NATS JetStream down — all event streaming halted"
+
+  - name: postgres
+    type: command
+    command: pg_isready -U kubric -d kubric
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "PostgreSQL down — tenant state unavailable"
+
+  - name: clickhouse
+    type: http
+    url: http://clickhouse:8123/ping
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "ClickHouse down — event storage halted"
+
+  - name: neo4j
+    type: http
+    url: http://neo4j:7474
+    interval: 15s
+    timeout: 10s
+    retries: 5
+    critical: false
+    alert: "Neo4j down — graph queries degraded"
+
+  - name: redis
+    type: command
+    command: redis-cli ping
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: false
+    alert: "Redis down — cache miss, CrewAI sessions lost"
+
+  - name: vault
+    type: http
+    url: http://vault:8200/v1/sys/health
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "Vault down — secrets unavailable"
+
+  - name: temporal
+    type: command
+    command: temporal workflow list --namespace default --address temporal:7233
+    interval: 15s
+    timeout: 10s
+    retries: 10
+    start_period: 45s
+    critical: true
+    alert: "Temporal down — durable workflows halted"
+
+  - name: qdrant
+    type: http
+    url: http://qdrant:6333/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: false
+    alert: "Qdrant down — vector search/RAG degraded"
+
+  - name: ollama
+    type: http
+    url: http://ollama:11434/api/tags
+    interval: 30s
+    timeout: 15s
+    retries: 5
+    start_period: 60s
+    critical: false
+    alert: "Ollama down — local LLM inference unavailable"
+
+  - name: minio
+    type: command
+    command: mc ready local
+    interval: 15s
+    timeout: 10s
+    retries: 5
+    critical: true
+    alert: "MinIO down — object storage unavailable"
+
+  # ── Application ─────────────────────────────────────────────────────────────
+  - name: ksvc
+    type: http
+    url: http://ksvc:8080/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "K-SVC down — tenant management unavailable"
+
+  - name: vdr
+    type: http
+    url: http://vdr:8081/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "VDR down — vulnerability findings unavailable"
+
+  - name: kic
+    type: http
+    url: http://kic:8082/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "KIC down — compliance assessments unavailable"
+
+  - name: noc
+    type: http
+    url: http://noc:8083/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "NOC down — cluster heartbeat unavailable"
+
+  - name: kai
+    type: http
+    url: http://kai:8100/healthz
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    critical: true
+    alert: "KAI Gateway down — AI orchestration unavailable"
+
+  - name: kai-python
+    type: http
+    url: http://kai-python:8101/healthz
+    interval: 15s
+    timeout: 10s
+    retries: 5
+    start_period: 30s
+    critical: true
+    alert: "KAI Python down — CrewAI personas unavailable"
+
+  - name: web
+    type: http
+    url: http://web:3001
+    interval: 15s
+    timeout: 5s
+    retries: 5
+    critical: false
+    alert: "Web UI down — dashboard unavailable"
+
+  # ── Observability ───────────────────────────────────────────────────────────
+  - name: prometheus
+    type: http
+    url: http://prometheus:9090/-/healthy
+    interval: 15s
+    timeout: 5s
+    retries: 5
+    critical: false
+    alert: "Prometheus down — metrics collection halted"
+
+  - name: loki
+    type: http
+    url: http://loki:3100/ready
+    interval: 15s
+    timeout: 5s
+    retries: 5
+    critical: false
+    alert: "Loki down — log aggregation halted"
+
+  - name: grafana
+    type: http
+    url: http://grafana:3000/api/health
+    interval: 15s
+    timeout: 5s
+    retries: 5
+    critical: false
+    alert: "Grafana down — dashboards unavailable"
+
+# ─── SLO Definitions ─────────────────────────────────────────────────────────
+slos:
+  fleet_availability:
+    target: 99.5%
+    window: 30d
+    measurement: "Percentage of 1-minute intervals where all critical services are healthy"
+
+  api_latency_p99:
+    target: 200ms
+    window: 24h
+    measurement: "99th percentile response time across ksvc, vdr, kic, noc"
+    prometheus_query: "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, service))"
+
+  mttd:
+    target: 5m
+    window: 30d
+    measurement: "Mean time from event generation to KAI Triage classification"
+
+  mttr_p1:
+    target: 4h
+    window: 30d
+    measurement: "Mean time to resolve Priority 1 incidents"
+
+  event_processing_lag:
+    target: 30s
+    window: 24h
+    measurement: "Maximum lag between NATS publish and ClickHouse insert"
+    prometheus_query: "kubric_nats_clickhouse_lag_seconds"
+
+# ─── Composite Health Score (KAI Sentinel) ────────────────────────────────────
+health_score:
+  formula: >
+    weighted_average(
+      critical_services_up * 0.40,
+      api_latency_slo_met * 0.20,
+      event_processing_slo_met * 0.15,
+      disk_usage_below_80pct * 0.10,
+      backup_age_within_rpo * 0.10,
+      zero_p1_incidents_open * 0.05
+    )
+  thresholds:
+    healthy: ">= 75"
+    degraded: "50-74"
+    critical: "< 50"
+  actions:
+    critical: "VAPI/Twilio escalation to on-call SOC"
+    degraded: "Slack notification to #kubric-ops"
+    healthy: "No action"

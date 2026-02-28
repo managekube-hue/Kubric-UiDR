@@ -1,0 +1,329 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  K-DEV-GIT-015  Pylint Configuration                                       ║
+# ║  Module: Kubric-UiDR — KAI AI Orchestration Layer (Python 3.12)            ║
+# ║  Format: .pylintrc / pylintrc (INI-style)                                  ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Pylint is used as a secondary static analysis tool alongside Ruff.  It
+# catches design-level issues (too-many-*, missing docstrings) that Ruff
+# does not cover.  In CI it runs with --fail-under=8.5 to enforce a minimum
+# quality score without blocking on every minor convention warning.
+#
+# Usage:
+#   pylint kai/                          # lint the KAI package
+#   pylint --rcfile=.pylintrc kai/       # explicit config path
+#   pylint --fail-under=8.5 kai/        # CI gate
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ═════════════════════════════════════════════════════════════════════════════
+# MASTER
+# ═════════════════════════════════════════════════════════════════════════════
+[MASTER]
+
+# Parallel execution — use 4 worker processes for faster linting on CI
+# runners (4 vCPU GitHub Actions runners) and developer machines.
+# Set to 0 for auto-detection based on CPU count.
+jobs = 4
+
+# Load additional Pylint plugins.
+# pylint.extensions.docparams — checks docstring parameter documentation
+# pylint.extensions.bad_builtin — flags deprecated builtins
+# pylint.extensions.check_elif — flags if/elif chains that could be elif
+# pylint.extensions.mccabe — cyclomatic complexity checks
+load-plugins =
+    pylint.extensions.docparams,
+    pylint.extensions.check_elif,
+    pylint.extensions.mccabe
+
+# Python version (used for feature detection and import resolution).
+py-version = 3.12
+
+# Files or directories to ignore entirely.
+ignore = migrations,vendor,third_party,node_modules,build,target,.venv
+
+# File patterns to ignore (glob).
+ignore-patterns =
+    *_pb2.py,
+    *_pb2_grpc.py,
+    setup.py
+
+# Allow loading of C extension modules (e.g., numpy, torch).
+unsafe-load-any-extension = no
+
+# ═════════════════════════════════════════════════════════════════════════════
+# MESSAGES CONTROL
+# ═════════════════════════════════════════════════════════════════════════════
+[MESSAGES CONTROL]
+
+# Disabled messages — each with rationale.
+#
+# C0114 (missing-module-docstring)
+#   Not every __init__.py or small utility module needs a docstring.
+#   Enforced selectively via code review for public API modules.
+#
+# C0115 (missing-class-docstring)
+#   Pydantic models and dataclasses are often self-documenting via field
+#   names and type annotations.
+#
+# C0116 (missing-function-docstring)
+#   Private helper functions (_parse_packet, _validate_rule) don't require
+#   docstrings.  Public API functions do — enforced by review.
+#
+# R0801 (duplicate-code)
+#   ML pipeline boilerplate (dataloader setup, model init, training loop)
+#   is intentionally similar across experiment scripts.
+#
+# R0903 (too-few-public-methods)
+#   Pydantic BaseModel subclasses, dataclasses, and NamedTuples often have
+#   zero methods — they are data containers.
+#
+# R0913 (too-many-arguments)
+#   Handled by too-many-arguments threshold below.  Disabled here to avoid
+#   double-reporting at the default threshold.
+#
+# W0511 (fixme)
+#   TODO/FIXME/HACK comments are tracked in the issue tracker, not by the
+#   linter.  Developers should not be blocked by work-in-progress markers.
+#
+# E0401 (import-error)
+#   Optional dependencies (torch, sklearn, crewai) may not be installed in
+#   all environments (e.g., lint-only CI jobs without GPU packages).
+#
+# W0223 (abstract-method)
+#   CrewAI base classes have abstract methods that are implemented via
+#   dynamic dispatch (tool registration).  Pylint cannot see the runtime
+#   wiring.
+#
+# C0209 (consider-using-f-string)
+#   Logging calls use %-formatting for lazy evaluation:
+#     logger.debug("Processing %s events", count)
+#   f-strings would evaluate the string even when the log level is off.
+#
+# W0212 (protected-access)
+#   Test code legitimately accesses _private members for white-box testing.
+#   Suppressed globally; enforced in production code by review.
+disable =
+    C0114,
+    C0115,
+    C0116,
+    R0801,
+    R0903,
+    R0913,
+    W0511,
+    E0401,
+    W0223,
+    C0209,
+    W0212
+
+# ═════════════════════════════════════════════════════════════════════════════
+# FORMAT
+# ═════════════════════════════════════════════════════════════════════════════
+[FORMAT]
+
+# Maximum line length — consistent with Black, Ruff, isort.
+max-line-length = 120
+
+# Maximum number of arguments for a function or method.
+# Raised from default (5) to accommodate ML model constructors and FastAPI
+# endpoint handlers that accept many dependency-injected parameters.
+max-args = 8
+
+# Maximum number of local variables in a function.
+max-locals = 20
+
+# Maximum number of statements in a function body.
+max-statements = 60
+
+# Expected indentation (4 spaces — PEP 8 standard).
+indent-string = '    '
+
+# Allow single-line if/for/while for simple guard clauses.
+single-line-if-stmt = yes
+single-line-class-stmt = no
+
+# ═════════════════════════════════════════════════════════════════════════════
+# BASIC
+# ═════════════════════════════════════════════════════════════════════════════
+[BASIC]
+
+# Naming conventions.
+# Allow short variable names common in data science: x, y, df, lr, bs, n, i, j, k, e
+good-names = i,j,k,e,x,y,n,f,df,lr,bs,fn,db,id,op,ts,_
+
+# Regular expression for valid function names.
+# Allow snake_case with up to 50 characters.
+function-rgx = [a-z_][a-z0-9_]{1,50}$
+
+# Regular expression for valid method names.
+method-rgx = [a-z_][a-z0-9_]{1,50}$
+
+# Regular expression for valid module names.
+module-rgx = [a-z_][a-z0-9_]{0,50}$
+
+# Regular expression for valid class names (PascalCase).
+class-rgx = [A-Z_][a-zA-Z0-9]{1,50}$
+
+# Regular expression for valid constant names (UPPER_SNAKE_CASE or module-level).
+const-rgx = (([A-Z_][A-Z0-9_]*)|(__.*__)|([a-z_][a-z0-9_]*))$
+
+# ═════════════════════════════════════════════════════════════════════════════
+# DESIGN
+# ═════════════════════════════════════════════════════════════════════════════
+[DESIGN]
+
+# Maximum number of return statements in a function.
+# Raised for complex validation functions and multi-stage parsers.
+max-returns = 8
+
+# Maximum number of branches (if/elif/else/for/while/try/except) in a function.
+# Raised for protocol dissectors and multi-format input handlers.
+max-branches = 15
+
+# Maximum number of boolean expressions in an if statement.
+max-bool-expr = 6
+
+# Maximum number of parents for a class (mixin-heavy designs).
+max-parents = 10
+
+# Maximum number of attributes for a class.
+# Pydantic models with many fields can reach 20+.
+max-attributes = 25
+
+# Maximum number of public methods for a class.
+max-public-methods = 25
+
+# Minimum number of public methods (0 allows pure data classes).
+min-public-methods = 0
+
+# ═════════════════════════════════════════════════════════════════════════════
+# IMPORTS
+# ═════════════════════════════════════════════════════════════════════════════
+[IMPORTS]
+
+# Known third-party packages — prevents false "unable to import" errors
+# when the package is installed but Pylint's import resolution fails.
+known-third-party =
+    crewai,
+    langchain,
+    langchain_core,
+    langchain_community,
+    langchain_openai,
+    fastapi,
+    pydantic,
+    pydantic_settings,
+    torch,
+    torchvision,
+    sklearn,
+    pandas,
+    numpy,
+    scipy,
+    xgboost,
+    uvicorn,
+    httpx,
+    sqlalchemy,
+    celery,
+    redis,
+    nats,
+    clearml,
+    openai,
+    anthropic,
+    cohere,
+    transformers,
+    pymisp,
+    thehive4py,
+    stix2,
+    pytest
+
+# Known standard library modules — helps Pylint distinguish stdlib from
+# third-party when running in virtualenvs.
+known-standard-library =
+    dataclasses,
+    typing,
+    pathlib,
+    asyncio,
+    collections,
+    functools,
+    itertools,
+    json,
+    logging,
+    os,
+    re,
+    sys,
+    unittest
+
+# ═════════════════════════════════════════════════════════════════════════════
+# TYPECHECK
+# ═════════════════════════════════════════════════════════════════════════════
+[TYPECHECK]
+
+# List of decorators that produce properties (Pylint needs to know these to
+# avoid false "no member" errors on decorated methods).
+generated-members =
+    torch.*,
+    numpy.*,
+    cv2.*,
+    pydantic.*
+
+# Ignore missing members on dynamically typed modules.
+ignored-modules =
+    torch,
+    torch.nn,
+    torch.optim,
+    torch.utils.data,
+    numpy,
+    sklearn,
+    xgboost,
+    pymisp
+
+# ═════════════════════════════════════════════════════════════════════════════
+# SIMILARITIES
+# ═════════════════════════════════════════════════════════════════════════════
+[SIMILARITIES]
+
+# Minimum number of lines for a code block to be considered duplicate.
+# Raised to reduce noise from boilerplate ML training loops and API
+# endpoint handlers that follow a pattern.
+min-similarity-lines = 8
+
+# Ignore comments when computing similarity.
+ignore-comments = yes
+
+# Ignore docstrings when computing similarity.
+ignore-docstrings = yes
+
+# Ignore import statements when computing similarity.
+ignore-imports = yes
+
+# ═════════════════════════════════════════════════════════════════════════════
+# LOGGING
+# ═════════════════════════════════════════════════════════════════════════════
+[LOGGING]
+
+# Check that logging calls use lazy string formatting (%-style) rather than
+# f-strings.  This avoids unnecessary string construction when the log
+# level is disabled.
+logging-format-style = old
+
+# Expected logging modules.
+logging-modules = logging
+
+# ═════════════════════════════════════════════════════════════════════════════
+# EXCEPTIONS
+# ═════════════════════════════════════════════════════════════════════════════
+[EXCEPTIONS]
+
+# Exceptions that are too broad to catch (catching these usually hides bugs).
+overgeneral-exceptions = builtins.BaseException,builtins.Exception
+
+# ═════════════════════════════════════════════════════════════════════════════
+# DOCSTRING PARAMS (pylint.extensions.docparams)
+# ═════════════════════════════════════════════════════════════════════════════
+[PARAMETER_DOCUMENTATION]
+
+# Accept Google, NumPy, or Sphinx-style docstrings.
+accept-no-param-doc = yes
+accept-no-raise-doc = yes
+accept-no-return-doc = yes
+accept-no-yields-doc = yes
+default-docstring-type = google

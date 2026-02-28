@@ -1,0 +1,55 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Kubric-UiDR — KAI Core Python Requirements (production deployment)
+# Minimal set required for the KAI AI orchestration layer.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── AI / Agent Framework ──────────────────────────────────────────────────────
+crewai==0.67.1
+langchain==0.2.16
+langchain-community==0.2.16
+langchain-core==0.2.38
+langchain-openai==0.1.23
+langchain-anthropic==0.1.23
+
+# ── Web Framework ─────────────────────────────────────────────────────────────
+fastapi==0.115.0
+uvicorn[standard]==0.31.0
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-multipart==0.0.12
+
+# ── Messaging ─────────────────────────────────────────────────────────────────
+nats-py==2.9.0
+
+# ── Databases ─────────────────────────────────────────────────────────────────
+asyncpg==0.29.0
+clickhouse-connect==0.7.19
+redis[hiredis]==5.1.1
+
+# ── Serialization / Config ────────────────────────────────────────────────────
+orjson==3.10.7
+pyyaml==6.0.2
+python-dotenv==1.0.1
+
+# ── HTTP Client ───────────────────────────────────────────────────────────────
+httpx==0.27.2
+
+# ── Observability ─────────────────────────────────────────────────────────────
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-exporter-otlp==1.27.0
+opentelemetry-instrumentation-fastapi==0.48b0
+opentelemetry-instrumentation-httpx==0.48b0
+prometheus-client==0.21.0
+
+# ── Threat Intelligence ───────────────────────────────────────────────────────
+pymisp==2.4.198
+stix2==3.0.1
+stix2-patterns==2.0.0
+
+# ── Logging ───────────────────────────────────────────────────────────────────
+structlog==24.4.0
+
+# ── Cryptography / Auth ───────────────────────────────────────────────────────
+cryptography==43.0.1
+pyjwt[crypto]==2.9.0

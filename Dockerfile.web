@@ -1,55 +1,42 @@
-# Dockerfile.web — Next.js 14 standalone build for Kubric Portal
-# Usage:
-#   docker build -t kubric/web -f Dockerfile.web .
+# =============================================================================
+# Kubric Frontend - Next.js 14 Production Build
+# =============================================================================
 
-# ── Stage 1: dependencies ────────────────────────────────────────────────────
 FROM node:20-alpine AS deps
 WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
 
-COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci 2>/dev/null || npm install
-
-# ── Stage 2: builder ─────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
-COPY frontend/ .
+COPY . .
 
-# Build arguments for compile-time env injection
-ARG NEXT_PUBLIC_API_BASE=http://k-svc:8080
-ARG NEXT_PUBLIC_KAI_URL=http://kai-core:8100
-ARG NEXT_PUBLIC_NATS_WS_URL=ws://nats:9222
-
-ENV NEXT_PUBLIC_API_BASE=$NEXT_PUBLIC_API_BASE
-ENV NEXT_PUBLIC_KAI_URL=$NEXT_PUBLIC_KAI_URL
-ENV NEXT_PUBLIC_NATS_WS_URL=$NEXT_PUBLIC_NATS_WS_URL
-ENV NEXT_TELEMETRY_DISABLED=1
-
+# Build Next.js app with standalone output
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
 RUN npm run build
 
-# ── Stage 3: runtime ─────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN addgroup --system --gid 1001 kubric && \
-    adduser --system --uid 1001 kubric
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copy standalone output
-COPY --from=builder --chown=kubric:kubric /app/.next/standalone ./
-COPY --from=builder --chown=kubric:kubric /app/.next/static ./.next/static
+# Copy standalone build
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-USER kubric
+USER nextjs
 
-EXPOSE 3000
+EXPOSE 3001
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-    CMD wget -q -O /dev/null http://localhost:3000/api/auth/session 2>/dev/null || exit 1
+ENV PORT 3001
+ENV HOSTNAME "0.0.0.0"
 
 CMD ["node", "server.js"]

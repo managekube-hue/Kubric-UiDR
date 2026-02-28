@@ -1,0 +1,69 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  K-DEV-BLD-002  Rust Toolchain Specification                               ║
+# ║  Module: Kubric-UiDR — Unified Security Detection & Response Platform       ║
+# ║  Ref: rustup override / rust-toolchain.toml                                 ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# This file pins the exact Rust toolchain used by all Kubric workspace members
+# (agents/coresec, agents/netguard, agents/perftrace, agents/provisioning,
+# agents/watchdog).  rustup reads this automatically when building anywhere
+# inside the repo, ensuring reproducible builds across CI, developer
+# workstations, and Docker build stages.
+#
+# Placement: copy or symlink to REPO_ROOT/rust-toolchain.toml so that rustup
+# finds it.  This spec doc lives in the Build Toolchain section for audit.
+#
+# References:
+#   - https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file
+#   - Kubric orchestration doc §38 (Rust workspace dependency matrix)
+# ─────────────────────────────────────────────────────────────────────────────
+
+[toolchain]
+# ── Channel ──────────────────────────────────────────────────────────────────
+# Pin to a concrete stable release to guarantee deterministic builds.
+# Upgrade cadence: every 6-week Rust release cycle after CI green-lights the
+# full test suite.  Bump this version in a standalone PR with the label
+# "toolchain-upgrade" so reviewers can isolate regressions.
+channel = "1.82.0"
+
+# ── Profile ──────────────────────────────────────────────────────────────────
+# "default" installs rustc, cargo, rust-std, rust-docs, and rustfmt.
+# We add extra components below; "default" keeps the baseline lean while
+# still including documentation for offline API reference on airgapped nodes.
+profile = "default"
+
+# ── Components ───────────────────────────────────────────────────────────────
+# rustfmt       — enforced via `cargo fmt --check` in CI (pre-commit hook and
+#                 GitHub Actions).  Style rules live in .rustfmt.toml.
+# clippy        — static analysis gate.  Deny warnings in CI:
+#                   cargo clippy --workspace -- -D warnings
+#                 Lint settings: K-DEV-GIT-007_clippy_config.toml → clippy.toml
+# llvm-tools-preview — required for:
+#                   • `cargo-llvm-cov` source-based code coverage (CI uploads
+#                     to Codecov)
+#                   • `llvm-profdata` / `llvm-cov` for generating coverage
+#                     reports during local development
+#                   • PGO (Profile-Guided Optimisation) builds of the agents
+#                     for production release images
+components = [
+    "rustfmt",
+    "clippy",
+    "llvm-tools-preview",
+]
+
+# ── Targets ──────────────────────────────────────────────────────────────────
+# x86_64-unknown-linux-gnu  — primary production target; glibc-linked binaries
+#     run on Debian 12 / Ubuntu 22.04 nodes in the Kubric Proxmox cluster.
+#     This is the default host target on CI runners (GitHub Actions
+#     ubuntu-latest).
+#
+# x86_64-unknown-linux-musl — fully static binaries for:
+#     • scratch / distroless Docker images  (Dockerfile.agents multi-stage)
+#     • Air-gapped deployment where dynamic linker version is unknown
+#     • Side-car injection into minimal Kubernetes pods
+#     Requires musl-tools (`apt-get install musl-tools`) on the build host.
+#     Cross-compilation is wired via `.cargo/config.toml` linker overrides.
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-unknown-linux-musl",
+]

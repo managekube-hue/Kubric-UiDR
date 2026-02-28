@@ -188,7 +188,7 @@ services:
     networks: [kubric]
 
   temporal-ui:
-    image: temporalio/ui:2.29
+    image: temporalio/ui:2.28.0
     restart: unless-stopped
     environment:
       TEMPORAL_ADDRESS: temporal:7233

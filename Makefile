@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod deploy-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06 ops-batch-07
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -12,7 +12,7 @@ help:
 	@echo "  make kustomize-build   Validate kustomize overlays"
 	@echo "  make db-migrate    Run database migrations (local)"
 	@echo "  make deploy-staging Deploy to staging environment"
-	@echo "  make deploy-prod   Deploy to production (requires manual approval)"
+	@echo "  make deploy-prod   Deploy production via Docker Compose (fresh Ubuntu <5m)"
 	@echo "  make clean         Clean build artifacts and caches"
 	@echo "  make check-gpl-boundary  Verify no GPL-3.0 RITA imports in services/"
 	@echo "  make enterprise-check  Run monorepo enterprise readiness gate"
@@ -24,6 +24,7 @@ help:
 	@echo "  make ops-batch-04  External closure runtime smoke"
 	@echo "  make ops-batch-05  External closure Docker/library completeness"
 	@echo "  make ops-batch-06  External closure audit remediation verification"
+	@echo "  make ops-batch-07  Enterprise tree restructure verification"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -203,6 +204,9 @@ ops-batch-05:
 ops-batch-06:
 	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-06-audit-verify.ps1
 
+ops-batch-07:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/ops-batch-07-tree-restructure.ps1
+
 # Building
 
 build: build-rust build-go
@@ -246,9 +250,35 @@ deploy-staging:
 	kubectl rollout status deployment/k-svc -n kubric --timeout=120s
 
 deploy-prod:
-	@echo "PRODUCTION DEPLOYMENT - Requires approval"
-	@echo "This will be triggered by GitHub Actions on push to main"
-	@echo "Manual: kustomize build infra/k8s/overlays/prod | kubectl apply -f -"
+	@echo "═══════════════════════════════════════════════════════════════"
+	@echo "  KUBRIC PRODUCTION DEPLOYMENT (Docker Compose)"
+	@echo "═══════════════════════════════════════════════════════════════"
+	@echo "Step 1: Validating .env file..."
+	@test -f .env || (echo "ERROR: .env file missing — copy .env.example to .env" && exit 1)
+	@echo "Step 2: Pulling latest images..."
+	docker compose -f docker-compose.prod.yml pull
+	@echo "Step 3: Building application images..."
+	docker compose -f docker-compose.prod.yml build
+	@echo "Step 4: Starting infrastructure..."
+	docker compose -f docker-compose.prod.yml up -d nats postgres clickhouse neo4j redis vault temporal-postgres minio qdrant
+	@echo "  Waiting 20s for infra healthy..."
+	@sleep 20
+	@echo "Step 5: Starting platform services..."
+	docker compose -f docker-compose.prod.yml up -d temporal ollama prometheus loki n8n
+	@sleep 10
+	@echo "Step 6: Starting application services..."
+	docker compose -f docker-compose.prod.yml up -d
+	@echo "Step 7: Waiting for health checks..."
+	@sleep 30
+	@echo "Step 8: Verifying..."
+	docker compose -f docker-compose.prod.yml ps
+	@echo "═══════════════════════════════════════════════════════════════"
+	@echo "  DEPLOYMENT COMPLETE"
+	@echo "  Dashboard:  http://localhost:3000 (Grafana)"
+	@echo "  API:        http://localhost:8080/healthz (K-SVC)"
+	@echo "  Frontend:   http://localhost:3001 (Web)"
+	@echo "  Temporal:   http://localhost:8233 (Temporal UI)"
+	@echo "═══════════════════════════════════════════════════════════════"
 
 # Infrastructure
 

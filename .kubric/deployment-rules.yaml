@@ -1,0 +1,140 @@
+# Kubric Deployment Rules
+# Decision tree for KAI DEPLOY agent and `make deploy-prod` pipeline.
+# Governs: image promotion, rollout strategy, guardrails, rollback.
+
+version: "1.0"
+
+# ─── Environments ─────────────────────────────────────────────────────────────
+environments:
+  dev:
+    compose_file: docker-compose.yml
+    profile: app
+    auto_deploy: true
+    approval: none
+
+  prod:
+    compose_file: docker-compose.prod.yml
+    profile: null  # all services included, no profile needed
+    auto_deploy: false
+    approval: manual
+    pre_checks:
+      - name: health-gate
+        description: All services must pass healthcheck before promotion
+        command: docker compose -f docker-compose.prod.yml ps --format json | jq -e 'all(.Health == "healthy")'
+      - name: image-digest
+        description: Verify image digests match what was tested
+        command: docker compose -f docker-compose.prod.yml images --format json
+
+# ─── Rollout Strategy ─────────────────────────────────────────────────────────
+rollout:
+  strategy: rolling
+  order:
+    # Infrastructure first (stateful, usually unchanged)
+    - group: infra
+      services: [postgres, clickhouse, neo4j, redis, vault, nats, minio, qdrant, temporal-postgres, temporal]
+      parallel: false
+      wait_healthy: true
+
+    # Observability (independent of app)
+    - group: observability
+      services: [prometheus, loki, grafana, temporal-ui]
+      parallel: true
+      wait_healthy: true
+
+    # Supporting services
+    - group: support
+      services: [ollama, n8n]
+      parallel: true
+      wait_healthy: true
+
+    # Core APIs (the main workload)
+    - group: api
+      services: [ksvc, vdr, kic, noc, kai-python, kai, temporal-worker, nats-clickhouse-bridge]
+      parallel: false
+      wait_healthy: true
+      soak_seconds: 30
+
+    # Frontend + edge
+    - group: edge
+      services: [web, caddy]
+      parallel: true
+      wait_healthy: true
+
+# ─── Guardrails ───────────────────────────────────────────────────────────────
+guardrails:
+  criticality_5_block:
+    description: >
+      If KAI Risk scores any asset at Criticality 5, KAI DEPLOY must NOT
+      auto-deploy changes to that asset's service. Requires manual SOC approval.
+    check: "curl -sf http://localhost:8082/api/v1/risk/criticality-5 | jq -e '.count == 0'"
+    on_failure: abort
+
+  gpl_boundary:
+    description: No GPL/AGPL source imports in proprietary Go/Rust code paths
+    check: "grep -r 'activecm/rita' services/ && exit 1 || true"
+    on_failure: abort
+
+  image_signature:
+    description: Optional — verify cosign signatures on container images
+    check: "cosign verify --key ${COSIGN_PUB_KEY} kubric/ksvc:latest 2>/dev/null || true"
+    on_failure: warn
+
+  disk_space:
+    description: Ensure at least 10 GB free on Docker volume mount
+    check: "df -BG /var/lib/docker | awk 'NR==2{print $4}' | grep -E '^[1-9][0-9]+'"
+    on_failure: abort
+
+# ─── Rollback ─────────────────────────────────────────────────────────────────
+rollback:
+  trigger:
+    - any service fails healthcheck after 3 retries post-deploy
+    - KAI Sentinel health score drops below 50 within 5 minutes
+  action:
+    - docker compose -f docker-compose.prod.yml down
+    - git checkout HEAD~1 -- docker-compose.prod.yml
+    - docker compose -f docker-compose.prod.yml up -d
+    - notify: "VAPI/Twilio escalation to on-call SOC"
+
+# ─── Image Promotion ─────────────────────────────────────────────────────────
+image_promotion:
+  registry: "ghcr.io/managekube-hue"
+  tag_strategy: "git-sha"
+  retention: "keep last 10 images per service"
+  services:
+    - name: ksvc
+      image: "kubric/k-svc"
+      dockerfile: build/ksvc/Dockerfile
+    - name: vdr
+      image: "kubric/vdr"
+      dockerfile: build/vdr/Dockerfile
+    - name: kic
+      image: "kubric/kic"
+      dockerfile: build/kic/Dockerfile
+    - name: noc
+      image: "kubric/noc"
+      dockerfile: build/noc/Dockerfile
+    - name: kai
+      image: "kubric/kai-gateway"
+      dockerfile: build/kai/Dockerfile
+    - name: kai-python
+      image: "kubric/kai-python"
+      dockerfile: kai/Dockerfile
+    - name: temporal-worker
+      image: "kubric/temporal-worker"
+      dockerfile: build/temporal-worker/Dockerfile
+    - name: nats-clickhouse-bridge
+      image: "kubric/nats-clickhouse-bridge"
+      dockerfile: build/nats-clickhouse-bridge/Dockerfile
+    - name: web
+      image: "kubric/web"
+      dockerfile: Dockerfile.web
+
+# ─── Watchtower ───────────────────────────────────────────────────────────────
+watchtower:
+  enabled: true
+  schedule: "0 0 3 * * *"  # 03:00 UTC daily
+  scope: "kubric-prod"
+  monitor_only: false  # set true for notification-only mode
+  notification:
+    type: slack
+    url: "${SLACK_WEBHOOK_URL}"

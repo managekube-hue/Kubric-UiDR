@@ -1,0 +1,91 @@
+{
+  "name": "@kubric/portal",
+  "version": "0.0.0-semantically-released",
+  "private": true,
+  "description": "Kubric-UiDR Customer Portal — Next.js security operations dashboard",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/managekube-hue/Kubric-UiDR.git",
+    "directory": "frontend"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start -p ${PORT:-3000}",
+    "lint": "next lint --max-warnings 0",
+    "lint:fix": "next lint --fix",
+    "test": "jest --passWithNoTests",
+    "test:ci": "jest --ci --coverage --reporters=default --reporters=jest-junit",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\"",
+    "typecheck": "tsc --noEmit",
+    "commitlint": "commitlint --edit",
+    "release": "semantic-release",
+    "analyze": "ANALYZE=true next build",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "next": "14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@tremor/react": "^3.18.1",
+    "lucide-react": "^0.447.0",
+    "tailwindcss": "^3.4.13",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "@headlessui/react": "^2.1.8",
+    "@heroicons/react": "^2.1.5",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.2",
+    "recharts": "^2.12.7",
+    "date-fns": "^4.1.0",
+    "zod": "^3.23.8",
+    "swr": "^2.2.5",
+    "nuqs": "^1.19.3",
+    "sonner": "^1.5.0",
+    "@tanstack/react-table": "^8.20.5",
+    "next-themes": "^0.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "@types/react": "^18.3.10",
+    "@types/react-dom": "^18.3.0",
+    "@types/node": "^22.7.4",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.15",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "semantic-release": "^24.1.2",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/github": "^11.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^12.0.1",
+    "jest": "^29.7.0",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/jest-dom": "^6.5.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "@next/bundle-analyzer": "14.2.15",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,json,md}": [
+      "prettier --write"
+    ]
+  }
+}

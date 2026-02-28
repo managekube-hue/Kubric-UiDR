@@ -75,6 +75,7 @@ temp/
 # Claude Code working-directory temp files
 tmpclaude-*-cwd
 00_K-VENDOR-00_DETECTION_ASSETS/tmpclaude-*-cwd
+archive/spec-modules/**/tmpclaude-*-cwd
 nul
 
 # Generated lib.exe intermediate files (wpcap.lib + Packet.lib are committed, .exp are not)

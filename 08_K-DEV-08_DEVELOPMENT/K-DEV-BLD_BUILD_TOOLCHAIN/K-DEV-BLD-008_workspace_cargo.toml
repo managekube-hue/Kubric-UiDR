@@ -1,0 +1,237 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  K-DEV-BLD-008  Workspace Cargo.toml — Spec Reference (§38)                ║
+# ║  Module: github.com/managekube-hue/Kubric-UiDR                             ║
+# ║  Edition: Rust 2021 — MSRV 1.82.0                                          ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# This is the SPECIFICATION REFERENCE copy of the root Cargo.toml, matching
+# the full dependency matrix from the orchestration document Section 38.
+# It serves as the canonical record of every workspace-level dependency, its
+# pinned version, enabled feature flags, and the rationale for inclusion.
+#
+# The LIVE file is REPO_ROOT/Cargo.toml.  This spec copy is kept in the Build
+# Toolchain documentation tree so auditors and new contributors can review the
+# dependency surface without navigating the repo root.
+#
+# Governance:
+#   • Any dependency addition MUST be recorded here AND in the root Cargo.toml.
+#   • `cargo deny check` enforces license allowlist (Apache-2.0, MIT, BSD,
+#     ISC, Zlib, MPL-2.0).  GPL crates are loaded at runtime only (nDPI).
+#   • `cargo audit` runs nightly in CI to flag known CVEs.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+[workspace]
+members = [
+    "agents/coresec",       # K-XRO-CS — eBPF telemetry, YARA/Sigma detection, ML scoring
+    "agents/netguard",      # K-XRO-NG — packet capture, DPI, network anomaly detection
+    "agents/perftrace",     # K-XRO-PT — system performance tracing, resource profiling
+    "agents/provisioning",  # K-XRO-PV — node bootstrapping, image pulls, config sync
+    "agents/watchdog",      # K-XRO-WD — OTA updates, health watchdog, crash recovery
+]
+resolver = "2"
+
+# ═════════════════════════════════════════════════════════════════════════════
+# WORKSPACE DEPENDENCIES — pinned versions inherited by all workspace members
+# Usage in member Cargo.toml:  dependency = { workspace = true }
+# ═════════════════════════════════════════════════════════════════════════════
+[workspace.dependencies]
+
+# ── Async Runtime ────────────────────────────────────────────────────────────
+# tokio: Multi-threaded async runtime.  "full" enables I/O, timers, fs, net,
+# signal, sync, macros, and rt-multi-thread.  All agents are async-first.
+tokio   = { version = "1", features = ["full"] }
+
+# futures: Combinators (join!, select!, FuturesUnordered) for concurrent
+# eBPF ring-buffer polling and NATS subscription fan-out.
+futures = "0.3"
+
+# ── Serialization ───────────────────────────────────────────────────────────
+# serde: Derive-based (de)serialization for all inter-agent message schemas.
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# serde_yaml: Sigma rule file parsing (YAML → SigmaRule struct).
+serde_yaml = "0.9"
+
+# zstd: LZ4-class compression for event payloads on NATS.  Levels 0–2 used
+# in hot path to keep latency <1 ms per 4 KB frame.
+zstd = "0.13"
+
+# ── Messaging (NATS JetStream) ──────────────────────────────────────────────
+# async-nats: Pure-Rust NATS 2.10 client with JetStream, KV, and object store.
+# All agents publish telemetry and subscribe to command channels via NATS.
+async-nats = "0.37"
+
+# ── gRPC / Protobuf ─────────────────────────────────────────────────────────
+# prost: Protobuf code generation.  Proto definitions in proto/ are compiled
+# by tonic-build in each agent's build.rs.
+prost       = "0.13"
+prost-types = "0.13"
+
+# tonic: gRPC server/client for the KAI-API ↔ agent control plane.
+tonic       = { version = "0.12", features = ["tls", "gzip"] }
+tonic-build = "0.12"
+
+# ── Cryptography & Integrity ────────────────────────────────────────────────
+# blake3: 256-bit keyed hash for event integrity chain (Merkle audit trail).
+blake3 = "1.5"
+
+# sha2: SHA-256 / SHA-512 for file-hash IOC matching and YARA meta.
+sha2   = "0.10"
+
+# ring: TLS primitives, HMAC, HKDF — used by reqwest/rustls and for token
+# signing in the provisioning agent.
+ring   = "0.17"
+
+# ── eBPF — CoreSec (Linux only) ─────────────────────────────────────────────
+# aya: Safe eBPF program loading, map access, perf-buffer reading.
+# `async_tokio` feature enables zero-copy perf event polling on the tokio
+# runtime.  Requires CAP_BPF + CAP_PERFMON on the host.
+aya     = { version = "0.13", features = ["async_tokio"] }
+aya-log = "0.2"
+
+# ── Packet Capture & Network ────────────────────────────────────────────────
+# pcap: libpcap wrapper — raw packet capture on monitored interfaces.
+# `capture-stream` enables async Stream<Item=Packet> on tokio.
+pcap = { version = "2.2", features = ["capture-stream"] }
+
+# pnet: Portable packet parsing (Ethernet → IP → TCP/UDP → payload).
+# Used by NetGuard for deep-packet inspection before nDPI hand-off.
+pnet = "0.35"
+
+# libc: Raw FFI types for nDPI runtime loading (dlopen) and low-level
+# socket options.  nDPI itself is GPL; loaded dynamically per L0-3 license.
+libc = "0.2"
+
+# nix: POSIX API (signals, process control, filesystem).  Linux/macOS only —
+# see [target.'cfg(unix)'.dependencies] in member crates.
+nix = { version = "0.29", features = ["process", "signal", "fs"] }
+
+# ── ML Inference (CoreSec on-device scoring) ─────────────────────────────────
+# candle: HuggingFace Rust ML framework — no Python or libtorch needed.
+# CoreSec loads ONNX/safetensors models for anomaly scoring at line rate.
+candle-core = "0.9"
+candle-nn   = "0.9"
+
+# ── Detection Rule Engines ──────────────────────────────────────────────────
+# yara-x: Pure-Rust YARA v4 engine — no libyara.so dependency.
+# Compiles YARA rules at agent startup; hot-reloads via notify watcher.
+yara-x = "0.12"
+
+# sigma-rust: Sigma rule evaluator (LGPL 2.1).  Pinned here for the spec
+# reference; actual integration targets the native evaluator in
+# agents/coresec/src/detection/sigma.rs until upstream API stabilises.
+# sigma-rust = "0.8"
+
+# ── System Metrics ──────────────────────────────────────────────────────────
+# sysinfo: Cross-platform CPU, memory, disk, process telemetry.
+# PerTrace agent samples every 5 s; CoreSec uses it for self-health reports.
+sysinfo = "0.33"
+
+# ── PDF / Report Generation ─────────────────────────────────────────────────
+# printpdf: KAI executive PDF report builder — compliance summaries, incident
+# timelines, risk heatmaps rendered server-side.
+printpdf = "0.7"
+
+# ── HTTP Client ──────────────────────────────────────────────────────────────
+# reqwest: HTTPS client for Watchdog OTA update pulls, KAI-COMM webhook
+# delivery, and MISP/TheHive REST API integration.
+# rustls-tls avoids OpenSSL dependency; json feature for serde integration.
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+
+# ── Observability ────────────────────────────────────────────────────────────
+# tracing: Structured, span-based instrumentation for all agents.
+tracing            = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# OpenTelemetry: Unified trace + metric propagation to Grafana Tempo /
+# Prometheus / Loki.  OTLP exporter sends via gRPC to the OTel Collector.
+opentelemetry         = { version = "0.28", features = ["trace", "metrics"] }
+opentelemetry-otlp    = { version = "0.28", features = ["http-proto"] }
+opentelemetry_sdk     = { version = "0.28", features = ["rt-tokio"] }
+tracing-opentelemetry = "0.29"
+
+# ── Error Handling ───────────────────────────────────────────────────────────
+# anyhow: Ergonomic error propagation in application code (agents, CLI).
+anyhow    = "1.0"
+# thiserror: Derive-based custom error types in library/shared code.
+thiserror = "1.0"
+
+# ── Configuration ────────────────────────────────────────────────────────────
+# dotenvy: Load .env files for local development secrets.
+dotenvy = "0.15"
+# config: Layered config (defaults → file → env → CLI) for agent settings.
+config  = "0.15"
+
+# ── UUID / Time ──────────────────────────────────────────────────────────────
+# uuid: V4 random UUIDs for event IDs, correlation IDs, session tokens.
+uuid   = { version = "1.10", features = ["v4", "serde"] }
+# chrono: Timestamp formatting (ISO 8601) and duration arithmetic for SLA
+# calculations and log correlation windows.
+chrono = { version = "0.4", features = ["serde"] }
+
+# ── CLI ──────────────────────────────────────────────────────────────────────
+# clap: Argument parsing for agent binaries.  `derive` for declarative
+# structs, `env` for 12-factor env-var overrides.
+clap = { version = "4", features = ["derive", "env"] }
+
+# ── File-System Watching ─────────────────────────────────────────────────────
+# notify: inotify/kqueue/ReadDirectoryChanges watcher for YARA/Sigma rule
+# hot-reload and config file change detection.
+notify = "6.1"
+
+# ── Signal Handling (Unix) ───────────────────────────────────────────────────
+# signal-hook + signal-hook-tokio: Graceful SIGTERM/SIGINT shutdown for all
+# agents running under systemd or Kubernetes.  Unix-only; Windows agents
+# use tokio::signal::ctrl_c() directly.
+# NOTE: These are declared as target-gated deps in member crates, not here,
+# to avoid Windows compile failures.  Pinned versions for reference:
+# signal-hook       = "0.3"
+# signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+# base64: Encoding for binary payloads in JSON messages and JWT tokens.
+base64 = "0.22"
+# hex: Hex encoding for hash digests and IOC display.
+hex    = "0.4"
+# regex: Pattern matching for log parsing, Sigma field extraction, and
+# detection rule conditions.
+regex  = "1"
+# bytes: Zero-copy byte buffer management for packet and event pipelines.
+bytes  = "1"
+
+# ═════════════════════════════════════════════════════════════════════════════
+# WORKSPACE METADATA
+# ═════════════════════════════════════════════════════════════════════════════
+[workspace.metadata]
+# Used by internal tooling (scripts/dependency-report.py) to tag the
+# specification section this manifest corresponds to.
+spec-section = "38"
+platform     = "Kubric-UiDR"
+msrv         = "1.82.0"
+
+# ═════════════════════════════════════════════════════════════════════════════
+# PROFILE OVERRIDES
+# ═════════════════════════════════════════════════════════════════════════════
+
+# Development builds: optimise deps but keep agent code at opt-level 0 for
+# fast incremental compiles and debuginfo.
+[profile.dev.package."*"]
+opt-level = 2
+
+# Release builds: LTO + single codegen unit for maximum binary performance.
+# Agents run 24/7 on bare-metal; a 3-minute link is acceptable for 10–15%
+# throughput gain on eBPF event processing.
+[profile.release]
+lto           = "fat"
+codegen-units = 1
+strip         = "symbols"
+panic         = "abort"
+
+# CI profile: inherits release but disables LTO for faster pipeline times.
+# Invoked via `cargo build --profile ci` in GitHub Actions.
+[profile.ci]
+inherits      = "release"
+lto           = "off"
+codegen-units = 16

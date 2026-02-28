@@ -1,0 +1,206 @@
+# Kubric Stack Manifest
+# Canonical service inventory and dependency graph for Docker Compose production deployment.
+# Referenced by: docker-compose.prod.yml, Makefile deploy-prod, .kubric/health-checks.yaml
+
+version: "1.0"
+platform: kubric-uidr
+
+# ─── Infrastructure Services (always-on, single-instance) ─────────────────────
+infrastructure:
+  nats:
+    image: nats:2.10-alpine
+    role: Message bus — JetStream event streaming
+    port: 4222
+    health: http://localhost:8222/healthz
+    critical: true
+
+  postgres:
+    image: postgres:16-alpine
+    role: Primary relational store — tenants, state, config
+    port: 5432
+    health: pg_isready -U kubric
+    critical: true
+    backup: pg_basebackup + WAL streaming (RPO 1h, RTO 2h)
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.3-alpine
+    role: Columnar event store — tenant-partitioned telemetry
+    port: 9000
+    health: http://localhost:8123/ping
+    critical: true
+    backup: Partition exports to MinIO (RPO 4h, RTO 4h)
+
+  neo4j:
+    image: neo4j:5.18-community
+    role: Graph DB — AD attack paths, asset topology
+    port: 7687
+    health: http://localhost:7474
+    critical: false
+    backup: neo4j-admin dump (RPO 4h, RTO 4h)
+
+  redis:
+    image: redis:7-alpine
+    role: Cache — CrewAI sessions, Celery broker
+    port: 6379
+    health: redis-cli ping
+    critical: false
+
+  vault:
+    image: hashicorp/vault:1.17
+    role: Secrets — PKI, agent tokens, tenant credentials
+    port: 8200
+    health: http://localhost:8200/v1/sys/health
+    critical: true
+    backup: Raft snapshot (RPO 1h, RTO 30m)
+
+  temporal:
+    image: temporalio/auto-setup:1.24
+    role: Durable workflow orchestration
+    port: 7233
+    depends_on: [temporal-postgres]
+    critical: true
+
+  temporal-postgres:
+    image: postgres:16-alpine
+    role: Temporal persistence store
+    port: 5432 (internal)
+    critical: true
+
+  qdrant:
+    image: qdrant/qdrant:v1.9.0
+    role: Vector DB — KAI RAG embeddings
+    port: 6333
+    health: http://localhost:6333/healthz
+    critical: false
+
+  ollama:
+    image: ollama/ollama:latest
+    role: Local LLM inference — llama3.2
+    port: 11434
+    health: http://localhost:11434/api/tags
+    critical: false
+
+  n8n:
+    image: n8nio/n8n:1.45.1
+    role: Workflow automation — ITSM routing, Slack/email
+    port: 5678
+    health: http://localhost:5678/healthz
+    critical: false
+
+  minio:
+    image: minio/minio:RELEASE.2024-07-16T23-46-41Z
+    role: S3-compatible object storage — evidence, models, backups
+    port: 9000
+    health: mc ready local
+    critical: true
+    backup: Erasure coding (RPO 0, RTO 15m)
+
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    role: Metrics scrape and storage
+    port: 9090
+    critical: false
+
+  loki:
+    image: grafana/loki:3.1.0
+    role: Log aggregation
+    port: 3100
+    critical: false
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    role: Dashboards — SOC, NOC, compliance
+    port: 3000
+    depends_on: [prometheus, loki]
+    critical: false
+
+# ─── Application Services (profile: app, scalable) ────────────────────────────
+application:
+  ksvc:
+    build: build/ksvc/Dockerfile
+    role: Tenant management API
+    port: 8080
+    health: http://localhost:8080/healthz
+    depends_on: [postgres, nats]
+    replicas_prod: 3
+
+  vdr:
+    build: build/vdr/Dockerfile
+    role: Vulnerability findings API
+    port: 8081
+    health: http://localhost:8081/healthz
+    depends_on: [postgres, nats]
+    replicas_prod: 3
+
+  kic:
+    build: build/kic/Dockerfile
+    role: Compliance assessments API (CGO — DuckDB)
+    port: 8082
+    health: http://localhost:8082/healthz
+    depends_on: [postgres, nats]
+    replicas_prod: 3
+
+  noc:
+    build: build/noc/Dockerfile
+    role: Cluster & agent heartbeat API
+    port: 8083
+    health: http://localhost:8083/healthz
+    depends_on: [postgres, nats, neo4j, minio]
+    replicas_prod: 3
+
+  kai:
+    build: build/kai/Dockerfile
+    role: Go reverse proxy + JWT auth gateway
+    port: 8100
+    health: http://localhost:8100/healthz
+    depends_on: [kai-python, postgres, nats]
+    replicas_prod: 2
+
+  kai-python:
+    build: kai/Dockerfile
+    role: FastAPI AI orchestration — CrewAI personas, Temporal workflows
+    port: 8101
+    health: http://localhost:8101/healthz
+    depends_on: [postgres, nats, ollama, temporal]
+    replicas_prod: 2
+
+  temporal-worker:
+    build: build/temporal-worker/Dockerfile
+    role: Go workflow engine — PatchWorkflow, RemediationWorkflow
+    depends_on: [temporal, postgres, nats]
+    replicas_prod: 2
+
+  nats-clickhouse-bridge:
+    build: build/nats-clickhouse-bridge/Dockerfile
+    role: Event stream → ClickHouse batch insert
+    depends_on: [nats, clickhouse]
+    replicas_prod: 2
+
+  web:
+    build: Dockerfile.web
+    role: Next.js frontend
+    port: 3001
+    health: http://localhost:3001
+    replicas_prod: 2
+
+  caddy:
+    image: caddy:2-alpine
+    role: Reverse proxy, TLS termination
+    port: 80, 443
+    depends_on: [ksvc, vdr, kic, noc, kai]
+    replicas_prod: 1
+
+# ─── Dependency Graph (boot order) ────────────────────────────────────────────
+boot_order:
+  phase_1_storage:    [postgres, temporal-postgres, clickhouse, neo4j, redis, minio, qdrant]
+  phase_2_messaging:  [nats, vault]
+  phase_3_platform:   [temporal, ollama, prometheus, loki, n8n]
+  phase_4_observability: [grafana, temporal-ui]
+  phase_5_app:        [ksvc, vdr, kic, noc, kai-python, kai, temporal-worker, nats-clickhouse-bridge, web]
+  phase_6_edge:       [caddy]
+
+# ─── Network ──────────────────────────────────────────────────────────────────
+network:
+  name: kubric
+  driver: bridge
+  subnet: 172.28.0.0/16

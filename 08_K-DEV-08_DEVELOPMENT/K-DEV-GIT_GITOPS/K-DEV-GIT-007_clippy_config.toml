@@ -1,0 +1,148 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║  K-DEV-GIT-007  Clippy Configuration (clippy.toml)                          ║
+# ║  Module: Kubric-UiDR — Rust Agent Workspace                                ║
+# ║  Ref: https://doc.rust-lang.org/clippy/configuration.html                   ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Clippy is the Rust static-analysis gate for all workspace members.
+# Place this file (or symlink it) at REPO_ROOT/clippy.toml so that
+# `cargo clippy --workspace` picks it up automatically.
+#
+# CI invocation:
+#   cargo clippy --workspace --all-targets -- -D warnings
+#
+# The settings below are tuned for the Kubric agent codebase, which includes:
+#   • eBPF programs (unsafe FFI, raw pointer manipulation)
+#   • Network packet parsing (bit-level operations, manual byte slicing)
+#   • Real-time event pipelines (performance-sensitive hot loops)
+#   • ML inference (matrix math, unsafe SIMD intrinsics via candle)
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Minimum Supported Rust Version ──────────────────────────────────────────
+# Must match the channel in K-DEV-BLD-002_rust-toolchain.toml.
+# Clippy uses this to avoid suggesting APIs or syntax not available on older
+# toolchains.  All agents target this version.
+msrv = "1.82"
+
+# ── Complexity Thresholds ────────────────────────────────────────────────────
+
+# cognitive-complexity-threshold (default: 25)
+# Maximum cognitive complexity per function before clippy::cognitive_complexity
+# fires.  Set to 30 because:
+#   • Packet-parsing state machines (NetGuard DPI) have inherently branchy
+#     logic that cannot be trivially decomposed without hurting readability.
+#   • eBPF map lookup chains in CoreSec follow kernel API patterns that are
+#     verbose but well-understood.
+# Functions exceeding this should be refactored or annotated with
+# `#[allow(clippy::cognitive_complexity)]` plus a justification comment.
+cognitive-complexity-threshold = 30
+
+# type-complexity-threshold (default: 250)
+# Clippy warns on deeply nested generic types.  tokio + tonic + futures
+# combinators routinely produce types that exceed the default.  Raising to
+# 350 avoids noise on legitimate async tower::Service chains.
+type-complexity-threshold = 350
+
+# too-many-arguments-threshold (default: 7)
+# Raised to 10 for eBPF program loaders and detection-engine constructors
+# that accept many configuration knobs.  Prefer builder patterns for new
+# code, but existing aya-based setup functions pass kernel constants inline.
+too-many-arguments-threshold = 10
+
+# too-many-lines-threshold (default: 100)
+# Raised to 150 for integration test harnesses and protocol dissectors
+# where splitting the function would scatter related assertions.
+too-many-lines-threshold = 150
+
+# ── Struct / Enum Thresholds ─────────────────────────────────────────────────
+
+# struct-field-count-threshold (default: 8) — not available as clippy.toml key
+# (enforced via allow attribute).  Documented here for reference:
+# CoreSec's `TelemetryEvent` has 14 fields to match the wire schema.
+
+# enum-variant-count-threshold — not a clippy.toml key; handled by allow
+# attributes on protocol enums that mirror IANA registries.
+
+# ── String / Verbosity ──────────────────────────────────────────────────────
+
+# single-char-binding-names-threshold (default: 4)
+# Network code uses short names (b for byte, p for packet, n for length)
+# following BSD socket conventions.  Allow up to 5.
+single-char-binding-names-threshold = 5
+
+# ── Disallowed Methods ──────────────────────────────────────────────────────
+# Ban methods that are unsafe-by-convention or harmful in production agents.
+disallowed-methods = [
+    # std::process::exit bypasses destructors and flush; use anyhow error
+    # propagation and let main() return ExitCode.
+    { path = "std::process::exit", reason = "Use anyhow Result propagation; exit() skips Drop handlers" },
+
+    # unwrap() on Options / Results.  In agent code, unwrap panics bring
+    # down the entire telemetry pipeline.  Use .context()? or .expect("msg").
+    # NOTE: This is intentionally NOT listed to avoid blanket ban — some
+    # const-init contexts require unwrap().  Enforced by code review + deny
+    # attribute in hot-path modules instead.
+
+    # println! / eprintln! — all output must go through the tracing framework
+    # so that log levels, structured fields, and OTel export work correctly.
+    { path = "std::io::_print", reason = "Use tracing::info!/warn!/error! instead of println!" },
+]
+
+# ── Disallowed Types ────────────────────────────────────────────────────────
+# Ban types that indicate architectural violations.
+disallowed-types = [
+    # Use `tokio::sync::Mutex` in async code, not std's blocking Mutex.
+    { path = "std::sync::Mutex", reason = "Use tokio::sync::Mutex in async contexts to avoid blocking the runtime" },
+]
+
+# ── Allowed Lint Exceptions (documented rationale) ───────────────────────────
+#
+# The following lints are ALLOWED at the workspace level via Cargo.toml or
+# crate-level #![allow(...)].  Rationale is documented here for auditors.
+#
+# clippy::missing_safety_doc
+#   eBPF helper functions in agents/coresec/src/ebpf/ are thin wrappers
+#   around kernel BPF helpers.  Safety invariants are documented in the
+#   module-level doc comment rather than per-function, matching the aya
+#   upstream convention.
+#
+# clippy::cast_possible_truncation
+# clippy::cast_sign_loss
+# clippy::cast_precision_loss
+#   Network packet parsing operates on wire-format integers where sizes are
+#   protocol-defined.  Casts are validated by preceding bounds checks.
+#   Suppressed in agents/netguard/src/dissect/ with per-module attributes.
+#
+# clippy::module_name_repetitions
+#   Detection module exports (SigmaEngine, SigmaRule, SigmaCompiler) repeat
+#   the module name for clarity at call sites.  This is idiomatic in library
+#   crates consumed by multiple binaries.
+#
+# clippy::must_use_candidate
+#   Builder methods and chainable API calls return &mut Self; marking every
+#   one #[must_use] is noise.  Applied selectively to pure functions only.
+#
+# clippy::unsafe_derive_deserialize
+#   Some telemetry structs derive Deserialize and contain fields that use
+#   MaybeUninit for zero-copy ring-buffer reads.  The unsafe usage is
+#   contained and reviewed.
+#
+# ═════════════════════════════════════════════════════════════════════════════
+# NOTES FOR CONTRIBUTORS
+# ═════════════════════════════════════════════════════════════════════════════
+#
+# 1. If you suppress a clippy lint with #[allow(...)], ALWAYS add a comment
+#    explaining why.  PR reviewers will reject bare allows.
+#
+# 2. When adding a new crate to the workspace, run:
+#      cargo clippy -p <crate> -- -D warnings
+#    before opening the PR.
+#
+# 3. To run clippy with nightly-only lints for a deeper audit:
+#      cargo +nightly clippy --workspace -- -W clippy::pedantic
+#    This is informational only; CI uses the pinned stable channel.
+#
+# 4. Clippy configuration keys are version-sensitive.  If a key is not
+#    recognised after a toolchain upgrade, check:
+#      https://doc.rust-lang.org/clippy/configuration.html
