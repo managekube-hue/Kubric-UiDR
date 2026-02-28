@@ -2,7 +2,7 @@
 
 ## Overview
 
-ERPNext provides:
+ERPNext is the complete ITSM solution for Kubric, providing:
 - **Customer Portal** - Self-service for customers
 - **ITSM** - Issue tracking and SLA management
 - **Billing** - Integrated invoicing
@@ -17,10 +17,6 @@ ERPNext provides:
 ERPNEXT_BASE_URL=http://erpnext:8000
 ERPNEXT_API_KEY=<api_key>
 ERPNEXT_API_SECRET=<api_secret>
-
-# Zammad (fallback for internal ticketing)
-ZAMMAD_URL=http://zammad:3000
-ZAMMAD_TOKEN=<token>
 ```
 
 ## Usage
@@ -77,36 +73,40 @@ invoice, err := client.CreateSalesInvoice(ctx, &erpnext.SalesInvoice{
 ## Architecture
 
 ```
-Customer Portal (ERPNext)
-  ├─ Self-service issue creation
-  ├─ View contracts & assets
-  ├─ Knowledge base access
-  └─ Billing history
-
-KAI Integration
-  ├─ Auto-create issues from alerts
-  ├─ Update issue status
-  ├─ Generate invoices
-  └─ Track SLAs
-
-Zammad (Internal)
-  ├─ Agent-only tickets
-  ├─ Quick triage
-  └─ Multi-channel support
+ERPNext (Port 8000)
+  ├─ Customer Portal
+  │   ├─ Self-service issue creation
+  │   ├─ View contracts & assets
+  │   ├─ Knowledge base access
+  │   └─ Billing history
+  │
+  ├─ Agent Interface
+  │   ├─ Issue management
+  │   ├─ SLA tracking
+  │   └─ Customer communication
+  │
+  └─ KAI Integration
+      ├─ Auto-create issues from alerts
+      ├─ Update issue status
+      ├─ Generate invoices
+      └─ Track SLAs
 ```
 
 ## Benefits
 
-1. **Customer Self-Service** - Portal for customers to manage their own tickets
-2. **Integrated Billing** - Automatic invoice generation from usage
-3. **Asset Tracking** - Link issues to specific customer assets
-4. **Modern UI** - React-based interface
-5. **Full ERP** - Can expand to inventory, HR, etc.
+1. **Single ITSM Platform** - One system for all ticketing needs
+2. **Customer Self-Service** - Portal for customers to manage their own tickets
+3. **Integrated Billing** - Automatic invoice generation from usage
+4. **Asset Tracking** - Link issues to specific customer assets
+5. **Modern UI** - React-based interface
+6. **Full ERP** - Can expand to inventory, HR, procurement
+7. **n8n Integration** - Workflow automation for multi-channel support (email, Slack, Teams)
 
-## Migration from Zammad
+## Workflow Automation
 
-Zammad remains as internal ticketing system. ERPNext handles customer-facing workflows.
-
-**Dual ITSM Strategy:**
-- ERPNext: Customer portal, billing, contracts
-- Zammad: Internal agent workflows, quick triage
+Use n8n (port 5678) for:
+- Email-to-ticket conversion
+- Slack/Teams notifications
+- Escalation workflows
+- SLA breach alerts
+- Customer notifications

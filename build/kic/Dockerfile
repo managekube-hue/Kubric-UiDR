@@ -1,6 +1,6 @@
 # build/kic/Dockerfile — KIC compliance assessments service
 # CGO_ENABLED=1 required for go-duckdb (embedded OLAP analytics engine).
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 ENV GOTOOLCHAIN=auto
 RUN apk add --no-cache gcc musl-dev
 WORKDIR /build

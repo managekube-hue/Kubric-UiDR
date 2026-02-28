@@ -170,33 +170,4 @@ if ($fail -gt 0) {
 } else {
     Write-Host "[batch-07] Tree restructure verification PASSED" -ForegroundColor Green
     exit 0
-}e compliance"            ($vendorDoc -match "License Compliance")
-
-$complianceDoc = Get-Content "docs/COMPLIANCE.md" -Raw
-Assert-True "COMPLIANCE doc covers KIC evidence"              ($complianceDoc -match "KIC-001")
-Assert-True "COMPLIANCE doc covers ITIL 4"                    ($complianceDoc -match "ITIL 4")
-Assert-True "COMPLIANCE doc covers Incident Management"       ($complianceDoc -match "Incident Management")
-Assert-True "COMPLIANCE doc covers Risk Management"           ($complianceDoc -match "Risk Management")
-Assert-True "COMPLIANCE doc covers SLO"                       ($complianceDoc -match "SLO")
-
-$drDoc = Get-Content "docs/DR-COVERAGE.md" -Raw
-Assert-True "DR doc covers EDR"                               ($drDoc -match "EDR.*Endpoint")
-Assert-True "DR doc covers NDR"                               ($drDoc -match "NDR.*Network")
-Assert-True "DR doc covers VDR"                               ($drDoc -match "VDR.*Vulnerability")
-Assert-True "DR doc covers KAI orchestration"                 ($drDoc -match "CrewAI")
-Assert-True "DR doc covers BDR RTO/RPO"                       ($drDoc -match "RPO")
-Assert-True "DR doc covers 20 disciplines"                    ($drDoc -match "20 Detection")
-Assert-True "DR doc covers NATS subjects"                     ($drDoc -match "kubric\.events\.")
-
-# ── Summary ────────────────────────────────────────────────────────────────
-Write-Host "`n========================================" -ForegroundColor Cyan
-Write-Host "  Results: $pass / $total passed ($fail failures)"
-if ($fail -eq 0) {
-    Write-Host "  STATUS: ALL GATES PASSED" -ForegroundColor Green
-} else {
-    Write-Host "  STATUS: $fail GATE(S) FAILED" -ForegroundColor Red
 }
-Write-Host "========================================`n" -ForegroundColor Cyan
-
-Pop-Location
-exit $fail

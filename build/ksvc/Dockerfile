@@ -2,7 +2,7 @@
 # Multi-stage: builder compiles Go binary; final image is distroless.
 
 # ── Stage 1: builder ─────────────────────────────────────────────────────────
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 ENV GOTOOLCHAIN=auto
 WORKDIR /build
 

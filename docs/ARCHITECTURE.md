@@ -230,8 +230,9 @@ focused role, goal, and backstory for LLM-driven security operations.
 Ollama (local) -> vLLM -> OpenAI -> Anthropic (fallback)
 
 ### PSA Integration (kai/psa/)
-- **Zammad REST client**: idempotent ticket creation (event_id dedup), priority + state mapping
+- **ERPNext REST client**: Complete ITSM solution with customer portal, issue tracking, billing, asset management, contracts
 - **QBR PDF reports**: reportlab rendering (exec summary, risk trends, metrics), MinIO upload
+- **n8n workflows**: Multi-channel support (email-to-ticket, Slack/Teams notifications, escalations)
 
 ### Temporal Workflows
 - **Billing**: ClickHouse usage aggregation -> Stripe invoice creation -> audit record
@@ -328,6 +329,10 @@ Endpoint/Network
                                    |
                             [Next.js Portal]
                             (customer view)
+
+                                   |
+                            [ERPNext ITSM]
+                            (tickets/billing)
 ```
 
 ### OCSF Event Classes

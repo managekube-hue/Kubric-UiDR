@@ -1,5 +1,5 @@
 # build/nats-clickhouse-bridge/Dockerfile — NATS JetStream to ClickHouse bridge
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /build
 COPY go.mod go.sum ./
 RUN go mod download
