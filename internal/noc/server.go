@@ -20,6 +20,11 @@ import (
 	"github.com/managekube-hue/Kubric-UiDR/internal/thehive"
 	"github.com/managekube-hue/Kubric-UiDR/internal/velociraptor"
 	"github.com/managekube-hue/Kubric-UiDR/internal/wazuh"
+
+	"github.com/managekube-hue/Kubric-UiDR/internal/alerting"
+	"github.com/managekube-hue/Kubric-UiDR/internal/messaging"
+	kubricneo4j "github.com/managekube-hue/Kubric-UiDR/internal/neo4j"
+	"github.com/managekube-hue/Kubric-UiDR/internal/storage"
 )
 
 // Server wires together the Chi router, NOCStore (pgx → Postgres), Publisher (NATS),
@@ -32,6 +37,10 @@ type Server struct {
 	integrations      *integrationHandler
 	correlationEngine *correlation.Engine
 	falcoReceiver     *falco.WebhookReceiver
+	zmqPub            *messaging.Publisher  // ZMQ4 high-throughput fanout (optional)
+	twilioAlerter     *alerting.TwilioAlerter // Twilio escalation (optional)
+	graphStore        *kubricneo4j.GraphStore // Neo4j asset topology (optional)
+	objectStore       *storage.ObjectStore    // MinIO evidence/SBOM/scan store (optional)
 }
 
 // NewServer initialises all NOC dependencies and returns a ready-to-run Server.
@@ -77,6 +86,44 @@ func NewServer(cfg Config) (*Server, error) {
 		correlationEngine: corrEngine,
 		falcoReceiver:     falcoReceiver,
 	}
+
+	// ── ZMQ fanout (optional) ────────────────────────────────────────────
+	if cfg.ZMQPublishAddr != "" {
+		zmqPub, err := messaging.NewPublisher(context.Background(), cfg.ZMQPublishAddr)
+		if err != nil {
+			fmt.Printf("noc: warn — ZMQ publisher init failed: %v\n", err)
+		} else {
+			s.zmqPub = zmqPub
+		}
+	}
+
+	// ── Twilio alerter (optional) ────────────────────────────────────────
+	if cfg.TwilioAccountSID != "" {
+		s.twilioAlerter = alerting.NewTwilioAlerter(
+			cfg.TwilioAccountSID, cfg.TwilioAuthToken, cfg.TwilioFromNumber,
+		)
+	}
+
+	// ── Neo4j graph store (optional) ─────────────────────────────────────
+	if gs, err := kubricneo4j.New(cfg.Neo4jURI, cfg.Neo4jUser, cfg.Neo4jPassword); err != nil {
+		fmt.Printf("noc: warn — Neo4j graph store init failed: %v\n", err)
+	} else if gs != nil {
+		s.graphStore = gs
+		if err := gs.EnsureConstraints(context.Background()); err != nil {
+			fmt.Printf("noc: warn — Neo4j constraints: %v\n", err)
+		}
+	}
+
+	// ── MinIO object store (optional) ────────────────────────────────────
+	if os, err := storage.New(cfg.MinIOEndpoint, cfg.MinIOAccessKey, cfg.MinIOSecretKey, false); err != nil {
+		fmt.Printf("noc: warn — MinIO init failed: %v\n", err)
+	} else if os != nil {
+		s.objectStore = os
+		if err := os.EnsureDefaultBuckets(context.Background()); err != nil {
+			fmt.Printf("noc: warn — MinIO default buckets: %v\n", err)
+		}
+	}
+
 	s.router = s.buildRouter()
 	return s, nil
 }
@@ -164,6 +211,11 @@ func (s *Server) Run(ctx context.Context) error {
 		s.store.Close()
 		s.pub.Close()
 		s.closeIntegrations()
+		if s.zmqPub != nil {
+			_ = s.zmqPub.Close()
+		}
+		s.graphStore.Close()
+		s.objectStore.Close()
 		return nil
 	case err := <-errCh:
 		return err
@@ -266,6 +318,32 @@ func (s *Server) buildRouter() *chi.Mux {
 		// Only mounted when the engine initialised successfully.
 		if s.correlationEngine != nil {
 			r.Mount("/detection", s.detectionRoutes())
+		}
+
+		// ── Graph topology routes (Neo4j) ─────────────────────────────
+		if s.graphStore != nil {
+			gh := &graphHandler{graph: s.graphStore}
+			r.Route("/graph", func(r chi.Router) {
+				r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
+				r.Post("/assets", gh.upsertAsset)
+				r.Post("/relationships", gh.upsertRelationship)
+				r.Get("/topology", gh.topology)
+				r.Get("/blast-radius", gh.blastRadius)
+			})
+		}
+
+		// ── Object storage routes (MinIO) ─────────────────────────────
+		if s.objectStore != nil {
+			sh := &storageHandler{store: s.objectStore}
+			r.Route("/storage", func(r chi.Router) {
+				r.Use(kubricmw.RequireAnyRole("kubric:admin", "kubric:analyst"))
+				r.Get("/buckets", sh.bucketStats)
+				r.Get("/{bucket}", sh.list)
+				r.Put("/{bucket}/{key}", sh.upload)
+				r.Get("/{bucket}/{key}", sh.download)
+				r.Get("/{bucket}/{key}/presign", sh.presign)
+				r.Delete("/{bucket}/{key}", sh.deleteObj)
+			})
 		}
 	})
 

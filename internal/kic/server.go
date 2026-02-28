@@ -8,15 +8,21 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/managekube-hue/Kubric-UiDR/internal/analytics"
 	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
+	"github.com/managekube-hue/Kubric-UiDR/internal/scorecard"
+	kubricsig "github.com/managekube-hue/Kubric-UiDR/internal/sigstore"
 )
 
 // Server wires together the Chi router, AssessmentStore (pgx → Postgres), and Publisher (NATS).
 type Server struct {
-	cfg    Config
-	store  *AssessmentStore
-	pub    *Publisher
-	router *chi.Mux
+	cfg       Config
+	store     *AssessmentStore
+	pub       *Publisher
+	router    *chi.Mux
+	scorecard *scorecard.Runner  // OpenSSF Scorecard (optional)
+	analytics *analytics.Engine  // DuckDB OLAP analytics (optional)
+	sigstore  *kubricsig.Verifier // Sigstore image verification (optional)
 }
 
 // NewServer initialises all KIC dependencies and returns a ready-to-run Server.
@@ -36,6 +42,24 @@ func NewServer(cfg Config) (*Server, error) {
 	}
 
 	s := &Server{cfg: cfg, store: store, pub: pub}
+
+	// ── OpenSSF Scorecard runner (optional — needs GITHUB_AUTH_TOKEN) ─────
+	s.scorecard = scorecard.NewRunner(cfg.GitHubToken)
+
+	// ── DuckDB analytics engine ──────────────────────────────────────────
+	if ae, err := analytics.New(cfg.DuckDBPath); err != nil {
+		fmt.Printf("kic: warn — DuckDB analytics init failed: %v\n", err)
+	} else {
+		s.analytics = ae
+	}
+
+	// ── Sigstore verifier (optional — needs COSIGN_PUB_KEY) ──────────────
+	if sv, err := kubricsig.NewVerifier(cfg.CosignPubKeyPath); err != nil {
+		fmt.Printf("kic: warn — Sigstore verifier init failed: %v\n", err)
+	} else {
+		s.sigstore = sv
+	}
+
 	s.router = s.buildRouter()
 	return s, nil
 }
@@ -64,6 +88,12 @@ func (s *Server) Run(ctx context.Context) error {
 		}
 		s.store.Close()
 		s.pub.Close()
+		if s.analytics != nil {
+			_ = s.analytics.Close()
+		}
+		if s.sigstore != nil {
+			s.sigstore.Close()
+		}
 		return nil
 	case err := <-errCh:
 		return err
@@ -121,6 +151,27 @@ func (s *Server) buildRouter() *chi.Mux {
 		r.Get("/frameworks", ch.frameworks)
 		r.Get("/posture", ch.posture)
 	})
+
+	// ── Supply-chain security endpoints ──────────────────────────────────
+	sch := newSupplyChainHandler(s.scorecard, s.sigstore)
+	r.Route("/supply-chain", func(r chi.Router) {
+		r.Use(kubricmw.RequireAnyRole("kubric:analyst"))
+		r.Post("/scorecard", sch.runScorecard)
+		r.Post("/verify-image", sch.verifyImage)
+	})
+
+	// ── Analytics endpoints (DuckDB) ─────────────────────────────────────
+	if s.analytics != nil {
+		anh := newAnalyticsHandler(s.analytics)
+		r.Route("/analytics", func(r chi.Router) {
+			r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+			r.Post("/events", anh.ingestEvent)
+			r.Get("/events/summary", anh.eventSummary)
+			r.Post("/compliance/snapshot", anh.ingestComplianceSnapshot)
+			r.Get("/compliance/trend", anh.complianceTrend)
+			r.Post("/metrics", anh.ingestMetric)
+		})
+	}
 
 	return r
 }

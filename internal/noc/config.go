@@ -46,6 +46,24 @@ type Config struct {
 	BloodHoundURL      string // BLOODHOUND_URL         e.g. http://bloodhound:8080
 	BloodHoundTokenID  string // BLOODHOUND_TOKEN_ID
 	BloodHoundTokenKey string // BLOODHOUND_TOKEN_KEY
+
+	// -- ZMQ high-throughput event fanout (optional) --------------------------
+	ZMQPublishAddr string // ZMQ_PUBLISH_ADDR  e.g. tcp://0.0.0.0:5555
+
+	// -- Twilio phone-based critical alert escalation (optional) ---------------
+	TwilioAccountSID string // TWILIO_ACCOUNT_SID
+	TwilioAuthToken  string // TWILIO_AUTH_TOKEN
+	TwilioFromNumber string // TWILIO_FROM_NUMBER   E.164 e.g. +15005550006
+
+	// -- Neo4j graph store (optional) ─────────────────────────────────────────
+	Neo4jURI      string // NEO4J_URI          e.g. bolt://neo4j:7687
+	Neo4jUser     string // NEO4J_USER         default: neo4j
+	Neo4jPassword string // NEO4J_PASSWORD     default: kubric-neo4j
+
+	// -- MinIO object store (optional) ────────────────────────────────────────
+	MinIOEndpoint  string // MINIO_ENDPOINT     e.g. minio:9000
+	MinIOAccessKey string // MINIO_ACCESS_KEY
+	MinIOSecretKey string // MINIO_SECRET_KEY
 }
 
 // LoadConfig reads NOC configuration. Vault-backed in K8s, env vars in dev.
@@ -74,6 +92,24 @@ func LoadConfig() Config {
 		BloodHoundURL:      getenv("BLOODHOUND_URL", ""),
 		BloodHoundTokenID:  getenv("BLOODHOUND_TOKEN_ID", ""),
 		BloodHoundTokenKey: getenv("BLOODHOUND_TOKEN_KEY", ""),
+
+		// ZMQ fanout
+		ZMQPublishAddr: getenv("ZMQ_PUBLISH_ADDR", ""),
+
+		// Twilio escalation
+		TwilioAccountSID: getenv("TWILIO_ACCOUNT_SID", ""),
+		TwilioAuthToken:  getenv("TWILIO_AUTH_TOKEN", ""),
+		TwilioFromNumber: getenv("TWILIO_FROM_NUMBER", ""),
+
+		// Neo4j graph
+		Neo4jURI:      getenv("NEO4J_URI", "bolt://neo4j:7687"),
+		Neo4jUser:     getenv("NEO4J_USER", "neo4j"),
+		Neo4jPassword: getenv("NEO4J_PASSWORD", "kubric-neo4j"),
+
+		// MinIO object store
+		MinIOEndpoint:  getenv("MINIO_ENDPOINT", "minio:9000"),
+		MinIOAccessKey: getenv("MINIO_ACCESS_KEY", "kubric"),
+		MinIOSecretKey: getenv("MINIO_SECRET_KEY", "kubric-minio-secret"),
 	}
 }
 
