@@ -28,6 +28,26 @@ This checkpoint aligns implementation to the architecture foundations in `docs/K
    - Added `scripts/bootstrap/ops-batch-06-audit-verify.ps1`.
    - Added `make ops-batch-06` target in `Makefile`.
 
+5. **Rust dependency baseline cleanup (CISO-assistant gap closure)**
+    - Removed unused/deferred workspace dependencies from `Cargo.toml`:
+       - `rdkafka`, `apache-avro`, `candle-transformers`, `once_cell`, `notify-debouncer-mini`.
+    - Removed unused agent-level dependencies from:
+       - `agents/coresec/Cargo.toml` (`prost`, `prost-types`, `once_cell`, `notify-debouncer-mini`, `candle-transformers`, `prost-build`)
+       - `agents/netguard/Cargo.toml` (`prost`, `prost-types`, `once_cell`, `notify-debouncer-mini`, `prost-build`)
+       - `agents/perftrace/Cargo.toml` (`prost`, `prost-types`, `once_cell`)
+    - Extended `ops-batch-06` checks to enforce this cleanup baseline.
+
+6. **CISO-Assistant GRC integration (C4 fix — customer portal gap)**
+    - Created `internal/kic/handler_ciso.go` — HTTP handler bridging portal to KAI RAG CISO-Assistant.
+    - Added `GetFrameworkStats` to `internal/kic/store_assessment.go` for compliance posture aggregation.
+    - Added generic `Publish` method to `internal/kic/publisher.go` for `kubric.grc.ciso.v1` events.
+    - Wired `/ciso/ask`, `/ciso/frameworks`, `/ciso/posture` routes in `internal/kic/server.go`.
+    - Added `RAGServiceURL` to `internal/kic/config.go` (env: `KAI_RAG_URL`, default: `http://kai-rag:8090`).
+    - Created `services/grc/ciso_bridge.go` — GRC bridge coordinating compliance + AI + evidence vault.
+    - Added `askCISO`, `listComplianceFrameworks`, `getCompliancePosture` to `frontend/lib/api-client.ts`.
+    - Created NATS subject doc `docs/message-bus/subject-mapping/K-MB-SUB-016_grc.ciso.v1.md`.
+    - Extended `ops-batch-06` checks to verify CISO-Assistant file presence and API wiring.
+
 ## Verification command
 
 ```powershell

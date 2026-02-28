@@ -19,15 +19,18 @@ type Config struct {
 	DatabaseURL string
 	// NATSUrl — Vault KV or KUBRIC_NATS_URL env
 	NATSUrl string
+	// RAGServiceURL — base URL of the KAI RAG CISO-Assistant Python service
+	RAGServiceURL string
 }
 
 // LoadConfig reads KIC configuration. Vault-backed in K8s, env vars in dev.
 func LoadConfig() Config {
 	creds := security.LoadServiceCreds(context.Background(), "kic")
 	return Config{
-		ListenAddr:  getenv("KIC_LISTEN_ADDR", ":8082"),
-		DatabaseURL: creds.DatabaseURL,
-		NATSUrl:     creds.NATSUrl,
+		ListenAddr:    getenv("KIC_LISTEN_ADDR", ":8082"),
+		DatabaseURL:   creds.DatabaseURL,
+		NATSUrl:       creds.NATSUrl,
+		RAGServiceURL: getenv("KAI_RAG_URL", "http://kai-rag:8090"),
 	}
 }
 

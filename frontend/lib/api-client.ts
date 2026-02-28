@@ -143,3 +143,67 @@ export interface KissScores {
 export async function getKissScores(opts: ApiOptions): Promise<KissScores> {
   return apiFetch(`/v1/kiss/${opts.tenantId}`, { ...opts, method: "GET" });
 }
+
+// ── CISO-Assistant (GRC AI Queries) ────────────────────────────────────────
+
+export interface CISOQuestion {
+  question: string;
+  frameworks?: string[];
+  include_refs?: boolean;
+}
+
+export interface CISOAnswer {
+  answer: string;
+  sources: string[];
+  confidence: number;
+  frameworks: string[];
+  posture?: PostureSummary;
+  retrieved_docs?: string[];
+  responded_at: string;
+}
+
+export interface PostureSummary {
+  tenant_id: string;
+  overall_score: number;
+  by_framework: FrameworkPosture[];
+  assessed_at: string;
+}
+
+export interface FrameworkPosture {
+  framework: string;
+  score: number;
+  total_controls: number;
+  compliant_count: number;
+  non_compliant_count: number;
+  partial_count: number;
+  last_assessed_at: string;
+}
+
+export interface ComplianceFramework {
+  id: string;
+  name: string;
+  category: string;
+}
+
+export async function askCISO(
+  question: CISOQuestion,
+  opts: ApiOptions
+): Promise<CISOAnswer> {
+  return apiFetch("/v1/ciso/ask", {
+    ...opts,
+    method: "POST",
+    body: JSON.stringify(question),
+  });
+}
+
+export async function listComplianceFrameworks(
+  opts: ApiOptions
+): Promise<{ frameworks: ComplianceFramework[] }> {
+  return apiFetch("/v1/ciso/frameworks", { ...opts, method: "GET" });
+}
+
+export async function getCompliancePosture(
+  opts: ApiOptions
+): Promise<PostureSummary> {
+  return apiFetch("/v1/ciso/posture", { ...opts, method: "GET" });
+}

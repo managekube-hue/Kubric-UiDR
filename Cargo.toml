@@ -19,17 +19,11 @@ futures     = "0.3"
 # ── Serialization ─────────────────────────────────────────────────────────────
 serde       = { version = "1",    features = ["derive"] }
 serde_json  = "1"
-prost       = "0.13"
-prost-types = "0.13"
 # ZSTD compression for event payloads (L0-2)
 zstd        = "0.13"
-# Apache Avro (Kafka schema registry topics)
-apache-avro = "0.17"
 
 # ── Messaging ─────────────────────────────────────────────────────────────────
 async-nats  = "0.37"
-# Kafka producer/consumer for ML pipeline (L3)
-rdkafka     = { version = "0.37", features = ["cmake-build"] }
 
 # ── Cryptography & Integrity ───────────────────────────────────────────────────
 blake3  = "1.5"
@@ -53,7 +47,6 @@ libc    = "0.2"
 # candle — HuggingFace Rust ML framework; no PyTorch link required
 candle-core         = "0.9"
 candle-nn           = "0.9"
-candle-transformers = "0.9"
 
 # ── Detection rules ────────────────────────────────────────────────────────────
 # yara-x — pure-Rust YARA v4 implementation, no libyara dynamic link
@@ -104,7 +97,6 @@ clap = { version = "4", features = ["derive", "env"] }
 
 # ── File system watcher (rule hot-reload, L3) ─────────────────────────────────
 notify               = "6.1"
-notify-debouncer-mini = "0.4"
 
 # ── Unix POSIX API (Linux/macOS signal handling, L0-2/L0-3) ───────────────────
 # nix and signal-hook are Linux/macOS-only.  Versions pinned here for
@@ -119,5 +111,4 @@ notify-debouncer-mini = "0.4"
 base64    = "0.22"
 hex       = "0.4"
 regex     = "1"
-once_cell = "1"
 bytes     = "1"

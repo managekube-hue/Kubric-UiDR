@@ -29,6 +29,10 @@ $agentsDocker = Get-Content (Join-Path $RepoRoot "Dockerfile.agents") -Raw
 $ebpfRs = Get-Content (Join-Path $RepoRoot "agents\coresec\src\hooks\ebpf.rs") -Raw
 $etwRs = Get-Content (Join-Path $RepoRoot "agents\coresec\src\hooks\etw.rs") -Raw
 $perfAgent = Get-Content (Join-Path $RepoRoot "agents\perftrace\src\agent.rs") -Raw
+$workspaceCargo = Get-Content (Join-Path $RepoRoot "Cargo.toml") -Raw
+$coresecCargo = Get-Content (Join-Path $RepoRoot "agents\coresec\Cargo.toml") -Raw
+$netguardCargo = Get-Content (Join-Path $RepoRoot "agents\netguard\Cargo.toml") -Raw
+$perftraceCargo = Get-Content (Join-Path $RepoRoot "agents\perftrace\Cargo.toml") -Raw
 
 $hasEbpfObjects = (Test-Path $ebpfExecObj) -and (Test-Path $ebpfOpenObj)
 $dockerBuildsEbpf = $agentsDocker -match [regex]::Escape("make -C vendor/ebpf")
@@ -48,6 +52,24 @@ $sigmaYamlCount = (Get-ChildItem -Path (Join-Path $RepoRoot "vendor\sigma\rules"
 
 Assert-True -Condition ($yaraCount -gt 0) -Message "YARA rules are populated ($yaraCount)"
 Assert-True -Condition (($sigmaYmlCount + $sigmaYamlCount) -gt 0) -Message "Sigma rules are populated ($($sigmaYmlCount + $sigmaYamlCount))"
+
+# ── Rust dependency baseline cleanup checks ─────────────────────────────────
+Assert-True -Condition ($workspaceCargo -notmatch "rdkafka") -Message "Workspace does not declare unused rdkafka dependency"
+Assert-True -Condition ($workspaceCargo -notmatch "apache-avro") -Message "Workspace does not declare unused apache-avro dependency"
+Assert-True -Condition ($workspaceCargo -notmatch "candle-transformers") -Message "Workspace does not declare unused candle-transformers dependency"
+Assert-True -Condition ($workspaceCargo -notmatch "once_cell") -Message "Workspace does not declare unused once_cell dependency"
+Assert-True -Condition ($workspaceCargo -notmatch "notify-debouncer-mini") -Message "Workspace does not declare unused notify-debouncer-mini dependency"
+
+Assert-True -Condition ($coresecCargo -notmatch "prost") -Message "CoreSec does not declare unused prost/prost-types dependencies"
+Assert-True -Condition ($coresecCargo -notmatch "once_cell") -Message "CoreSec does not declare unused once_cell dependency"
+Assert-True -Condition ($coresecCargo -notmatch "notify-debouncer-mini") -Message "CoreSec does not declare unused notify-debouncer-mini dependency"
+
+Assert-True -Condition ($netguardCargo -notmatch "prost") -Message "NetGuard does not declare unused prost/prost-types dependencies"
+Assert-True -Condition ($netguardCargo -notmatch "once_cell") -Message "NetGuard does not declare unused once_cell dependency"
+Assert-True -Condition ($netguardCargo -notmatch "notify-debouncer-mini") -Message "NetGuard does not declare unused notify-debouncer-mini dependency"
+
+Assert-True -Condition ($perftraceCargo -notmatch "prost") -Message "PerfTrace does not declare unused prost/prost-types dependencies"
+Assert-True -Condition ($perftraceCargo -notmatch "once_cell") -Message "PerfTrace does not declare unused once_cell dependency"
 
 # ── NetGuard enrichment pipeline wiring ──────────────────────────────────────
 
@@ -111,5 +133,25 @@ Assert-True -Condition ($ipsumLines -gt 0) -Message "IPsum blocklist has $ipsumL
 # Dockerfile.agents copies vendor assets into NetGuard runtime image
 Assert-True -Condition ($agentsDocker -match "vendor/yara-rules.*netguard|netguard.*vendor/yara-rules|COPY --from=builder /src/vendor/yara-rules") -Message "Dockerfile.agents copies YARA rules into NetGuard image"
 Assert-True -Condition ($agentsDocker -match "vendor/ipsum.*netguard|netguard.*vendor/ipsum|COPY --from=builder /src/vendor/ipsum") -Message "Dockerfile.agents copies IPsum blocklist into NetGuard image"
+
+# ── CISO-Assistant GRC integration checks ─────────────────────────────────
+
+$cisoHandler  = Join-Path $RepoRoot "internal\kic\handler_ciso.go"
+$cisoBridge   = Join-Path $RepoRoot "services\grc\ciso_bridge.go"
+$cisoNatsSub  = Join-Path $RepoRoot "docs\message-bus\subject-mapping\K-MB-SUB-016_grc.ciso.v1.md"
+$apiClient    = Get-Content (Join-Path $RepoRoot "frontend\lib\api-client.ts") -Raw
+$kicServer    = Get-Content (Join-Path $RepoRoot "internal\kic\server.go") -Raw
+$kicStore     = Get-Content (Join-Path $RepoRoot "internal\kic\store_assessment.go") -Raw
+
+Assert-True -Condition (Test-Path $cisoHandler) -Message "CISO-Assistant handler exists (internal/kic/handler_ciso.go)"
+Assert-True -Condition (Test-Path $cisoBridge) -Message "GRC CISO bridge service exists (services/grc/ciso_bridge.go)"
+Assert-True -Condition (Test-Path $cisoNatsSub) -Message "CISO NATS subject doc exists (K-MB-SUB-016_grc.ciso.v1.md)"
+
+Assert-True -Condition ($kicServer -match "ciso") -Message "KIC server.go wires /ciso routes"
+Assert-True -Condition ($kicServer -match "newCISOHandler") -Message "KIC server.go creates CISO handler"
+Assert-True -Condition ($kicStore -match "GetFrameworkStats") -Message "Assessment store has GetFrameworkStats method"
+Assert-True -Condition ($apiClient -match "askCISO") -Message "Frontend API client exports askCISO function"
+Assert-True -Condition ($apiClient -match "getCompliancePosture") -Message "Frontend API client exports getCompliancePosture function"
+Assert-True -Condition ($apiClient -match "listComplianceFrameworks") -Message "Frontend API client exports listComplianceFrameworks function"
 
 Write-Host "[batch-06] Audit remediation verification PASSED" -ForegroundColor Green

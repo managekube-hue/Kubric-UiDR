@@ -40,6 +40,15 @@ func (p *Publisher) Close() {
 	_ = p.conn.Drain()
 }
 
+// Publish sends raw data to an arbitrary NATS subject.
+// Used by CISO-Assistant and other handlers that need custom subject patterns.
+func (p *Publisher) Publish(subject string, data []byte) error {
+	if p == nil || p.conn == nil {
+		return nil
+	}
+	return p.conn.Publish(subject, data)
+}
+
 // PublishAssessmentEvent publishes to kubric.{tenant_id}.compliance.assessment.v1.
 func (p *Publisher) PublishAssessmentEvent(e AssessmentEvent) error {
 	if p == nil || p.conn == nil {

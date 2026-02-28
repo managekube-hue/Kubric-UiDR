@@ -112,5 +112,15 @@ func (s *Server) buildRouter() *chi.Mux {
 		})
 	})
 
+	// ── CISO-Assistant GRC endpoints ─────────────────────────────────────
+	ch := newCISOHandler(s.store, s.pub, s.cfg.RAGServiceURL)
+	r.Route("/ciso", func(r chi.Router) {
+		// All CISO endpoints require at least analyst role
+		r.Use(kubricmw.RequireAnyRole("kubric:analyst", "kubric:readonly"))
+		r.Post("/ask", ch.ask)
+		r.Get("/frameworks", ch.frameworks)
+		r.Get("/posture", ch.posture)
+	})
+
 	return r
 }

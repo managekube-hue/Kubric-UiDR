@@ -163,3 +163,44 @@ func scanAssessment(row pgx.Row) (Assessment, error) {
 		&a.CreatedAt, &a.UpdatedAt)
 	return a, err
 }
+
+// FrameworkStats holds aggregated compliance statistics for a single framework.
+type FrameworkStats struct {
+	Score        float64
+	Total        int
+	Compliant    int
+	NonCompliant int
+	Partial      int
+	NotApplicable int
+	LastAssessed time.Time
+}
+
+// GetFrameworkStats computes compliance statistics for a tenant + framework pair.
+// Score = (compliant + partial*0.5) / (total - not_applicable) * 100.
+func (s *AssessmentStore) GetFrameworkStats(ctx context.Context, tenantID, framework string) (FrameworkStats, error) {
+	const q = `
+		SELECT
+			COUNT(*)                                                      AS total,
+			COUNT(*) FILTER (WHERE status = 'pass')                       AS compliant,
+			COUNT(*) FILTER (WHERE status = 'fail')                       AS non_compliant,
+			COUNT(*) FILTER (WHERE status = 'not-reviewed')               AS partial,
+			COUNT(*) FILTER (WHERE status = 'not-applicable')             AS na,
+			COALESCE(MAX(assessed_at), now())                             AS last_assessed
+		FROM kic_assessments
+		WHERE tenant_id = $1 AND framework = $2
+	`
+	var fs FrameworkStats
+	err := s.pool.QueryRow(ctx, q, tenantID, framework).Scan(
+		&fs.Total, &fs.Compliant, &fs.NonCompliant, &fs.Partial,
+		&fs.NotApplicable, &fs.LastAssessed,
+	)
+	if err != nil {
+		return fs, fmt.Errorf("framework stats query: %w", err)
+	}
+
+	denom := fs.Total - fs.NotApplicable
+	if denom > 0 {
+		fs.Score = (float64(fs.Compliant) + float64(fs.Partial)*0.5) / float64(denom) * 100
+	}
+	return fs, nil
+}
