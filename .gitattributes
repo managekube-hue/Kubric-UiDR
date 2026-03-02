@@ -1,0 +1,46 @@
+# Kubric-UiDR Git line ending normalization
+# Ensures consistent LF line endings in the repo regardless of OS
+
+* text=auto eol=lf
+
+# Force LF for these file types (never CRLF)
+*.yml      text eol=lf
+*.yaml     text eol=lf
+*.sh       text eol=lf
+*.py       text eol=lf
+*.go       text eol=lf
+*.rs       text eol=lf
+*.ts       text eol=lf
+*.tsx      text eol=lf
+*.js       text eol=lf
+*.jsx      text eol=lf
+*.json     text eol=lf
+*.toml     text eol=lf
+*.mod      text eol=lf
+*.sum      text eol=lf
+*.md       text eol=lf
+*.sql      text eol=lf
+*.proto    text eol=lf
+Dockerfile text eol=lf
+Dockerfile.* text eol=lf
+Makefile   text eol=lf
+
+# PowerShell - CRLF on Windows checkout is fine
+*.ps1      text eol=crlf
+*.psm1     text eol=crlf
+*.psd1     text eol=crlf
+
+# Binary - never touch line endings
+*.o        binary
+*.a        binary
+*.so       binary
+*.dll      binary
+*.exe      binary
+*.png      binary
+*.jpg      binary
+*.gif      binary
+*.ico      binary
+*.zip      binary
+*.tar      binary
+*.gz       binary
+*.wasm     binary

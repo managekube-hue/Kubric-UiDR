@@ -24,7 +24,7 @@ COPY vendor/ebpf ./vendor/ebpf
 RUN make -C vendor/ebpf
 
 # ?? Stage 2: Rust build environment ??????????????????????????????????????????
-FROM rust:1.80-slim-bookworm AS rust-builder
+FROM rust:1.80-slim-bookworm AS builder
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     pkg-config libssl-dev libpcap-dev clang llvm \
@@ -78,13 +78,13 @@ RUN groupadd -r kubric && useradd -r -g kubric kubric
 # ?? Stage 4: coresec runtime ??????????????????????????????????????????????????
 FROM agent-runtime-base AS coresec
 
-COPY --from=rust-builder /src/target/release/coresec /usr/local/bin/coresec
+COPY --from=builder /src/target/release/coresec /usr/local/bin/coresec
 # eBPF objects needed at runtime
-COPY --from=rust-builder /src/vendor/ebpf/execve_hook.o  /opt/kubric/vendor/ebpf/execve_hook.o
-COPY --from=rust-builder /src/vendor/ebpf/openat2_hook.o /opt/kubric/vendor/ebpf/openat2_hook.o
+COPY --from=builder /src/vendor/ebpf/execve_hook.o  /opt/kubric/vendor/ebpf/execve_hook.o
+COPY --from=builder /src/vendor/ebpf/openat2_hook.o /opt/kubric/vendor/ebpf/openat2_hook.o
 # Detection rules
-COPY --from=rust-builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
-COPY --from=rust-builder /src/vendor/sigma      /opt/kubric/vendor/sigma
+COPY --from=builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
+COPY --from=builder /src/vendor/sigma      /opt/kubric/vendor/sigma
 
 # eBPF needs root or CAP_BPF
 ENV VENDOR_DIR=/opt/kubric/vendor
@@ -93,11 +93,11 @@ ENTRYPOINT ["/usr/local/bin/coresec"]
 # ?? Stage 5: netguard runtime ?????????????????????????????????????????????????
 FROM agent-runtime-base AS netguard
 
-COPY --from=rust-builder /src/target/release/netguard /usr/local/bin/netguard
+COPY --from=builder /src/target/release/netguard /usr/local/bin/netguard
 # Network detection assets
-COPY --from=rust-builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
-COPY --from=rust-builder /src/vendor/ipsum       /opt/kubric/vendor/ipsum
-COPY --from=rust-builder /src/vendor/suricata    /opt/kubric/vendor/suricata
+COPY --from=builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
+COPY --from=builder /src/vendor/ipsum       /opt/kubric/vendor/ipsum
+COPY --from=builder /src/vendor/suricata    /opt/kubric/vendor/suricata
 
 ENV VENDOR_DIR=/opt/kubric/vendor
 USER kubric
@@ -106,20 +106,20 @@ ENTRYPOINT ["/usr/local/bin/netguard"]
 # ?? Stage 6: perftrace runtime ????????????????????????????????????????????????
 FROM agent-runtime-base AS perftrace
 
-COPY --from=rust-builder /src/target/release/perftrace /usr/local/bin/perftrace
+COPY --from=builder /src/target/release/perftrace /usr/local/bin/perftrace
 USER kubric
 ENTRYPOINT ["/usr/local/bin/perftrace"]
 
 # ?? Stage 7: provisioning runtime ????????????????????????????????????????????
 FROM agent-runtime-base AS provisioning
 
-COPY --from=rust-builder /src/target/release/provisioning /usr/local/bin/provisioning
+COPY --from=builder /src/target/release/provisioning /usr/local/bin/provisioning
 USER kubric
 ENTRYPOINT ["/usr/local/bin/provisioning"]
 
 # ?? Stage 8: watchdog runtime ?????????????????????????????????????????????????
 FROM agent-runtime-base AS watchdog
 
-COPY --from=rust-builder /src/target/release/watchdog /usr/local/bin/watchdog
+COPY --from=builder /src/target/release/watchdog /usr/local/bin/watchdog
 USER kubric
 ENTRYPOINT ["/usr/local/bin/watchdog"]
