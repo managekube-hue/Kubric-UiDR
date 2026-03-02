@@ -1,115 +1,125 @@
-# Dockerfile.agents — Multi-stage Rust build for Kubric security agents
-# Produces separate binaries: coresec, netguard, perftrace, watchdog, provisioning
+# Kubric Agents � Multi-stage Rust build
+# Produces runtime images for CoreSec, NetGuard, PerfTrace, Provisioning, Watchdog.
+# eBPF ELF objects are compiled from vendor/ebpf/ C sources during the build.
+#
 # Usage:
-#   docker build -t kubric/coresec    --target coresec    -f Dockerfile.agents .
-#   docker build -t kubric/netguard   --target netguard   -f Dockerfile.agents .
-#   docker build -t kubric/perftrace  --target perftrace  -f Dockerfile.agents .
-#   docker build -t kubric/watchdog   --target watchdog   -f Dockerfile.agents .
-#   docker build -t kubric/provisioning --target provisioning -f Dockerfile.agents .
+#   docker build --target coresec     -t kubric/coresec:latest     .
+#   docker build --target netguard    -t kubric/netguard:latest    .
+#   docker build --target perftrace   -t kubric/perftrace:latest   .
+#   docker build --target provisioning -t kubric/provisioning:latest .
+#   docker build --target watchdog    -t kubric/watchdog:latest    .
 
-# ── Stage 1: builder ─────────────────────────────────────────────────────────
-FROM rust:1.82-bookworm AS builder
-WORKDIR /src
+# ?? Stage 1: eBPF compiler ???????????????????????????????????????????????????
+# Compiles vendor/ebpf/*.c ? vendor/ebpf/*.o using clang/LLVM
+FROM ubuntu:24.04 AS ebpf-builder
 
-# System deps for native libraries (pcap, nDPI, eBPF)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpcap-dev \
-    pkg-config \
-    cmake \
-    make \
-    clang \
-    llvm \
-    libssl-dev \
-    protobuf-compiler \
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    clang llvm libelf-dev linux-headers-generic make ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Cache dependency builds — copy only Cargo manifests first
-COPY Cargo.toml Cargo.lock ./
-COPY agents/coresec/Cargo.toml agents/coresec/Cargo.toml
-COPY agents/netguard/Cargo.toml agents/netguard/Cargo.toml
-COPY agents/perftrace/Cargo.toml agents/perftrace/Cargo.toml
-COPY agents/watchdog/Cargo.toml agents/watchdog/Cargo.toml
-COPY agents/provisioning/Cargo.toml agents/provisioning/Cargo.toml
+WORKDIR /src
+COPY vendor/ebpf ./vendor/ebpf
 
-# Create dummy main.rs for each agent so cargo can resolve the workspace
-RUN mkdir -p agents/coresec/src agents/netguard/src agents/perftrace/src \
-             agents/watchdog/src agents/provisioning/src && \
-    echo "fn main() {}" > agents/coresec/src/main.rs && \
-    echo "fn main() {}" > agents/netguard/src/main.rs && \
-    echo "fn main() {}" > agents/perftrace/src/main.rs && \
-    echo "fn main() {}" > agents/watchdog/src/main.rs && \
-    echo "fn main() {}" > agents/provisioning/src/main.rs
-
-# Pre-build dependencies (cached layer)
-RUN cargo build --workspace --release 2>/dev/null || true
-
-# Copy actual source and vendor rules
-COPY agents/ agents/
-COPY vendor/ebpf/ vendor/ebpf/
-COPY vendor/sigma/ vendor/sigma/
-COPY vendor/yara-rules/ vendor/yara-rules/
-COPY vendor/ipsum/ vendor/ipsum/
-
-# Build eBPF programs used by CoreSec Linux hook provider
+# Build eBPF objects from C sources
 RUN make -C vendor/ebpf
 
-# Build all agents
-RUN cargo build --workspace --release
+# ?? Stage 2: Rust build environment ??????????????????????????????????????????
+FROM rust:1.80-slim-bookworm AS rust-builder
 
-# ── Stage 2: runtime images ──────────────────────────────────────────────────
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    pkg-config libssl-dev libpcap-dev clang llvm \
+    make git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# --- CoreSec (EDR agent) ---
-FROM debian:bookworm-slim AS coresec
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libpcap0.8 && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -m -u 1000 kubric
-COPY --from=builder /src/target/release/coresec /usr/local/bin/coresec
-COPY --from=builder /src/vendor/ebpf/*.o /opt/kubric/vendor/ebpf/
-COPY --from=builder /src/vendor/sigma/rules/ /opt/kubric/vendor/sigma/rules/
-COPY --from=builder /src/vendor/yara-rules/ /opt/kubric/vendor/yara-rules/
-ENV KUBRIC_EBPF_EXECVE=/opt/kubric/vendor/ebpf/execve_hook.o
-ENV KUBRIC_EBPF_OPENAT=/opt/kubric/vendor/ebpf/openat2_hook.o
+WORKDIR /src
+
+# Cache Cargo registry
+COPY Cargo.toml Cargo.lock ./
+COPY agents/coresec/Cargo.toml      agents/coresec/Cargo.toml
+COPY agents/netguard/Cargo.toml     agents/netguard/Cargo.toml
+COPY agents/perftrace/Cargo.toml    agents/perftrace/Cargo.toml
+COPY agents/provisioning/Cargo.toml agents/provisioning/Cargo.toml
+COPY agents/watchdog/Cargo.toml     agents/watchdog/Cargo.toml
+
+# Dummy src files so cargo can cache deps without full source
+RUN mkdir -p agents/coresec/src      && echo 'fn main(){}' > agents/coresec/src/main.rs
+RUN mkdir -p agents/netguard/src     && echo 'fn main(){}' > agents/netguard/src/main.rs
+RUN mkdir -p agents/perftrace/src    && echo 'fn main(){}' > agents/perftrace/src/main.rs
+RUN mkdir -p agents/provisioning/src && echo 'fn main(){}' > agents/provisioning/src/main.rs
+RUN mkdir -p agents/watchdog/src     && echo 'fn main(){}' > agents/watchdog/src/main.rs
+RUN cargo fetch
+
+# Copy full source
+COPY agents ./agents
+COPY vendor  ./vendor
+
+# Copy compiled eBPF objects from stage 1
+COPY --from=ebpf-builder /src/vendor/ebpf/execve_hook.o  vendor/ebpf/execve_hook.o
+COPY --from=ebpf-builder /src/vendor/ebpf/openat2_hook.o vendor/ebpf/openat2_hook.o
+
+# Build all agents in release mode
+RUN cargo build --release \
+    -p coresec \
+    -p netguard \
+    -p perftrace \
+    -p provisioning \
+    -p watchdog
+
+# ?? Stage 3: slim runtime base ????????????????????????????????????????????????
+FROM debian:bookworm-slim AS agent-runtime-base
+
+RUN apt-get update -y && apt-get install -y --no-install-recommends \
+    ca-certificates libpcap0.8 libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN groupadd -r kubric && useradd -r -g kubric kubric
+
+# ?? Stage 4: coresec runtime ??????????????????????????????????????????????????
+FROM agent-runtime-base AS coresec
+
+COPY --from=rust-builder /src/target/release/coresec /usr/local/bin/coresec
+# eBPF objects needed at runtime
+COPY --from=rust-builder /src/vendor/ebpf/execve_hook.o  /opt/kubric/vendor/ebpf/execve_hook.o
+COPY --from=rust-builder /src/vendor/ebpf/openat2_hook.o /opt/kubric/vendor/ebpf/openat2_hook.o
+# Detection rules
+COPY --from=rust-builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
+COPY --from=rust-builder /src/vendor/sigma      /opt/kubric/vendor/sigma
+
+# eBPF needs root or CAP_BPF
+ENV VENDOR_DIR=/opt/kubric/vendor
+ENTRYPOINT ["/usr/local/bin/coresec"]
+
+# ?? Stage 5: netguard runtime ?????????????????????????????????????????????????
+FROM agent-runtime-base AS netguard
+
+COPY --from=rust-builder /src/target/release/netguard /usr/local/bin/netguard
+# Network detection assets
+COPY --from=rust-builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
+COPY --from=rust-builder /src/vendor/ipsum       /opt/kubric/vendor/ipsum
+COPY --from=rust-builder /src/vendor/suricata    /opt/kubric/vendor/suricata
+
+ENV VENDOR_DIR=/opt/kubric/vendor
 USER kubric
-ENTRYPOINT ["coresec"]
+ENTRYPOINT ["/usr/local/bin/netguard"]
 
-# --- NetGuard (NDR agent) ---
-FROM debian:bookworm-slim AS netguard
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libpcap0.8 && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -m -u 1000 kubric
-COPY --from=builder /src/target/release/netguard /usr/local/bin/netguard
-COPY --from=builder /src/vendor/yara-rules/ /opt/kubric/vendor/yara-rules/
-COPY --from=builder /src/vendor/ipsum/ /opt/kubric/vendor/ipsum/
-ENV KUBRIC_IPSUM_PATH=/opt/kubric/vendor/ipsum/ipsum.txt
+# ?? Stage 6: perftrace runtime ????????????????????????????????????????????????
+FROM agent-runtime-base AS perftrace
+
+COPY --from=rust-builder /src/target/release/perftrace /usr/local/bin/perftrace
 USER kubric
-ENTRYPOINT ["netguard"]
+ENTRYPOINT ["/usr/local/bin/perftrace"]
 
-# --- PerfTrace (APM agent) ---
-FROM debian:bookworm-slim AS perftrace
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -m -u 1000 kubric
-COPY --from=builder /src/target/release/perftrace /usr/local/bin/perftrace
+# ?? Stage 7: provisioning runtime ????????????????????????????????????????????
+FROM agent-runtime-base AS provisioning
+
+COPY --from=rust-builder /src/target/release/provisioning /usr/local/bin/provisioning
 USER kubric
-ENTRYPOINT ["perftrace"]
+ENTRYPOINT ["/usr/local/bin/provisioning"]
 
-# --- Watchdog (health + OTA updates) ---
-FROM debian:bookworm-slim AS watchdog
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -m -u 1000 kubric
-COPY --from=builder /src/target/release/watchdog /usr/local/bin/watchdog
+# ?? Stage 8: watchdog runtime ?????????????????????????????????????????????????
+FROM agent-runtime-base AS watchdog
+
+COPY --from=rust-builder /src/target/release/watchdog /usr/local/bin/watchdog
 USER kubric
-ENTRYPOINT ["watchdog"]
-
-# --- Provisioning (agent registration) ---
-FROM debian:bookworm-slim AS provisioning
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && \
-    rm -rf /var/lib/apt/lists/* && \
-    useradd -m -u 1000 kubric
-COPY --from=builder /src/target/release/provisioning /usr/local/bin/provisioning
-USER kubric
-ENTRYPOINT ["provisioning"]
-
-# Default target builds coresec
-FROM coresec
+ENTRYPOINT ["/usr/local/bin/watchdog"]

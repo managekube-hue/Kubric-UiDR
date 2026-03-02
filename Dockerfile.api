@@ -1,90 +1,75 @@
-# Dockerfile.api — Multi-stage Go build for all Kubric API services
-# Produces separate binaries: ksvc, vdr, kic, noc, nats-clickhouse-bridge, nuclei-bridge
+# Kubric API � Multi-stage Go build
+# Produces separate runtime images for each Go service via BuildKit targets.
 # Usage:
-#   docker build -t kubric/k-svc --target k-svc -f Dockerfile.api .
-#   docker build -t kubric/vdr   --target vdr   -f Dockerfile.api .
-#   docker build -t kubric/kic   --target kic   -f Dockerfile.api .
-#   docker build -t kubric/noc   --target noc   -f Dockerfile.api .
+#   docker build --target ksvc      -t kubric/ksvc:latest      .
+#   docker build --target vdr       -t kubric/vdr:latest       .
+#   docker build --target kic       -t kubric/kic:latest       .
+#   docker build --target noc       -t kubric/noc:latest       .
+#   docker build --target nats-clickhouse-bridge -t kubric/nats-clickhouse-bridge:latest .
+#   docker build --target temporal-worker        -t kubric/temporal-worker:latest        .
 
-# ── Stage 1: builder ─────────────────────────────────────────────────────────
-FROM golang:1.22-bookworm AS builder
+# ?? Stage 1: build all Go binaries ???????????????????????????????????????????
+FROM golang:1.23-alpine AS builder
+
+RUN apk add --no-cache git ca-certificates tzdata make
+
 WORKDIR /src
 
-# build-essential already present in bookworm; needed for go-duckdb CGO
-RUN apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev && rm -rf /var/lib/apt/lists/*
-
-# Cache module downloads
+# Cache module downloads separately from source
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy source
-COPY cmd/ cmd/
-COPY internal/ internal/
-COPY services/ services/
+# Copy all source
+COPY . .
 
-# Build all binaries — static.
-# KIC uses CGO_ENABLED=1 for go-duckdb; all others remain pure-Go.
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/ksvc ./cmd/ksvc/...
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/vdr ./cmd/vdr/...
-RUN CGO_ENABLED=1 GOOS=linux go build -ldflags="-s -w -extldflags '-static'" -o /out/kic ./cmd/kic/...
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/noc ./cmd/noc/...
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/nats-clickhouse-bridge ./cmd/nats-clickhouse-bridge/...
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /out/nuclei-bridge ./cmd/nuclei-bridge/...
+# Build every service binary in one layer (BuildKit parallelises automatically)
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -trimpath -ldflags="-s -w" -o /out/ksvc               ./cmd/ksvc          && \
+    go build -trimpath -ldflags="-s -w" -o /out/vdr                ./cmd/vdr           && \
+    go build -trimpath -ldflags="-s -w" -o /out/kic                ./cmd/kic           && \
+    go build -trimpath -ldflags="-s -w" -o /out/noc                ./cmd/noc           && \
+    go build -trimpath -ldflags="-s -w" -o /out/nats-ch-bridge     ./cmd/nats-clickhouse-bridge && \
+    go build -trimpath -ldflags="-s -w" -o /out/temporal-worker    ./cmd/temporal
 
-# ── Stage 1.5: static wget for HEALTHCHECK in distroless images ──────────────
-# Distroless has no shell/curl. We copy a static musl-linked wget from busybox.
-FROM busybox:stable-musl AS busybox-static
+# ?? Stage 2: distroless runtime base ?????????????????????????????????????????
+FROM gcr.io/distroless/static-debian12:nonroot AS runtime-base
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
 
-# ── Stage 2: runtime images ──────────────────────────────────────────────────
-# Each target produces a minimal image with just the binary + certs + non-root user.
+# ?? Stage 3: ksvc ?????????????????????????????????????????????????????????????
+FROM runtime-base AS ksvc
+COPY --from=builder /out/ksvc /ksvc
+EXPOSE 8080
+ENTRYPOINT ["/ksvc"]
 
-# --- K-SVC (Tenant API gateway) ---
-FROM gcr.io/distroless/static-debian12:nonroot AS k-svc
-COPY --from=builder /out/ksvc /app/ksvc
-COPY --from=busybox-static /bin/wget /wget
-COPY db/migrations/ /migrations/
-EXPOSE 8080 9090
-HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-    CMD ["/wget", "-q", "-O", "/dev/null", "http://localhost:8080/healthz"]
-ENTRYPOINT ["/app/ksvc"]
+# ?? Stage 4: vdr ??????????????????????????????????????????????????????????????
+FROM runtime-base AS vdr
+COPY --from=builder /out/vdr /vdr
+EXPOSE 8081
+ENTRYPOINT ["/vdr"]
 
-# --- VDR (Vulnerability Detection & Response) ---
-FROM gcr.io/distroless/static-debian12:nonroot AS vdr
-COPY --from=builder /out/vdr /app/vdr
-COPY --from=busybox-static /bin/wget /wget
-EXPOSE 8081 9090
-HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-    CMD ["/wget", "-q", "-O", "/dev/null", "http://localhost:8081/healthz"]
-ENTRYPOINT ["/app/vdr"]
+# ?? Stage 5: kic ??????????????????????????????????????????????????????????????
+FROM runtime-base AS kic
+COPY --from=builder /out/kic /kic
+# Vendor assets for compliance engine
+COPY --from=builder /src/vendor/sigma      /vendor/sigma
+COPY --from=builder /src/vendor/oscal      /vendor/oscal
+COPY --from=builder /src/vendor/mitre      /vendor/mitre
+EXPOSE 8082
+ENTRYPOINT ["/kic"]
 
-# --- KIC (Kubernetes Infrastructure Compliance) ---
-FROM gcr.io/distroless/static-debian12:nonroot AS kic
-COPY --from=builder /out/kic /app/kic
-COPY --from=busybox-static /bin/wget /wget
-EXPOSE 8082 9090
-HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-    CMD ["/wget", "-q", "-O", "/dev/null", "http://localhost:8082/healthz"]
-ENTRYPOINT ["/app/kic"]
+# ?? Stage 6: noc ??????????????????????????????????????????????????????????????
+FROM runtime-base AS noc
+COPY --from=builder /out/noc /noc
+EXPOSE 8083
+ENTRYPOINT ["/noc"]
 
-# --- NOC (Network Operations Center) ---
-FROM gcr.io/distroless/static-debian12:nonroot AS noc
-COPY --from=builder /out/noc /app/noc
-COPY --from=busybox-static /bin/wget /wget
-EXPOSE 8083 9090
-HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-    CMD ["/wget", "-q", "-O", "/dev/null", "http://localhost:8083/healthz"]
-ENTRYPOINT ["/app/noc"]
+# ?? Stage 7: nats-clickhouse-bridge ???????????????????????????????????????????
+FROM runtime-base AS nats-clickhouse-bridge
+COPY --from=builder /out/nats-ch-bridge /nats-ch-bridge
+ENTRYPOINT ["/nats-ch-bridge"]
 
-# --- NATS-ClickHouse Bridge ---
-FROM gcr.io/distroless/static-debian12:nonroot AS nats-clickhouse-bridge
-COPY --from=builder /out/nats-clickhouse-bridge /app/nats-clickhouse-bridge
-ENTRYPOINT ["/app/nats-clickhouse-bridge"]
-
-# --- Nuclei Bridge ---
-FROM gcr.io/distroless/static-debian12:nonroot AS nuclei-bridge
-COPY --from=builder /out/nuclei-bridge /app/nuclei-bridge
-COPY vendor/nuclei-templates/ /templates/
-ENTRYPOINT ["/app/nuclei-bridge"]
-
-# Default target builds k-svc
-FROM k-svc
+# ?? Stage 8: temporal-worker ??????????????????????????????????????????????????
+FROM runtime-base AS temporal-worker
+COPY --from=builder /out/temporal-worker /temporal-worker
+ENTRYPOINT ["/temporal-worker"]

@@ -121,3 +121,5 @@ CURRENT-NESTED-TREE.md
 vendor/sigma/rules/
 vendor/yara-rules/
 vendor/nuclei-templates/
+
+.vs/
