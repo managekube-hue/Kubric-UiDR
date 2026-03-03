@@ -1,0 +1,26 @@
+name: KubricLinuxFIMCheck
+description: |
+  File Integrity Monitoring artifact for critical Linux paths.
+  Hashes key system files and compares against baseline.
+author: Kubric Security
+type: CLIENT
+parameters:
+  - name: WatchPaths
+    type: CSV
+    default: |
+      Path
+      /etc/passwd
+      /etc/shadow
+      /etc/sudoers
+      /etc/crontab
+      /etc/ssh/sshd_config
+      /root/.bashrc
+      /root/.profile
+sources:
+  - query: |
+      LET paths = SELECT Path FROM parse_csv(filename=WatchPaths, accessor="data")
+      SELECT Path, hash(path=Path, hashselect="SHA256") AS SHA256,
+             stat(filename=Path).Mtime AS Mtime,
+             stat(filename=Path).Size  AS Size
+      FROM paths
+      WHERE stat(filename=Path).IsRegular

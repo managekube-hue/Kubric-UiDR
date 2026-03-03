@@ -1,0 +1,73 @@
+<!-- Kubric Sysmon Configuration
+     License: MIT — copy freely
+     Source: https://github.com/SwiftOnSecurity/sysmon-config (MIT)
+     Sync: make sync-vendor-assets
+-->
+<Sysmon schemaversion="4.90">
+
+  <HashAlgorithms>SHA256,IMPHASH</HashAlgorithms>
+  <CheckRevocation>False</CheckRevocation>
+
+  <EventFiltering>
+
+    <!-- ?? Process Create (Event ID 1) ??????????????????????????????????? -->
+    <RuleGroup name="ProcessCreate" groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <!-- Shells spawned from unusual parents -->
+        <Rule groupRelation="and">
+          <Image condition="end with">cmd.exe</Image>
+          <ParentImage condition="contains any">winword.exe;excel.exe;powerpnt.exe;outlook.exe</ParentImage>
+        </Rule>
+        <Rule groupRelation="and">
+          <Image condition="end with">powershell.exe</Image>
+          <ParentImage condition="contains any">winword.exe;excel.exe;mshta.exe;wscript.exe</ParentImage>
+        </Rule>
+        <!-- Network recon tools -->
+        <Image condition="end with any">nmap.exe;nc.exe;ncat.exe;psexec.exe;wmic.exe</Image>
+        <!-- Suspicious encoded commands -->
+        <CommandLine condition="contains any">-EncodedCommand;-enc ;IEX(;Invoke-Expression</CommandLine>
+        <!-- Process execution from temp -->
+        <Image condition="contains any">\Temp\;\AppData\Local\Temp\;\AppData\Roaming\</Image>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <!-- ?? File Create (Event ID 11) ????????????????????????????????????? -->
+    <RuleGroup name="FileCreate" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFilename condition="end with any">.exe;.dll;.bat;.ps1;.vbs;.hta;.js</TargetFilename>
+        <TargetFilename condition="contains any">\Temp\;\AppData\;C:\ProgramData\</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+    <!-- ?? Network Connect (Event ID 3) ?????????????????????????????????? -->
+    <RuleGroup name="NetworkConnect" groupRelation="or">
+      <NetworkConnect onmatch="include">
+        <!-- External connections from scripting engines -->
+        <Image condition="end with any">powershell.exe;wscript.exe;cscript.exe;mshta.exe</Image>
+        <!-- Non-standard outbound ports -->
+        <DestinationPort condition="is any">4444;1337;31337;8080;9001;9002</DestinationPort>
+      </NetworkConnect>
+    </RuleGroup>
+
+    <!-- ?? Driver Load (Event ID 6) ??????????????????????????????????????? -->
+    <RuleGroup name="DriverLoad" groupRelation="or">
+      <DriverLoad onmatch="include">
+        <Signed condition="is">false</Signed>
+      </DriverLoad>
+    </RuleGroup>
+
+    <!-- ?? Registry Events (Event ID 12/13) ??????????????????????????????? -->
+    <RuleGroup name="RegistryEvent" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <!-- Persistence keys -->
+        <TargetObject condition="contains any">
+          \Software\Microsoft\Windows\CurrentVersion\Run;
+          \Software\Microsoft\Windows NT\CurrentVersion\Winlogon;
+          \SYSTEM\CurrentControlSet\Services\
+        </TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+
+  </EventFiltering>
+
+</Sysmon>

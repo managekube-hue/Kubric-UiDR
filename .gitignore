@@ -123,3 +123,6 @@ vendor/yara-rules/
 vendor/nuclei-templates/
 
 .vs/
+
+ndr-rita
+COMPREHENSIVE-AUDIT-REPOR.md

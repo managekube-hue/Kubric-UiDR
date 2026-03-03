@@ -48,9 +48,9 @@ all: check-deps $(OBJS)
 
 # Compile eBPF C to BPF ELF object
 %.o: %.c
-	@echo "[eBPF] Compiling $< → $@"
+	@echo "[eBPF] Compiling $< -> $@"
 	$(CLANG) $(CFLAGS) -c $< -o $@
-	@echo "[eBPF] Generated $@ ($(shell stat -c%s $@ 2>/dev/null || stat -f%z $@) bytes)"
+	@echo "[eBPF] Generated $@ ($(shell stat --printf='%s' $@ 2>/dev/null || echo unknown) bytes)"
 
 # Strip debug symbols for release (reduces size, keeps BTF)
 strip: $(OBJS)

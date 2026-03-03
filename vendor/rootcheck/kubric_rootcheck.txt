@@ -1,0 +1,31 @@
+# Kubric Wazuh Rootcheck Rules — Seed
+# License: GPL 2.0 (data files, embed allowed)
+# Sync production rules: make sync-vendor-assets
+
+# Detect hidden files in /tmp (common malware staging)
+[ROOTKIT_FILES]
+f:/tmp/.* -> Hidden file in /tmp. Possible malware staging.
+f:/dev/shm/.* -> Hidden file in /dev/shm. Possible malware staging.
+
+# SUID/SGID binaries that should not exist
+[ROOTKIT_FILES]
+f:/usr/bin/nmap -> nmap should not be SUID/SGID.
+f:/usr/bin/curl -> curl should not be SUID/SGID.
+f:/usr/bin/wget -> wget should not be SUID/SGID.
+
+# Suspicious kernel module names (known rootkits)
+[ROOTKIT_TROJANS]
+f:/lib/modules/*/kernel/drivers/net/r8169.ko -> Possible Azazel rootkit kernel module.
+f:/usr/lib/libproc.so -> Possible Azazel rootkit library.
+
+# Sensitive file permissions
+[APP_POLICY]
+f:/etc/shadow p:!640 -> /etc/shadow has incorrect permissions (should be 640).
+f:/etc/passwd p:!644 -> /etc/passwd has incorrect permissions (should be 644).
+f:/etc/sudoers p:!440 -> /etc/sudoers has incorrect permissions (should be 440).
+
+# Unexpected listening services
+[NET_RFC_LISTEN_PORTS]
+Any connection on port 4444 -> Suspicious listener on port 4444 (common RAT port).
+Any connection on port 1337 -> Suspicious listener on port 1337 (common backdoor port).
+Any connection on port 31337 -> Suspicious listener on port 31337 (Elite/31337 backdoor port).

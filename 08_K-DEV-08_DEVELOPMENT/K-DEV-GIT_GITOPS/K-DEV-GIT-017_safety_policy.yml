@@ -1,8 +1,0 @@
-security:
-  ignore-vulnerabilities: []
-
-scan:
-  full-report: true
-
-output:
-  format: json

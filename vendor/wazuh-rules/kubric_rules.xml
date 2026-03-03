@@ -1,0 +1,55 @@
+<!-- Kubric Wazuh Rules — Seed Ruleset
+     License: GPL 2.0 (rules bundled as data, not linked code)
+     Sync production rules: make sync-vendor-assets
+     Source: https://github.com/wazuh/wazuh-ruleset
+-->
+<group name="kubric,syslog,sshd">
+
+  <!-- SSH brute force detection -->
+  <rule id="100001" level="10" frequency="8" timeframe="120">
+    <if_matched_sid>5716</if_matched_sid>
+    <same_source_ip />
+    <description>SSH brute force (multiple authentication failures).</description>
+    <group>authentication_failures,pci_dss_10.2.4,pci_dss_10.2.5,</group>
+  </rule>
+
+  <!-- Suspicious process spawned from web server -->
+  <rule id="100002" level="12">
+    <if_sid>1002</if_sid>
+    <field name="process.parent.name">httpd|apache2|nginx|php-fpm</field>
+    <field name="process.name">bash|sh|zsh|python|perl|ruby|nc|ncat|curl|wget</field>
+    <description>Web server spawned suspicious child process — possible RCE.</description>
+    <group>attack,web,t1059,</group>
+  </rule>
+
+  <!-- Privilege escalation via sudo -->
+  <rule id="100003" level="8">
+    <if_sid>5402</if_sid>
+    <field name="process.name">sudo</field>
+    <description>Privilege escalation via sudo detected.</description>
+    <group>privilege_escalation,t1548,</group>
+  </rule>
+
+  <!-- New listening port opened -->
+  <rule id="100004" level="7">
+    <if_sid>533</if_sid>
+    <description>New listening port opened on monitored host.</description>
+    <group>network,</group>
+  </rule>
+
+  <!-- File modification in /etc -->
+  <rule id="100005" level="9">
+    <if_sid>550</if_sid>
+    <field name="file.path">/etc/</field>
+    <description>Critical system file modified: $(file.path)</description>
+    <group>fim,integrity_monitoring,t1565,</group>
+  </rule>
+
+  <!-- Malware detected by YARA -->
+  <rule id="100006" level="15">
+    <if_sid>87105</if_sid>
+    <description>YARA rule matched — potential malware detected.</description>
+    <group>malware,t1204,</group>
+  </rule>
+
+</group>

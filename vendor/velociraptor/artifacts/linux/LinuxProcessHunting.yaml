@@ -1,0 +1,21 @@
+name: KubricLinuxProcessHunting
+description: |
+  Hunt for suspicious process activity on Linux endpoints.
+  Detects web shells, reverse shells, unusual parent-child relationships.
+author: Kubric Security
+type: CLIENT
+parameters:
+  - name: TargetGlob
+    type: GLOB
+    default: "/proc/*/exe"
+    description: Glob pattern for process exe symlinks to inspect
+sources:
+  - query: |
+      SELECT Pid, Name, Exe, Cmdline, Username, Ppid
+      FROM processes()
+      WHERE Cmdline =~ "(-enc|-EncodedCommand|base64|IEX|Invoke-Expression)"
+         OR Exe =~ "(/tmp/|/dev/shm/|/var/tmp/)"
+         OR (Name =~ "(bash|sh|python|perl)" AND Ppid IN (
+               SELECT Pid FROM processes() WHERE Name =~ "(httpd|nginx|apache)"
+             ))
+      ORDER BY CreateTime DESC

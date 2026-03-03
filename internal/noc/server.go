@@ -14,6 +14,7 @@ import (
 	"github.com/managekube-hue/Kubric-UiDR/internal/correlation"
 	"github.com/managekube-hue/Kubric-UiDR/internal/cortex"
 	"github.com/managekube-hue/Kubric-UiDR/internal/falco"
+	"github.com/managekube-hue/Kubric-UiDR/internal/itdr"
 	kubricmw "github.com/managekube-hue/Kubric-UiDR/internal/middleware"
 	"github.com/managekube-hue/Kubric-UiDR/internal/osquery"
 	"github.com/managekube-hue/Kubric-UiDR/internal/shuffle"
@@ -182,6 +183,17 @@ func initIntegrations(cfg Config) *integrationHandler {
 	} else {
 		ih.bloodhound = c
 	}
+
+	ih.itdr = itdr.New(itdr.Config{
+		SigmaSecurityDir:      cfg.ITDRSigmaSecurityDir,
+		SigmaPrivEscDir:       cfg.ITDRSigmaPrivEscDir,
+		WazuhRulesDir:         cfg.ITDRWazuhRulesDir,
+		MispTaxonomiesDir:     cfg.ITDRMispTaxonomiesDir,
+		BloodHoundCypherDir:   cfg.ITDRBloodHoundCypherDir,
+		IdentityRespondersDir: cfg.ITDRIdentityRespondersDir,
+		OTXBaseURL:            cfg.OTXBaseURL,
+		OTXAPIKey:             cfg.OTXAPIKey,
+	}, ih.bloodhound, ih.cortex)
 
 	return ih
 }

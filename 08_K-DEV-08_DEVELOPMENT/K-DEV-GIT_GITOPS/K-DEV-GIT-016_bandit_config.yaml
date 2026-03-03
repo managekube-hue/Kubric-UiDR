@@ -1,9 +1,0 @@
-skips:
-  - B101
-
-exclude_dirs:
-  - vendor
-  - .git
-  - node_modules
-
-severity: medium

@@ -1,0 +1,51 @@
+{
+  "name": "KubricUnauthorizedAccess",
+  "titlePrefix": "[UNAUTH-ACCESS] ",
+  "severity": 2,
+  "tlp": 2,
+  "pap": 2,
+  "tags": ["kubric", "access", "edr", "authentication"],
+  "tasks": [
+    {
+      "title": "Triage — Confirm alert",
+      "group": "Triage",
+      "description": "Review Sigma authentication alert. Confirm source IP, user account, and time of access. Cross-reference with HR/IT approved access list."
+    },
+    {
+      "title": "Contain — Lock account",
+      "group": "Containment",
+      "description": "Disable compromised or suspicious user account in IdP (Okta/LDAP). Invalidate all active sessions and tokens."
+    },
+    {
+      "title": "Contain — Block source IP",
+      "group": "Containment",
+      "description": "Run block_ip Cortex responder for attacking source IP. Add to WAF deny-list."
+    },
+    {
+      "title": "Investigate — Audit log review",
+      "group": "Investigation",
+      "description": "Pull all actions performed by the account during the suspicious session from ClickHouse audit log."
+    },
+    {
+      "title": "Investigate — Lateral movement check",
+      "group": "Investigation",
+      "description": "Search for SSH/RDP/WMI connections originating from the compromised account. Use NetGuard RITA data."
+    },
+    {
+      "title": "Eradicate — Revoke credentials",
+      "group": "Eradication",
+      "description": "Rotate all secrets, API keys, and SSH keys associated with the compromised account. Force MFA re-enrolment."
+    },
+    {
+      "title": "Recover — Re-enable with hardening",
+      "group": "Recovery",
+      "description": "Re-enable account with additional monitoring. Enable privileged access review for 30 days."
+    }
+  ],
+  "customFields": {
+    "kubric_tenant": {"string": ""},
+    "source_ip": {"string": ""},
+    "affected_user": {"string": ""},
+    "mitre_technique": {"string": "T1078"}
+  }
+}
