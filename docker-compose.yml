@@ -46,7 +46,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
       POSTGRES_DB:       ${POSTGRES_DB:-kubric}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ${KUBRIC_POSTGRES_DATA_DIR:-postgres_data}:/var/lib/postgresql/data
       - ./migrations/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kubric}"]
@@ -64,7 +64,7 @@ services:
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:?CLICKHOUSE_PASSWORD required}
       CLICKHOUSE_DB:       ${CLICKHOUSE_DB:-kubric}
     volumes:
-      - clickhouse_data:/var/lib/clickhouse
+      - ${KUBRIC_CLICKHOUSE_DATA_DIR:-clickhouse_data}:/var/lib/clickhouse
       - ./migrations/clickhouse:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "clickhouse-client --query 'SELECT 1'"]
@@ -81,7 +81,6 @@ services:
       -js
       -sd /data
       -m 8222
-      --websocket_port 9222
     volumes:
       - nats_data:/data
     healthcheck:
@@ -141,7 +140,8 @@ services:
     <<: [*restart, *logging]
     environment:
       NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/kubric-dev-password}
-    volumes: [neo4j_data:/data]
+    volumes:
+      - ${KUBRIC_NEO4J_DATA_DIR:-neo4j_data}:/data
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:7474 || exit 1"]
       interval: 15s
@@ -201,6 +201,54 @@ services:
     depends_on: [prometheus, loki]
     networks: [kubric]
     ports: ["3000:3000"]
+
+  # ?? NDR Services ????????????????????????????????????????????????????????????
+
+  ndr-rita:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      target: ndr-rita
+    <<: [*restart, *logging]
+    image: kubric/ndr-rita:latest
+    environment:
+      NDR_RITA_LISTEN: :4096
+      CLICKHOUSE_URL: ${KUBRIC_CLICKHOUSE_URL:-clickhouse://kubric:${CLICKHOUSE_PASSWORD}@clickhouse:9000/kubric}
+    depends_on:
+      clickhouse: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:4096/api/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks: [kubric]
+    ports: ["4096:4096"]
+
+  netguard:
+    build:
+      context: .
+      dockerfile: Dockerfile.agents
+      target: netguard
+    <<: [*restart, *logging]
+    image: kubric/netguard:latest
+    environment:
+      KUBRIC_TENANT_ID: ${KUBRIC_TENANT_ID:-dev-tenant-01}
+      KUBRIC_AGENT_ID: ${KUBRIC_NETGUARD_AGENT_ID:-netguard-01}
+      KUBRIC_NATS_URL: ${KUBRIC_NATS_URL:-nats://nats:4222}
+      KUBRIC_INTERFACE: ${KUBRIC_INTERFACE:-eth0}
+      KUBRIC_RITA_URL: ${KUBRIC_RITA_URL:-http://ndr-rita:4096}
+      KUBRIC_YARA_DIR: /opt/kubric/vendor/yara-rules
+      KUBRIC_SURICATA_DIR: /opt/kubric/vendor/suricata
+      KUBRIC_CRS_DIR: /opt/kubric/vendor/coreruleset/rules
+      KUBRIC_ENABLE_ZEEK: ${KUBRIC_ENABLE_ZEEK:-false}
+      KUBRIC_ZEEK_SCRIPT_DIR: /opt/kubric/vendor/zeek/scripts
+    depends_on:
+      nats: {condition: service_healthy}
+      ndr-rita: {condition: service_healthy}
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks: [kubric]
 
   # ?? Go API Services ????????????????????????????????????????????????????????
 

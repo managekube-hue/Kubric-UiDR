@@ -89,6 +89,28 @@ impl NdpiLib {
     ///
     /// Returns `None` if the library is not found (graceful degradation).
     pub fn load() -> Option<Self> {
+        // Prefer explicit runtime path from environment.
+        if let Ok(path) = std::env::var("KUBRIC_NDPI_LIB") {
+            if let Some(lib) = Self::try_load(&path) {
+                NDPI_AVAILABLE.store(true, Ordering::SeqCst);
+                info!(library = path, "nDPI loaded from KUBRIC_NDPI_LIB");
+                return Some(lib);
+            }
+        }
+
+        // Try build-script-provided vendor lib dir when present.
+        if let Some(candidate) = Self::candidate_vendor_paths().into_iter().find_map(|p| {
+            if p.exists() {
+                Self::try_load(p.to_string_lossy().as_ref())
+            } else {
+                None
+            }
+        }) {
+            NDPI_AVAILABLE.store(true, Ordering::SeqCst);
+            info!("nDPI loaded from vendor dynamic library path");
+            return Some(candidate);
+        }
+
         let lib_names: &[&str] = if cfg!(target_os = "windows") {
             &["ndpi.dll", "libndpi.dll"]
         } else if cfg!(target_os = "macos") {
@@ -105,17 +127,21 @@ impl NdpiLib {
             }
         }
 
-        // Also try the path from environment variable
-        if let Ok(path) = std::env::var("KUBRIC_NDPI_LIB") {
-            if let Some(lib) = Self::try_load(&path) {
-                NDPI_AVAILABLE.store(true, Ordering::SeqCst);
-                info!(library = path, "nDPI loaded from KUBRIC_NDPI_LIB");
-                return Some(lib);
-            }
-        }
-
         warn!("nDPI library not found — DPI classification disabled");
         None
+    }
+
+    fn candidate_vendor_paths() -> Vec<std::path::PathBuf> {
+        let mut out = Vec::new();
+        if let Ok(dir) = std::env::var("KUBRIC_NDPI_LIB_DIR") {
+            out.push(std::path::PathBuf::from(&dir).join("libndpi.so"));
+            out.push(std::path::PathBuf::from(&dir).join("libndpi.so.5"));
+        }
+        out.push(std::path::PathBuf::from("vendor/ndpi/lib/libndpi.so"));
+        out.push(std::path::PathBuf::from("vendor/ndpi/lib/libndpi.so.5"));
+        out.push(std::path::PathBuf::from("/opt/kubric/vendor/ndpi/lib/libndpi.so"));
+        out.push(std::path::PathBuf::from("/opt/kubric/vendor/ndpi/lib/libndpi.so.5"));
+        out
     }
 
     #[cfg(unix)]

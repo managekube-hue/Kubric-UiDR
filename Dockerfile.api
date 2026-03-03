@@ -5,13 +5,17 @@
 #   docker build --target vdr       -t kubric/vdr:latest       .
 #   docker build --target kic       -t kubric/kic:latest       .
 #   docker build --target noc       -t kubric/noc:latest       .
+#   docker build --target ndr-rita  -t kubric/ndr-rita:latest  .
 #   docker build --target nats-clickhouse-bridge -t kubric/nats-clickhouse-bridge:latest .
 #   docker build --target temporal-worker        -t kubric/temporal-worker:latest        .
 
 # ?? Stage 1: build all Go binaries ???????????????????????????????????????????
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 RUN apk add --no-cache git ca-certificates tzdata make
+
+# Use module mode in container builds to avoid relying on incomplete local vendor trees.
+ENV GOFLAGS=-mod=mod
 
 WORKDIR /src
 
@@ -28,6 +32,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -trimpath -ldflags="-s -w" -o /out/vdr                ./cmd/vdr           && \
     go build -trimpath -ldflags="-s -w" -o /out/kic                ./cmd/kic           && \
     go build -trimpath -ldflags="-s -w" -o /out/noc                ./cmd/noc           && \
+    go build -trimpath -ldflags="-s -w" -o /out/ndr-rita           ./cmd/ndr-rita      && \
     go build -trimpath -ldflags="-s -w" -o /out/nats-ch-bridge     ./cmd/nats-clickhouse-bridge && \
     go build -trimpath -ldflags="-s -w" -o /out/temporal-worker    ./cmd/temporal
 
@@ -63,6 +68,12 @@ FROM runtime-base AS noc
 COPY --from=builder /out/noc /noc
 EXPOSE 8083
 ENTRYPOINT ["/noc"]
+
+# ?? Stage 6b: ndr-rita ?????????????????????????????????????????????????????????
+FROM runtime-base AS ndr-rita
+COPY --from=builder /out/ndr-rita /ndr-rita
+EXPOSE 4096
+ENTRYPOINT ["/ndr-rita"]
 
 # ?? Stage 7: nats-clickhouse-bridge ???????????????????????????????????????????
 FROM runtime-base AS nats-clickhouse-bridge

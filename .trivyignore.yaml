@@ -1,0 +1,3 @@
+# Kubric vulnerability exception policy
+# Entries must include an expiry and ticket reference.
+vulnerabilities: []

@@ -60,11 +60,21 @@ require (
 	github.com/anchore/go-struct-converter v0.0.0-20230627203149-c72ef8859ca9 // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/apache/arrow-go/v18 v18.1.0 // indirect
+	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/bombsimon/logrusr/v2 v2.0.1 // indirect
 	github.com/bradleyfalzon/ghinstallation/v2 v2.8.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/charmbracelet/bubbles v0.18.0 // indirect
+	github.com/charmbracelet/bubbletea v0.26.3 // indirect
+	github.com/charmbracelet/harmonica v0.2.0 // indirect
+	github.com/charmbracelet/lipgloss v0.11.0 // indirect
+	github.com/charmbracelet/x/ansi v0.1.2 // indirect
+	github.com/charmbracelet/x/input v0.1.1 // indirect
+	github.com/charmbracelet/x/term v0.1.1 // indirect
+	github.com/charmbracelet/x/windows v0.1.2 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/cncf/xds/go v0.0.0-20250501225837-2ac532fd4443 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.18.1 // indirect
@@ -78,9 +88,11 @@ require (
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/envoyproxy/go-control-plane/envoy v1.32.4 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.2.1 // indirect
+	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/facebookgo/clock v0.0.0-20150410010913-600d898af40a // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-faster/city v1.0.1 // indirect
 	github.com/go-faster/errors v0.7.1 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
@@ -90,6 +102,9 @@ require (
 	github.com/go-jose/go-jose/v4 v4.1.3 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-playground/validator/v10 v10.23.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/go-zeromq/goczmq/v4 v4.2.2 // indirect
 	github.com/goark/errs v1.3.2 // indirect
@@ -101,6 +116,7 @@ require (
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/flatbuffers v25.1.24+incompatible // indirect
 	github.com/google/go-containerregistry v0.20.7 // indirect
+	github.com/google/go-github v17.0.0+incompatible // indirect
 	github.com/google/go-github/v53 v53.2.0 // indirect
 	github.com/google/go-github/v56 v56.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
@@ -121,6 +137,7 @@ require (
 	github.com/hashicorp/go-secure-stdlib/strutil v0.1.2 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.1-vault-7 // indirect
+	github.com/hjson/hjson-go/v4 v4.4.0 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20230524184225-eabc099b10ab // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -131,14 +148,22 @@ require (
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.11 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
-	github.com/moby/buildkit v0.12.2 // indirect
+	github.com/moby/buildkit v0.13.2 // indirect
+	github.com/montanaflynn/stats v0.7.1 // indirect
+	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
+	github.com/muesli/cancelreader v0.2.2 // indirect
+	github.com/muesli/reflow v0.3.0 // indirect
+	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
@@ -158,11 +183,12 @@ require (
 	github.com/prometheus/common v0.66.1 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/rhysd/actionlint v1.6.26 // indirect
-	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
+	github.com/rs/zerolog v1.33.0 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.10.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
@@ -175,6 +201,7 @@ require (
 	github.com/skeema/knownhosts v1.2.1 // indirect
 	github.com/spdx/gordf v0.0.0-20221230105357-b735bd5aac89 // indirect
 	github.com/spdx/tools-golang v0.5.3 // indirect
+	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.5.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
@@ -183,6 +210,7 @@ require (
 	github.com/vbatts/tar-split v0.12.2 // indirect
 	github.com/xanzy/go-gitlab v0.93.1 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/zeebo/errs v1.4.0 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	go.opencensus.io v0.24.0 // indirect

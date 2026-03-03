@@ -7,6 +7,18 @@
 use serde::Serialize;
 use tracing::{info, warn};
 
+#[derive(Debug, Clone)]
+struct SuricataRule {
+    sid: String,
+    msg: String,
+    content_terms: Vec<Vec<u8>>,
+}
+
+#[derive(Debug, Clone)]
+pub struct SuricataAssetValidation {
+    pub missing_files: Vec<String>,
+}
+
 /// A network IDS match result.
 #[derive(Debug, Clone, Serialize)]
 pub struct IdsAlert {
@@ -35,6 +47,7 @@ impl IdsAlert {
 pub struct IdsEngine {
     rules: yara_x::Rules,
     count: usize,
+    suricata_rules: Vec<SuricataRule>,
 }
 
 impl IdsEngine {
@@ -44,14 +57,20 @@ impl IdsEngine {
         Self {
             rules: compiler.build(),
             count: 0,
+            suricata_rules: Vec::new(),
         }
     }
 
     /// Load YARA rules from a directory, intended for network-oriented rules.
     pub fn load_from_dir(dir: &str) -> anyhow::Result<Self> {
-        let path = std::path::Path::new(dir);
+        Self::load_from_dirs(dir, dir)
+    }
+
+    /// Load YARA and Suricata rules from their respective directories.
+    pub fn load_from_dirs(yara_dir: &str, suricata_dir: &str) -> anyhow::Result<Self> {
+        let path = std::path::Path::new(yara_dir);
         if !path.exists() {
-            info!(dir, "IDS rule directory not found — using empty engine");
+            info!(dir = yara_dir, "IDS YARA rule directory not found — using empty engine");
             return Ok(Self::empty());
         }
 
@@ -59,34 +78,95 @@ impl IdsEngine {
         let mut count = 0;
         load_dir(path, &mut compiler, &mut count);
 
-        info!(rules = count, dir, "IDS YARA rules loaded");
+        let mut suricata_rules = Vec::new();
+        load_suricata_rules(std::path::Path::new(suricata_dir), &mut suricata_rules);
+
+        info!(yara_rules = count, suricata_rules = suricata_rules.len(), yara_dir, suricata_dir, "IDS rules loaded");
         Ok(Self {
             rules: compiler.build(),
             count,
+            suricata_rules,
         })
     }
 
     /// Scan a network payload and return matching rule identifiers.
     pub fn scan(&self, data: &[u8]) -> Vec<(String, String)> {
+        let mut out: Vec<(String, String)> = Vec::new();
+
         let mut scanner = yara_x::Scanner::new(&self.rules);
-        let results = match scanner.scan(data) {
-            Ok(r) => r,
-            Err(_) => return Vec::new(),
-        };
-        results
+        if let Ok(results) = scanner.scan(data) {
+            out.extend(results
             .matching_rules()
             .map(|rule| {
                 (
                     rule.identifier().to_string(),
                     rule.namespace().to_string(),
                 )
-            })
-            .collect()
+            }));
+        }
+
+        for rule in &self.suricata_rules {
+            if rule.content_terms.is_empty() {
+                continue;
+            }
+            let matched = rule
+                .content_terms
+                .iter()
+                .all(|term| contains_bytes(data, term));
+            if matched {
+                out.push((format!("{}:{}", rule.sid, rule.msg), "suricata".to_string()));
+            }
+        }
+
+        out
     }
 
     pub fn rule_count(&self) -> usize {
-        self.count
+        self.count + self.suricata_rules.len()
     }
+
+    pub fn validate_suricata_assets(dir: &str) -> SuricataAssetValidation {
+        let root = std::path::Path::new(dir);
+        if !root.exists() {
+            return SuricataAssetValidation {
+                missing_files: vec!["suricata directory missing".to_string()],
+            };
+        }
+
+        let mut missing = Vec::new();
+        let c2 = root.join("emerging-c2.rules");
+        if !c2.exists() {
+            missing.push("emerging-c2.rules".to_string());
+        }
+
+        let glob = std::fs::read_dir(root)
+            .ok()
+            .map(|it| {
+                it.flatten()
+                    .map(|e| e.path())
+                    .filter(|p| {
+                        p.file_name()
+                            .and_then(|n| n.to_str())
+                            .map(|n| n.starts_with("emerging-") && n.ends_with(".rules"))
+                            .unwrap_or(false)
+                    })
+                    .count()
+            })
+            .unwrap_or(0);
+
+        if glob == 0 {
+            missing.push("emerging-*.rules".to_string());
+        }
+
+        SuricataAssetValidation { missing_files: missing }
+    }
+}
+
+fn contains_bytes(haystack: &[u8], needle: &[u8]) -> bool {
+    if needle.is_empty() {
+        return true;
+    }
+    haystack.windows(needle.len()).any(|w| w == needle)
 }
 
 fn load_dir(path: &std::path::Path, compiler: &mut yara_x::Compiler, count: &mut usize) {
@@ -114,6 +194,65 @@ fn load_dir(path: &std::path::Path, compiler: &mut yara_x::Compiler, count: &mut
             }
         }
     }
+}
+
+fn load_suricata_rules(path: &std::path::Path, out: &mut Vec<SuricataRule>) {
+    let entries = match std::fs::read_dir(path) {
+        Ok(e) => e,
+        Err(_) => return,
+    };
+    for entry in entries.flatten() {
+        let p = entry.path();
+        if p.is_dir() {
+            load_suricata_rules(&p, out);
+        } else if let Some(ext) = p.extension() {
+            let ext = ext.to_string_lossy().to_lowercase();
+            if ext == "rules" {
+                if let Ok(src) = std::fs::read_to_string(&p) {
+                    for line in src.lines() {
+                        if let Some(rule) = parse_suricata_rule(line) {
+                            out.push(rule);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn parse_suricata_rule(line: &str) -> Option<SuricataRule> {
+    let trimmed = line.trim();
+    if trimmed.is_empty() || trimmed.starts_with('#') {
+        return None;
+    }
+    let start = trimmed.find('(')?;
+    let end = trimmed.rfind(')')?;
+    let body = &trimmed[start + 1..end];
+
+    let mut sid = String::new();
+    let mut msg = String::new();
+    let mut content_terms: Vec<Vec<u8>> = Vec::new();
+
+    for part in body.split(';') {
+        let kv = part.trim();
+        if let Some(v) = kv.strip_prefix("sid:") {
+            sid = v.trim().to_string();
+        } else if let Some(v) = kv.strip_prefix("msg:") {
+            msg = v.trim().trim_matches('"').to_string();
+        } else if let Some(v) = kv.strip_prefix("content:") {
+            let txt = v.trim().trim_matches('"');
+            content_terms.push(txt.as_bytes().to_vec());
+        }
+    }
+
+    if sid.is_empty() || content_terms.is_empty() {
+        return None;
+    }
+    Some(SuricataRule {
+        sid,
+        msg,
+        content_terms,
+    })
 }
 
 #[cfg(test)]

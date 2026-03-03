@@ -1,0 +1,41 @@
+name: kubric-dev
+
+services:
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    ports: ["4222:4222", "8222:8222"]
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24-alpine
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-kubric}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-kubric-dev-password}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-kubric}
+    ports: ["8123:8123", "9000:9000"]
+
+  coresec:
+    build:
+      context: ..
+      dockerfile: Dockerfile.agents
+      target: coresec
+    depends_on: [nats]
+
+  netguard:
+    build:
+      context: ..
+      dockerfile: Dockerfile.agents
+      target: netguard
+    depends_on: [nats, ndr-rita]
+    cap_add: ["NET_ADMIN", "NET_RAW"]
+
+  ndr-rita:
+    build:
+      context: ..
+      dockerfile: Dockerfile.api
+      target: ndr-rita
+    environment:
+      NDR_RITA_LISTEN: :4096
+      CLICKHOUSE_URL: ${CLICKHOUSE_URL:-clickhouse://kubric:${CLICKHOUSE_PASSWORD:-kubric-dev-password}@clickhouse:9000/kubric}
+    depends_on: [clickhouse]
+    ports: ["4096:4096"]

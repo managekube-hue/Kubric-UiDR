@@ -1,0 +1,67 @@
+name: kubric
+
+services:
+  nats:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/nats:2.10-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    ports: ["4222:4222", "8222:8222"]
+    restart: unless-stopped
+
+  clickhouse:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/clickhouse:24-alpine
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-kubric}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-kubric-dev-password}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-kubric}
+    ports: ["8123:8123", "9000:9000"]
+    restart: unless-stopped
+
+  postgres:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kubric}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kubric-dev-password}
+      POSTGRES_DB: ${POSTGRES_DB:-kubric}
+    ports: ["5432:5432"]
+    restart: unless-stopped
+
+  neo4j:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/neo4j:5-community
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/kubric-dev-password}
+    ports: ["7474:7474", "7687:7687"]
+    restart: unless-stopped
+
+  redis:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/redis:7-alpine
+    ports: ["6379:6379"]
+    restart: unless-stopped
+
+  minio:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-kubric}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-kubric-dev-password}
+    ports: ["9000:9000", "9001:9001"]
+    restart: unless-stopped
+
+  coresec:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/coresec:${KUBRIC_TAG:-latest}
+    depends_on: [nats]
+    restart: unless-stopped
+
+  netguard:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/netguard:${KUBRIC_TAG:-latest}
+    depends_on: [nats, ndr-rita]
+    cap_add: ["NET_ADMIN", "NET_RAW"]
+    restart: unless-stopped
+
+  ndr-rita:
+    image: ${GHCR_IMAGE_PREFIX:-ghcr.io/managekube-hue/kubric-uidr}/ndr-rita:${KUBRIC_TAG:-latest}
+    environment:
+      NDR_RITA_LISTEN: :4096
+      CLICKHOUSE_URL: ${CLICKHOUSE_URL:-clickhouse://kubric:${CLICKHOUSE_PASSWORD:-kubric-dev-password}@clickhouse:9000/kubric}
+    depends_on: [clickhouse]
+    ports: ["4096:4096"]
+    restart: unless-stopped

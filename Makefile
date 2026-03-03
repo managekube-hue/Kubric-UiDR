@@ -1,4 +1,4 @@
-.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull enterprise-check deploy-sandbox-no-vault deploy-live-prod deploy-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06 ops-batch-07 master-validation
+.PHONY: help build dev test clean deploy bootstrap lint check-gpl-boundary restore-drill kustomize-build db-migrate nats-init vendor-pull vendor-update vendor-sync-ndr verify-local-storage enterprise-check deploy-sandbox-no-vault deploy-live-prod deploy-prod ops-batch-01 ops-batch-02 ops-batch-03 ops-batch-04 ops-batch-05 ops-batch-06 ops-batch-07 master-validation minikube-up minikube-stage minikube-status minikube-down build-modules-18 build-edr build-itdr build-ndr build-cdr build-sdr build-adr build-ddr build-vdr build-mdr build-ti build-cfdr build-bdr build-npm build-uem build-mdm build-apm build-grc build-kai
 
 help:
 	@echo "Kubric Platform - Development Makefile"
@@ -26,6 +26,13 @@ help:
 	@echo "  make ops-batch-06  External closure audit remediation verification"
 	@echo "  make ops-batch-07  Enterprise tree restructure verification"
 	@echo "  make master-validation  Run all validation checks (quick)"
+	@echo "  make vendor-update  Fetch and stage pinned NDR vendor sources"
+	@echo "  make vendor-sync-ndr  Sync NDR runtime assets into vendor/ paths"
+	@echo "  make minikube-up  Start local Minikube cluster"
+	@echo "  make minikube-stage  Stage kubric dev overlay on Minikube"
+	@echo "  make minikube-status  kubectl get pods/services in kubric namespace"
+	@echo "  make verify-local-storage  Verify Docker/Minikube/DB paths are pinned to D:"
+	@echo "  make build-modules-18  Run logical build targets for all 18 modules"
 	@echo ""
 
 .DEFAULT_GOAL := help
@@ -165,6 +172,7 @@ lint-fix:
 
 security-scan:
 	@echo "Running security scanners..."
+	trivy fs --severity HIGH,CRITICAL --exit-code 1 --ignore-unfixed .
 	grype dir:. --fail-on high
 	syft dir:. -o json > sbom.json
 	@echo "SBOM generated: sbom.json"
@@ -211,6 +219,98 @@ ops-batch-07:
 master-validation:
 	@echo "Running master validation suite..."
 	powershell -ExecutionPolicy Bypass -File scripts/master-validation.ps1
+
+vendor-update:
+	@echo "Updating pinned vendor source archives..."
+	go run -mod=mod scripts/vendor-update.go --sha-check
+
+vendor-sync-ndr:
+	@echo "Syncing NDR vendor assets (nDPI/Zeek/CRS/Suricata)..."
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/vendor-sync-ndr.ps1
+
+minikube-up:
+	@echo "Starting Minikube (Hyper-V driver, Kubernetes v1.30.0)..."
+	minikube start --driver=hyperv --kubernetes-version=v1.30.0 --cpus=6 --memory=12g --disk-size=50g --addons=ingress,metrics-server
+	kubectl get nodes
+
+minikube-stage:
+	@echo "Staging kubric dev overlay on Minikube..."
+	kubectl create namespace kubric --dry-run=client -o yaml | kubectl apply -f -
+	kubectl apply -k infra/k8s/overlays/dev
+	kubectl get pods -n kubric
+
+minikube-status:
+	@echo "Kubric namespace status"
+	kubectl get pods -n kubric
+	kubectl get svc -n kubric
+
+verify-local-storage:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/verify-local-storage.ps1
+
+minikube-down:
+	@echo "Deleting Minikube cluster..."
+	minikube delete
+
+build-modules-18: build-edr build-itdr build-ndr build-cdr build-sdr build-adr build-ddr build-vdr build-mdr build-ti build-cfdr build-bdr build-npm build-uem build-mdm build-apm build-grc build-kai
+	@echo "Logical 18-module build targets completed"
+
+build-edr:
+	docker build --target coresec -f Dockerfile.agents -t kubric/coresec:latest .
+
+build-itdr:
+	go build -mod=mod ./internal/itdr
+
+build-ndr:
+	docker build --target netguard -f Dockerfile.agents -t kubric/netguard:latest .
+	docker build --target ndr-rita -f Dockerfile.api -t kubric/ndr-rita:latest .
+
+build-cdr:
+	go build -mod=mod ./cmd/noc
+
+build-sdr:
+	go build -mod=mod ./cmd/ksvc
+
+build-adr:
+	go build -mod=mod ./cmd/noc
+
+build-ddr:
+	docker build --target coresec -f Dockerfile.agents -t kubric/coresec:latest .
+
+build-vdr:
+	go build -mod=mod ./cmd/vdr
+
+build-mdr:
+	go build -mod=mod ./cmd/ksvc
+
+build-ti:
+	go build -mod=mod ./cmd/noc
+
+build-cfdr:
+	go build -mod=mod ./cmd/kic
+
+build-bdr:
+	go build -mod=mod ./cmd/noc
+
+build-npm:
+	docker build --target perftrace -f Dockerfile.agents -t kubric/perftrace:latest .
+
+build-uem:
+	go build -mod=mod ./cmd/noc
+
+build-mdm:
+	go build -mod=mod ./cmd/noc
+
+build-apm:
+	docker build --target perftrace -f Dockerfile.agents -t kubric/perftrace:latest .
+
+build-grc:
+	go build -mod=mod ./cmd/kic
+
+build-kai:
+	docker build -f kai/Dockerfile -t kubric/kai:latest .
+
+first3-message-contract-smoke:
+	powershell -ExecutionPolicy Bypass -File scripts/bootstrap/first3-message-contract-smoke.ps1
 
 # Building
 

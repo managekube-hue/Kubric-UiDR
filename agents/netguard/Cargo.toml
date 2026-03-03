@@ -3,6 +3,7 @@ name        = "netguard"
 version     = "0.2.0"
 edition     = "2021"
 description = "Kubric NetGuard — 10G network detection and response sensor (L0-3)"
+build       = "build.rs"
 
 [dependencies]
 # ── Core ──────────────────────────────────────────────────────────────────────
@@ -50,6 +51,7 @@ yara-x         = { workspace = true }
 
 # ── HTTP client (RITA sidecar communication) ──────────────────────────────────
 reqwest        = { workspace = true }
+regex          = { workspace = true }
 
 # ── System / metrics ──────────────────────────────────────────────────────────
 sysinfo        = { workspace = true }
@@ -59,4 +61,7 @@ opentelemetry         = { workspace = true }
 opentelemetry-otlp    = { workspace = true }
 opentelemetry_sdk     = { workspace = true }
 tracing-opentelemetry = { workspace = true }
+
+[build-dependencies]
+bindgen = "0.70"
 

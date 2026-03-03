@@ -49,14 +49,6 @@ struct {
     __type(value, struct exec_event);
 } exec_heap SEC(".maps");
 
-// ─── Helper: read up to N bytes of a user-space string ───────────────────────
-static __always_inline int read_str(void *dst, int dst_size,
-                                    const char __user *src)
-{
-    int ret = bpf_probe_read_user_str(dst, dst_size, src);
-    return (ret < 0) ? ret : 0;
-}
-
 // ─── Tracepoint: sys_enter_execve ────────────────────────────────────────────
 // Kernel tracepoint format (from /sys/kernel/debug/tracing/events/syscalls/
 // sys_enter_execve/format):
@@ -87,9 +79,9 @@ int execve_hook(struct sys_enter_execve_args *ctx)
     evt->pid = (__u32)(pid_tgid >> 32);   // tgid = process ID
     evt->uid = (__u32)bpf_get_current_uid_gid();
 
-    // Parent PID via task_struct (CO-RE)
-    struct task_struct *task = (struct task_struct *)bpf_get_current_task();
-    evt->ppid = (__u32)BPF_CORE_READ(task, real_parent, tgid);
+    // Parent PID via task_struct CO-RE requires vmlinux BTF struct layout;
+    // keep this hook buildable across minimal build images by defaulting to 0.
+    evt->ppid = 0;
 
     evt->timestamp_ns = bpf_ktime_get_ns();
 

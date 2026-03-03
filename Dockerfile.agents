@@ -14,8 +14,8 @@
 FROM ubuntu:24.04 AS ebpf-builder
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    clang llvm libelf-dev linux-headers-generic make ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+clang llvm libelf-dev libbpf-dev linux-headers-generic make ca-certificates \
+&& rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 COPY vendor/ebpf ./vendor/ebpf
@@ -24,7 +24,7 @@ COPY vendor/ebpf ./vendor/ebpf
 RUN make -C vendor/ebpf
 
 # ?? Stage 2: Rust build environment ??????????????????????????????????????????
-FROM rust:1.80-slim-bookworm AS builder
+FROM rust:1.88-slim-bookworm AS builder
 
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     pkg-config libssl-dev libpcap-dev clang llvm \
@@ -79,15 +79,30 @@ RUN groupadd -r kubric && useradd -r -g kubric kubric
 FROM agent-runtime-base AS coresec
 
 COPY --from=builder /src/target/release/coresec /usr/local/bin/coresec
-# eBPF objects needed at runtime
+# eBPF objects (compiled from C sources by ebpf-builder stage)
 COPY --from=builder /src/vendor/ebpf/execve_hook.o  /opt/kubric/vendor/ebpf/execve_hook.o
 COPY --from=builder /src/vendor/ebpf/openat2_hook.o /opt/kubric/vendor/ebpf/openat2_hook.o
-# Detection rules
-COPY --from=builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
-COPY --from=builder /src/vendor/sigma      /opt/kubric/vendor/sigma
+# Detection rules — YARA-X and Sigma
+COPY --from=builder /src/vendor/yara-rules           /opt/kubric/vendor/yara-rules
+COPY --from=builder /src/vendor/sigma                /opt/kubric/vendor/sigma
+# Threat intelligence — Suricata ET, Wazuh, Sysmon, Osquery, Velociraptor, rootcheck
+COPY --from=builder /src/vendor/suricata             /opt/kubric/vendor/suricata
+COPY --from=builder /src/vendor/wazuh-rules          /opt/kubric/vendor/wazuh-rules
+COPY --from=builder /src/vendor/sysmon               /opt/kubric/vendor/sysmon
+COPY --from=builder /src/vendor/osquery              /opt/kubric/vendor/osquery
+COPY --from=builder /src/vendor/velociraptor         /opt/kubric/vendor/velociraptor
+COPY --from=builder /src/vendor/rootcheck            /opt/kubric/vendor/rootcheck
+COPY --from=builder /src/vendor/ipsum                /opt/kubric/vendor/ipsum
+# Response assets — Cortex responders (Python, run via subprocess) + TheHive templates
+COPY --from=builder /src/vendor/cortex               /opt/kubric/vendor/cortex
+COPY --from=builder /src/vendor/thehive              /opt/kubric/vendor/thehive
 
-# eBPF needs root or CAP_BPF
-ENV VENDOR_DIR=/opt/kubric/vendor
+# eBPF requires CAP_BPF + CAP_PERFMON (or root on older kernels)
+ENV VENDOR_DIR=/opt/kubric/vendor \
+    KUBRIC_YARA_DIR=/opt/kubric/vendor/yara-rules \
+    KUBRIC_SIGMA_DIR=/opt/kubric/vendor/sigma/rules \
+    KUBRIC_EBPF_EXECVE=/opt/kubric/vendor/ebpf/execve_hook.o \
+    KUBRIC_EBPF_OPENAT=/opt/kubric/vendor/ebpf/openat2_hook.o
 ENTRYPOINT ["/usr/local/bin/coresec"]
 
 # ?? Stage 5: netguard runtime ?????????????????????????????????????????????????
@@ -98,8 +113,14 @@ COPY --from=builder /src/target/release/netguard /usr/local/bin/netguard
 COPY --from=builder /src/vendor/yara-rules /opt/kubric/vendor/yara-rules
 COPY --from=builder /src/vendor/ipsum       /opt/kubric/vendor/ipsum
 COPY --from=builder /src/vendor/suricata    /opt/kubric/vendor/suricata
+COPY --from=builder /src/vendor/ndpi        /opt/kubric/vendor/ndpi
+COPY --from=builder /src/vendor/zeek        /opt/kubric/vendor/zeek
+COPY --from=builder /src/vendor/coreruleset /opt/kubric/vendor/coreruleset
 
-ENV VENDOR_DIR=/opt/kubric/vendor
+ENV VENDOR_DIR=/opt/kubric/vendor \
+    KUBRIC_NDPI_LIB_DIR=/opt/kubric/vendor/ndpi/lib \
+    KUBRIC_ZEEK_SCRIPT_DIR=/opt/kubric/vendor/zeek/scripts \
+    KUBRIC_CRS_DIR=/opt/kubric/vendor/coreruleset/rules
 USER kubric
 ENTRYPOINT ["/usr/local/bin/netguard"]
 

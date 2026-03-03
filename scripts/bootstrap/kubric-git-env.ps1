@@ -25,5 +25,17 @@ $env:MINIKUBE_HOME = "D:\.minikube"
 $env:KUBECONFIG    = "D:\.kube\config"
 $env:GIT_SSH_COMMAND = "ssh"
 
-Set-Location "C:\Users\manag\source\repos\managekube-hue\Kubric-UiDR"
+$env:KUBRIC_POSTGRES_DATA_DIR = "D:\kubric-data\postgres"
+$env:KUBRIC_CLICKHOUSE_DATA_DIR = "D:\kubric-data\clickhouse"
+$env:KUBRIC_NEO4J_DATA_DIR = "D:\kubric-data\neo4j"
+
+$preferredRepo = "D:\repos\managekube-hue\Kubric-UiDR"
+$fallbackRepo = "C:\Users\manag\source\repos\managekube-hue\Kubric-UiDR"
+
+if (Test-Path $preferredRepo) {
+    Set-Location $preferredRepo
+} elseif (Test-Path $fallbackRepo) {
+    Set-Location $fallbackRepo
+}
+
 Write-Host "Environment ready. git: $(git --version 2>&1)" -ForegroundColor Green

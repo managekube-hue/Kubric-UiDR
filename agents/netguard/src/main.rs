@@ -9,6 +9,8 @@ mod ipsum_lookup;
 mod ndpi_ffi;
 mod rita_client;
 mod tls;
+mod waf;
+mod zeek;
 
 #[tokio::main]
 async fn main() -> Result<()> {

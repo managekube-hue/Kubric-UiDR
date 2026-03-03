@@ -39,6 +39,8 @@ use crate::ids::IdsEngine;
 use crate::ipsum_lookup::IpsumLookup;
 use crate::rita_client::RitaClient;
 use crate::tls;
+use crate::waf::WafEngine;
+use crate::zeek::ZeekRunner;
 
 // ---------------------------------------------------------------------------
 // NATS subjects — aligned with docs/KUBRIC Orchestration.docx.md §19
@@ -54,9 +56,24 @@ fn ids_subject(tenant_id: &str) -> String {
     format!("kubric.{tenant_id}.detection.network_ids.v1")
 }
 
+/// NATS subject for C2 detection alerts.
+fn c2_subject(tenant_id: &str) -> String {
+    format!("kubric.{tenant_id}.detection.network_c2.v1")
+}
+
 /// NATS subject for RITA behavioural detection events.
 fn rita_subject(tenant_id: &str) -> String {
     format!("kubric.{tenant_id}.detection.rita.v1")
+}
+
+/// NATS subject for TLS fingerprint detections (JA3/JA3S).
+fn tls_subject(tenant_id: &str) -> String {
+    format!("kubric.{tenant_id}.detection.network_tls.v1")
+}
+
+/// NATS subject for WAF detections.
+fn waf_subject(tenant_id: &str) -> String {
+    format!("kubric.{tenant_id}.detection.network_waf.v1")
 }
 
 // ---------------------------------------------------------------------------
@@ -80,15 +97,66 @@ pub async fn run(cfg: Config) -> Result<()> {
     let dpi_engine = DpiEngine::new();
     info!(ndpi = dpi_engine.has_ndpi(), "DPI engine ready");
 
-    let ids_engine = IdsEngine::load_from_dir("vendor/yara-rules")
+    let yara_dir = std::env::var("KUBRIC_YARA_DIR")
+        .unwrap_or_else(|_| "vendor/yara-rules".to_string());
+    let suricata_dir = std::env::var("KUBRIC_SURICATA_DIR")
+        .unwrap_or_else(|_| "vendor/suricata".to_string());
+    let strict_suricata = std::env::var("KUBRIC_STRICT_SURICATA")
+        .map(|v| v.eq_ignore_ascii_case("true") || v == "1")
+        .unwrap_or(false);
+
+    let suricata_validation = IdsEngine::validate_suricata_assets(&suricata_dir);
+    if !suricata_validation.missing_files.is_empty() {
+        if strict_suricata {
+            return Err(anyhow::anyhow!(
+                "required Suricata assets missing: {:?}",
+                suricata_validation.missing_files
+            ));
+        }
+        warn!(
+            missing = ?suricata_validation.missing_files,
+            "Suricata rule set incomplete; C2 coverage may be reduced"
+        );
+    }
+
+    let ids_engine = IdsEngine::load_from_dirs(&yara_dir, &suricata_dir)
         .unwrap_or_else(|e| {
-            warn!(%e, "IDS YARA rules failed to load — scanning disabled");
+            warn!(%e, "IDS rule load failed — scanning disabled");
             IdsEngine::empty()
         });
     info!(rules = ids_engine.rule_count(), "IDS engine ready");
 
     let ipsum = IpsumLookup::from_env();
     info!(ips = ipsum.count(), "IPsum blocklist ready");
+
+    let waf_dir = std::env::var("KUBRIC_CRS_DIR")
+        .unwrap_or_else(|_| "vendor/coreruleset/rules".to_string());
+    let waf_engine = WafEngine::load_from_dir(&waf_dir);
+
+    if let Some(zeek) = ZeekRunner::from_env() {
+        info!(scripts = zeek.script_count(), "Zeek integration enabled");
+        let tls_events = zeek.run_once();
+        let tls_subj = tls_subject(&cfg.tenant_id);
+        for evt in tls_events {
+            let msg = json!({
+                "tenant_id": cfg.tenant_id,
+                "agent_id": cfg.agent_id,
+                "class_uid": 4001,
+                "activity_id": 6,
+                "severity_id": 2,
+                "category_name": "Network Activity",
+                "type_name": "TLS Fingerprint",
+                "src_endpoint": { "ip": evt.src_ip },
+                "dst_endpoint": { "ip": evt.dst_ip },
+                "tls": {
+                    "ja3": evt.ja3,
+                    "ja3s": evt.ja3s,
+                    "sni": evt.server_name,
+                },
+            });
+            publish_json(&nats, &tls_subj, &msg).await;
+        }
+    }
 
     // --- Shared shutdown flag --------------------------------------------
 
@@ -135,6 +203,7 @@ pub async fn run(cfg: Config) -> Result<()> {
                     &dpi_engine,
                     &ids_engine,
                     &ipsum,
+                    &waf_engine,
                 );
             });
 
@@ -262,9 +331,12 @@ fn run_capture_blocking(
     dpi: &DpiEngine,
     ids: &IdsEngine,
     ipsum: &IpsumLookup,
+    waf: &WafEngine,
 ) {
     let subject = network_subject(&cfg.tenant_id);
     let ids_subj = ids_subject(&cfg.tenant_id);
+    let c2_subj = c2_subject(&cfg.tenant_id);
+    let waf_subj = waf_subject(&cfg.tenant_id);
     let rt = tokio::runtime::Handle::current();
     let mut packet_count: u64 = 0;
 
@@ -273,7 +345,7 @@ fn run_capture_blocking(
             Ok(packet) => {
                 packet_count += 1;
                 if let Some(enriched) = dissect_and_enrich(
-                    packet.data, cfg, dpi, ids, ipsum,
+                    packet.data, cfg, dpi, ids, ipsum, waf,
                 ) {
                     // Publish OCSF network-activity event
                     if let Ok(payload) = serde_json::to_vec(&enriched.ocsf) {
@@ -293,6 +365,28 @@ fn run_capture_blocking(
                             rt.spawn(async move {
                                 if let Err(e) = n.publish(s, payload.into()).await {
                                     error!(%e, "NATS publish IDS alert failed");
+                                }
+                            });
+                        }
+                    }
+                    for alert in &enriched.c2_alerts {
+                        if let Ok(payload) = serde_json::to_vec(alert) {
+                            let s = c2_subj.clone();
+                            let n = nats.clone();
+                            rt.spawn(async move {
+                                if let Err(e) = n.publish(s, payload.into()).await {
+                                    error!(%e, "NATS publish C2 alert failed");
+                                }
+                            });
+                        }
+                    }
+                    for alert in &enriched.waf_alerts {
+                        if let Ok(payload) = serde_json::to_vec(alert) {
+                            let s = waf_subj.clone();
+                            let n = nats.clone();
+                            rt.spawn(async move {
+                                if let Err(e) = n.publish(s, payload.into()).await {
+                                    error!(%e, "NATS publish WAF alert failed");
                                 }
                             });
                         }
@@ -318,6 +412,8 @@ fn run_capture_blocking(
 struct EnrichedPacket {
     ocsf: serde_json::Value,
     ids_alerts: Vec<serde_json::Value>,
+    c2_alerts: Vec<serde_json::Value>,
+    waf_alerts: Vec<serde_json::Value>,
 }
 
 /// Dissect a raw Ethernet frame, run all enrichment engines, and build an
@@ -328,6 +424,7 @@ fn dissect_and_enrich(
     dpi: &DpiEngine,
     ids: &IdsEngine,
     ipsum: &IpsumLookup,
+    waf: &WafEngine,
 ) -> Option<EnrichedPacket> {
     let eth = EthernetPacket::new(data)?;
 
@@ -363,10 +460,12 @@ fn dissect_and_enrich(
 
     // --- YARA-X payload scan ---
     let mut ids_alerts = Vec::new();
+    let mut c2_alerts = Vec::new();
+    let mut waf_alerts = Vec::new();
     if let Some(ref payload) = l7_payload {
         if !payload.is_empty() {
             for (rule_name, namespace) in ids.scan(payload) {
-                ids_alerts.push(json!({
+                let alert = json!({
                     "tenant_id": cfg.tenant_id,
                     "agent_id": cfg.agent_id,
                     "timestamp": ts,
@@ -380,7 +479,48 @@ fn dissect_and_enrich(
                     "src_endpoint": { "ip": &src_ip, "port": src_port },
                     "dst_endpoint": { "ip": &dst_ip, "port": dst_port },
                     "connection_info": { "protocol_name": &dpi_result.protocol },
-                }));
+                });
+                if namespace.eq_ignore_ascii_case("suricata")
+                    && rule_name.to_lowercase().contains("c2")
+                {
+                    c2_alerts.push(json!({
+                        "tenant_id": cfg.tenant_id,
+                        "agent_id": cfg.agent_id,
+                        "timestamp": ts,
+                        "class_uid": 4001,
+                        "activity_id": 6,
+                        "severity_id": 4,
+                        "category_name": "Network Activity",
+                        "type_name": "C2 Detection",
+                        "analytic": {
+                            "name": "Suricata C2 Rule",
+                            "rule": rule_name,
+                        },
+                        "src_endpoint": { "ip": &src_ip, "port": src_port },
+                        "dst_endpoint": { "ip": &dst_ip, "port": dst_port },
+                        "connection_info": { "protocol_name": &dpi_result.protocol },
+                    }));
+                }
+                ids_alerts.push(alert);
+            }
+
+            if dpi_result.protocol.eq_ignore_ascii_case("HTTP") {
+                for (rule_id, msg) in waf.inspect_http_payload(payload) {
+                    waf_alerts.push(json!({
+                        "tenant_id": cfg.tenant_id,
+                        "agent_id": cfg.agent_id,
+                        "timestamp": ts,
+                        "class_uid": 4001,
+                        "activity_id": 5,
+                        "severity_id": 3,
+                        "category_name": "Network Activity",
+                        "type_name": "WAF Alert",
+                        "rule_id": rule_id,
+                        "rule_message": msg,
+                        "src_endpoint": { "ip": &src_ip, "port": src_port },
+                        "dst_endpoint": { "ip": &dst_ip, "port": dst_port },
+                    }));
+                }
             }
         }
     }
@@ -431,7 +571,7 @@ fn dissect_and_enrich(
         ocsf["ids_match_count"] = json!(ids_alerts.len());
     }
 
-    Some(EnrichedPacket { ocsf, ids_alerts })
+    Some(EnrichedPacket { ocsf, ids_alerts, c2_alerts, waf_alerts })
 }
 
 // ---------------------------------------------------------------------------
