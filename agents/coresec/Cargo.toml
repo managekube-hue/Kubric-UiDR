@@ -72,6 +72,13 @@ opentelemetry-otlp    = { workspace = true }
 opentelemetry_sdk     = { workspace = true }
 tracing-opentelemetry = { workspace = true }
 
+# ── HTTP client (MalwareBazaar TI, Cortex responders) ─────────────────────────
+reqwest = { workspace = true }
+
+# ── Base64 (hash encoding, TI payloads) ───────────────────────────────────────
+base64 = { workspace = true }
+hex    = { workspace = true }
+
 [features]
 default  = []
 # Enable eBPF user-space loading (Linux only; no-op on other platforms)

@@ -4,23 +4,23 @@
 * text=auto eol=lf
 
 # Force LF for these file types (never CRLF)
-*.yml      text eol=lf
-*.yaml     text eol=lf
+*.yml      text eol=lf working-tree-encoding=UTF-8
+*.yaml     text eol=lf working-tree-encoding=UTF-8
 *.sh       text eol=lf
-*.py       text eol=lf
-*.go       text eol=lf
-*.rs       text eol=lf
+*.py       text eol=lf working-tree-encoding=UTF-8
+*.go       text eol=lf working-tree-encoding=UTF-8
+*.rs       text eol=lf working-tree-encoding=UTF-8
 *.ts       text eol=lf
 *.tsx      text eol=lf
 *.js       text eol=lf
 *.jsx      text eol=lf
-*.json     text eol=lf
-*.toml     text eol=lf
+*.json     text eol=lf working-tree-encoding=UTF-8
+*.toml     text eol=lf working-tree-encoding=UTF-8
 *.mod      text eol=lf
 *.sum      text eol=lf
-*.md       text eol=lf
+*.md       text eol=lf working-tree-encoding=UTF-8
 *.sql      text eol=lf
-*.proto    text eol=lf
+*.proto    text eol=lf working-tree-encoding=UTF-8
 Dockerfile text eol=lf
 Dockerfile.* text eol=lf
 Makefile   text eol=lf

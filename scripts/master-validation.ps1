@@ -83,6 +83,11 @@ Run-Check ".kubric/ directory exists" {
     Test-Path ".kubric"
 }
 
+Run-Check "Source files are valid UTF-8" {
+    & powershell -ExecutionPolicy Bypass -File "scripts/bootstrap/find-bad-bytes.ps1" -RepoRoot $RepoRoot | Out-Null
+    $LASTEXITCODE -eq 0
+}
+
 # =============================================================================
 # 2. Docker Compose Validation
 # =============================================================================

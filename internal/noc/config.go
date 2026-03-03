@@ -47,6 +47,16 @@ type Config struct {
 	BloodHoundTokenID  string // BLOODHOUND_TOKEN_ID
 	BloodHoundTokenKey string // BLOODHOUND_TOKEN_KEY
 
+	// -- ITDR identity intelligence (optional) ---------------------------------
+	ITDRSigmaSecurityDir      string // ITDR_SIGMA_SECURITY_DIR
+	ITDRSigmaPrivEscDir       string // ITDR_SIGMA_PRIVESC_DIR
+	ITDRWazuhRulesDir         string // ITDR_WAZUH_RULES_DIR
+	ITDRMispTaxonomiesDir     string // ITDR_MISP_TAXONOMIES_DIR
+	ITDRBloodHoundCypherDir   string // ITDR_BLOODHOUND_CYPHER_DIR
+	ITDRIdentityRespondersDir string // ITDR_IDENTITY_RESPONDERS_DIR
+	OTXBaseURL                string // OTX_BASE_URL
+	OTXAPIKey                 string // OTX_API_KEY
+
 	// -- ZMQ high-throughput event fanout (optional) --------------------------
 	ZMQPublishAddr string // ZMQ_PUBLISH_ADDR  e.g. tcp://0.0.0.0:5555
 
@@ -92,6 +102,16 @@ func LoadConfig() Config {
 		BloodHoundURL:      getenv("BLOODHOUND_URL", ""),
 		BloodHoundTokenID:  getenv("BLOODHOUND_TOKEN_ID", ""),
 		BloodHoundTokenKey: getenv("BLOODHOUND_TOKEN_KEY", ""),
+
+		// ITDR identity intelligence
+		ITDRSigmaSecurityDir:      getenv("ITDR_SIGMA_SECURITY_DIR", "vendor/sigma/rules/windows/builtin/security"),
+		ITDRSigmaPrivEscDir:       getenv("ITDR_SIGMA_PRIVESC_DIR", "vendor/sigma/rules/windows/builtin/security/privesc"),
+		ITDRWazuhRulesDir:         getenv("ITDR_WAZUH_RULES_DIR", "vendor/wazuh-rules"),
+		ITDRMispTaxonomiesDir:     getenv("ITDR_MISP_TAXONOMIES_DIR", "vendor/misp/taxonomies"),
+		ITDRBloodHoundCypherDir:   getenv("ITDR_BLOODHOUND_CYPHER_DIR", "vendor/bloodhound/cypher"),
+		ITDRIdentityRespondersDir: getenv("ITDR_IDENTITY_RESPONDERS_DIR", "vendor/cortex/responders/identity"),
+		OTXBaseURL:                getenv("OTX_BASE_URL", "https://otx.alienvault.com/api/v1/indicators"),
+		OTXAPIKey:                 getenv("OTX_API_KEY", ""),
 
 		// ZMQ fanout
 		ZMQPublishAddr: getenv("ZMQ_PUBLISH_ADDR", ""),

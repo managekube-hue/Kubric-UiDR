@@ -61,6 +61,7 @@ impl HookProviderKind {
             Self::Ebpf(p) => p.start().await,
             #[cfg(target_os = "windows")]
             Self::Etw(p) => p.start().await,
+            _ => anyhow::bail!("no hook provider variants enabled for this build"),
         }
     }
 
@@ -71,6 +72,7 @@ impl HookProviderKind {
             Self::Ebpf(_) => "eBPF/aya",
             #[cfg(target_os = "windows")]
             Self::Etw(_) => "ETW/Kernel-Process",
+            _ => "none",
         }
     }
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/managekube-hue/Kubric-UiDR/internal/bloodhound"
 	"github.com/managekube-hue/Kubric-UiDR/internal/cortex"
 	"github.com/managekube-hue/Kubric-UiDR/internal/falco"
+	"github.com/managekube-hue/Kubric-UiDR/internal/itdr"
 	"github.com/managekube-hue/Kubric-UiDR/internal/osquery"
 	"github.com/managekube-hue/Kubric-UiDR/internal/shuffle"
 	"github.com/managekube-hue/Kubric-UiDR/internal/thehive"
@@ -30,6 +31,7 @@ type integrationHandler struct {
 	osquery      *osquery.Client
 	shuffle      *shuffle.Client
 	bloodhound   *bloodhound.Client
+	itdr         *itdr.Service
 }
 
 // RegisterRoutes mounts all integration sub-routes under /integrations.
@@ -103,6 +105,18 @@ func (h *integrationHandler) RegisterRoutes(r chi.Router) {
 			r.Get("/domains", h.bhListDomains)
 			r.Post("/cypher", h.bhRunCypher)
 			r.Get("/domains/{domainID}/attack-paths", h.bhListAttackPaths)
+		})
+
+		// ------------------------------------------------------------------
+		// ITDR
+		// ------------------------------------------------------------------
+		r.Route("/itdr", func(r chi.Router) {
+			r.Get("/assets", h.itdrListAssets)
+			r.Get("/misp/taxonomies", h.itdrListMispTaxonomies)
+			r.Post("/bloodhound/cypher/run", h.itdrRunBloodHoundCypherFile)
+			r.Get("/otx/{indicatorType}/{indicator}", h.itdrLookupOTX)
+			r.Post("/responders/{name}/run", h.itdrRunIdentityResponder)
+			r.Post("/cortex/responders/{responderID}/run", h.itdrRunCortexResponder)
 		})
 
 		// ------------------------------------------------------------------
@@ -819,6 +833,127 @@ func (h *integrationHandler) bhListAttackPaths(w http.ResponseWriter, r *http.Re
 }
 
 // =========================================================================
+// ITDR handlers
+// =========================================================================
+
+// GET /integrations/itdr/assets
+func (h *integrationHandler) itdrListAssets(w http.ResponseWriter, r *http.Request) {
+	if h.itdr == nil {
+		writeError(w, http.StatusServiceUnavailable, "integration not configured")
+		return
+	}
+	inv, err := h.itdr.ListAssets()
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, inv)
+}
+
+// GET /integrations/itdr/misp/taxonomies
+func (h *integrationHandler) itdrListMispTaxonomies(w http.ResponseWriter, r *http.Request) {
+	if h.itdr == nil {
+		writeError(w, http.StatusServiceUnavailable, "integration not configured")
+		return
+	}
+	taxonomies, err := h.itdr.ListMispTaxonomies()
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, taxonomies)
+}
+
+// POST /integrations/itdr/bloodhound/cypher/run
+// Body: { "file":"path.cypher", "parameters": { ... } }
+func (h *integrationHandler) itdrRunBloodHoundCypherFile(w http.ResponseWriter, r *http.Request) {
+	if h.itdr == nil {
+		writeError(w, http.StatusServiceUnavailable, "integration not configured")
+		return
+	}
+	var body struct {
+		File       string                 `json:"file"`
+		Parameters map[string]interface{} `json:"parameters"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid JSON: "+err.Error())
+		return
+	}
+	if body.File == "" {
+		writeError(w, http.StatusUnprocessableEntity, "file must not be empty")
+		return
+	}
+
+	result, err := h.itdr.RunCypherQueryFile(r.Context(), body.File, body.Parameters)
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
+}
+
+// GET /integrations/itdr/otx/{indicatorType}/{indicator}
+func (h *integrationHandler) itdrLookupOTX(w http.ResponseWriter, r *http.Request) {
+	if h.itdr == nil {
+		writeError(w, http.StatusServiceUnavailable, "integration not configured")
+		return
+	}
+	indicatorType := chi.URLParam(r, "indicatorType")
+	indicator := chi.URLParam(r, "indicator")
+	result, err := h.itdr.LookupOTXIndicator(r.Context(), indicatorType, indicator)
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
+}
+
+// POST /integrations/itdr/responders/{name}/run
+func (h *integrationHandler) itdrRunIdentityResponder(w http.ResponseWriter, r *http.Request) {
+	if h.itdr == nil {
+		writeError(w, http.StatusServiceUnavailable, "integration not configured")
+		return
+	}
+	name := chi.URLParam(r, "name")
+	var body map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid JSON: "+err.Error())
+		return
+	}
+	result, err := h.itdr.RunIdentityResponderScript(r.Context(), name, body)
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
+}
+
+// POST /integrations/itdr/cortex/responders/{responderID}/run
+// Body: { "object_type":"case", "object_id":"...", "parameters": { ... } }
+func (h *integrationHandler) itdrRunCortexResponder(w http.ResponseWriter, r *http.Request) {
+	if h.itdr == nil {
+		writeError(w, http.StatusServiceUnavailable, "integration not configured")
+		return
+	}
+	responderID := chi.URLParam(r, "responderID")
+	var body struct {
+		ObjectType string                 `json:"object_type"`
+		ObjectID   string                 `json:"object_id"`
+		Parameters map[string]interface{} `json:"parameters"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid JSON: "+err.Error())
+		return
+	}
+	action, err := h.itdr.RunCortexIdentityResponder(r.Context(), responderID, body.ObjectType, body.ObjectID, body.Parameters)
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusCreated, action)
+}
+
+// =========================================================================
 // Shuffle SOAR handlers
 // =========================================================================
 
@@ -886,6 +1021,7 @@ func (h *integrationHandler) healthAll(w http.ResponseWriter, r *http.Request) {
 		{"osquery", func() error { return h.osquery.Health(r.Context()) }, h.osquery != nil},
 		{"shuffle", func() error { return h.shuffle.Health(r.Context()) }, h.shuffle != nil},
 		{"bloodhound", func() error { return h.bloodhound.Health(r.Context()) }, h.bloodhound != nil},
+		{"itdr", func() error { return h.itdr.Health(r.Context()) }, h.itdr != nil},
 	}
 
 	results := make([]integrationHealth, len(integrations))
